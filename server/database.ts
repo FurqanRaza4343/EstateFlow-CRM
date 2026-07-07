@@ -23,7 +23,7 @@ import {
   ContactPerson
 } from '../src/types';
 
-const DB_DIR = path.join(process.cwd(), 'data');
+const DB_DIR = process.env.NETLIFY ? '/tmp/data' : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 
 export interface DBStore {

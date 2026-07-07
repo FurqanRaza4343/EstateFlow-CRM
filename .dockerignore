@@ -1,0 +1,10 @@
+node_modules/
+.git/
+data/
+*.log
+.env
+.env*
+dist/
+public/images/old*
+.DS_Store
+*.ts.map

@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://estateflow-api-4d46b4e5-33c4-4594-831a-3aec347c4852.fly.dev/api/$1" }
+  ]
+}
