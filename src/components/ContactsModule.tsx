@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { ContactPerson } from '../types';
 import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
+import { api } from '../lib/api';
 
 interface ContactsModuleProps {
   currentUser: any;
@@ -62,18 +63,16 @@ export default function ContactsModule({
     'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
   ];
 
-  const fetchContacts = () => {
-    fetch('/api/contacts')
-      .then(r => r.json())
-      .then(data => setContacts(data || []))
-      .catch(e => console.error('Error fetching contacts:', e));
+  const fetchContacts = async () => {
+    const { data, error } = await api.getContacts();
+    if (!error) setContacts(data || []);
   };
 
   useEffect(() => {
     fetchContacts();
   }, []);
 
-  const handleSaveContact = (e: React.FormEvent) => {
+  const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !phone.trim()) {
       alert('First Name and Phone Number are mandatory to save custom contacts.');
@@ -83,47 +82,33 @@ export default function ContactsModule({
     setLoading(true);
     const finalPhone = phone.trim().startsWith('+') ? phone.trim() : `+91${phone.trim().replace(/\D/g, '')}`;
 
-    const payload = {
+    const { error } = await api.createContact({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       phone: finalPhone,
       email: email.trim(),
       company: company.trim(),
       notes: notes.trim()
-    };
+    });
 
-    fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(async res => {
-        if (res.ok) {
-          alert('Success: Contact cataloged securely inside WhatsApp Directory.');
-          setFirstName('');
-          setLastName('');
-          setPhone('');
-          setEmail('');
-          setCompany('');
-          setNotes('');
-          setCustomAvatarUrl(null);
-          setShowAddModal(false);
-          fetchContacts();
-          if (onRefreshActivities) {
-            onRefreshActivities();
-          }
-        } else {
-          const err = await res.json();
-          alert(`Error: ${err.error || 'Failed to save contact person.'}`);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Server connection trouble saving contact person.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (!error) {
+      alert('Success: Contact cataloged securely inside WhatsApp Directory.');
+      setFirstName('');
+      setLastName('');
+      setPhone('');
+      setEmail('');
+      setCompany('');
+      setNotes('');
+      setCustomAvatarUrl(null);
+      setShowAddModal(false);
+      fetchContacts();
+      if (onRefreshActivities) {
+        onRefreshActivities();
+      }
+    } else {
+      alert('Error: ' + (error.message || 'Failed to save contact person.'));
+    }
+    setLoading(false);
   };
 
   // Filter contacts list by search query
@@ -322,8 +307,13 @@ export default function ContactsModule({
           })}
 
           {filteredContacts.length === 0 && (
-            <div className="col-span-2 text-center py-16 border rounded-2xl border-dashed border-slate-200 bg-slate-50 text-slate-400 text-xs italic">
-              No contacts matched your search filter parameters. Try saving a new contact!
+            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+              <User size={40} className="mx-auto text-slate-300 mb-3" />
+              <p className="text-sm font-bold text-slate-400">No contacts found</p>
+              <p className="text-xs text-slate-300 mt-1">Save a new contact to your WhatsApp directory</p>
+              <button onClick={() => setShowAddModal(true)} className="mt-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer inline-flex items-center gap-1.5">
+                <Plus size={14} /> Add Contact
+              </button>
             </div>
           )}
         </div>

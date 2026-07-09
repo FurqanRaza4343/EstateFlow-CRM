@@ -27,11 +27,14 @@ import {
   Volume2,
   ChevronRight,
   TrendingUp,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Users,
+  Building2
 } from 'lucide-react';
 import { Lead, UserProfile, LeadStatus, LeadTemperature, Property, LeadSource } from '../types';
 import AiDisclosure from './AiDisclosure';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
+import { api } from '../lib/api';
 
 interface LeadsModuleProps {
   leads: Lead[];
@@ -120,9 +123,8 @@ export default function LeadsModule({
   
   useEffect(() => {
     if (selectedLeadId) {
-      fetch(`/api/leads/${selectedLeadId}/timeline`)
-        .then(res => res.json())
-        .then(data => setTimeline(data || []))
+      api.getActivities(selectedLeadId)
+        .then(({ data }) => setTimeline(data || []))
         .catch(err => console.error(err));
     }
   }, [selectedLeadId, leads]);
@@ -134,8 +136,7 @@ export default function LeadsModule({
     await onAddNote(selectedLeadId, newNote);
     setNewNote('');
     // refresh timeline
-    const res = await fetch(`/api/leads/${selectedLeadId}/timeline`);
-    const data = await res.json();
+    const { data } = await api.getActivities(selectedLeadId);
     setTimeline(data || []);
   };
 
@@ -411,8 +412,13 @@ export default function LeadsModule({
           })}
 
           {filteredLeads.length === 0 && (
-            <div className="text-center py-16 text-slate-400 text-xs">
-              No matching counseling leads standard search.
+            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+              <Users size={40} className="mx-auto text-slate-300 mb-3" />
+              <p className="text-sm font-bold text-slate-400">No leads found</p>
+              <p className="text-xs text-slate-300 mt-1">Try changing your filters or add a new lead</p>
+              <button onClick={onOpenAddLead} className="mt-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer inline-flex items-center gap-1.5">
+                <Plus size={14} /> Add Lead
+              </button>
             </div>
           )}
         </div>
@@ -583,8 +589,9 @@ export default function LeadsModule({
                   ))}
 
                   {recommendedProperties.length === 0 && (
-                    <div className="col-span-2 text-center py-4 bg-slate-50 rounded-xl text-xs text-slate-400">
-                      No matching properties cataloged matching this tier.
+                    <div className="col-span-2 py-8 text-center">
+                      <Building2 size={28} className="mx-auto text-slate-300 mb-2" />
+                      <p className="text-xs text-slate-400 font-medium">No matching properties to recommend</p>
                     </div>
                   )}
                 </div>
@@ -716,8 +723,10 @@ export default function LeadsModule({
                   ))}
 
                   {timeline.length === 0 && (
-                    <div className="text-center py-6 text-slate-400 text-xs italic">
-                      Zero counseling notes, calls, or dispatch records registered yet.
+                    <div className="text-center py-8">
+                      <Clock size={28} className="mx-auto text-slate-300 mb-2" />
+                      <p className="text-xs text-slate-400 font-medium">No activity recorded yet</p>
+                      <p className="text-[10px] text-slate-300 mt-0.5">Add a note or make a call to start the timeline</p>
                     </div>
                   )}
                 </div>

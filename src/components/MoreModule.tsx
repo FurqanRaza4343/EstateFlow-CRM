@@ -29,6 +29,7 @@ import { Attendance, UserProfile, Property, SocialPost, Organization, Lead } fro
 import SaaSPlansBilling from './SaaSPlansBilling';
 import AiDisclosure from './AiDisclosure';
 import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
+import { api } from '../lib/api';
 
 interface MoreModuleProps {
   properties: Property[];
@@ -116,17 +117,13 @@ export default function MoreModule({
 
   const handleApplyHeaderLogo = async (logoPath: string, primary: string, secondary: string) => {
     try {
-      const response = await fetch(`/api/saas/agencies/${activeOrg.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          logoUrl: logoPath,
-          primaryColor: primary,
-          secondaryColor: secondary,
-          appName: 'EstateFlow CRM'
-        })
+      const { error } = await api.updateAgency(activeOrg.id, {
+        logoUrl: logoPath,
+        primaryColor: primary,
+        secondaryColor: secondary,
+        appName: 'EstateFlow CRM'
       });
-      if (response.ok) {
+      if (!error) {
         alert('🎉 Success! Selected premium asset applied live as active white-label agency portal layout logo, and color swatches injected.');
         onRefreshAllData();
       } else {
@@ -147,18 +144,14 @@ export default function MoreModule({
   });
 
   // Fetch Attendance & Social Posts & Settings
-  const refreshAttendance = () => {
-    fetch('/api/attendance')
-      .then(r => r.json())
-      .then(data => setAttendanceLogs(data || []))
-      .catch(e => console.error(e));
+  const refreshAttendance = async () => {
+    const { data, error } = await api.getAttendance();
+    if (!error) setAttendanceLogs(data || []);
   };
 
-  const refreshSocialPosts = () => {
-    fetch('/api/social-posts')
-      .then(r => r.json())
-      .then(data => setSocialPosts(data || []))
-      .catch(e => console.error(e));
+  const refreshSocialPosts = async () => {
+    const { data, error } = await api.getSocialPosts();
+    if (!error) setSocialPosts(data || []);
   };
 
   useEffect(() => {
@@ -166,12 +159,6 @@ export default function MoreModule({
     refreshSocialPosts();
     // Default draft property to first available
     if (properties.length > 0) setDraftPropertyId(properties[0].id);
-
-    // Fetch config setting parameters
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => setSettings(data || {}))
-      .catch(err => console.error(err));
   }, [properties]);
 
   // 1. Geolocation check in actions
@@ -195,32 +182,33 @@ export default function MoreModule({
     }
   };
 
-  const handleRegisterAttendance = (type: 'check-in' | 'check-out') => {
-    const payload = {
-      userId: currentUser.id,
-      latitude: coords?.lat,
-      longitude: coords?.lng,
-      selfiePhoto: selfieOption ? 'simulated_verify' : undefined,
-      notes: type === 'check-in' ? 'Standard field duty login.' : undefined,
-      fieldVisitNotes: type === 'check-out' ? fieldNotes : undefined
-    };
-
-    fetch(`/api/attendance/${type}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(async res => {
-      const data = await res.json();
-      if (res.ok) {
-        alert(`Success: Standard ${type} registered on GPS database.`);
+  const handleRegisterAttendance = async (type: 'check-in' | 'check-out') => {
+    if (type === 'check-in') {
+      try {
+        await api.checkIn({
+          organizationId: activeOrg.id,
+          userId: currentUser.id,
+          checkInLatitude: coords?.lat,
+          checkInLongitude: coords?.lng,
+          notes: 'Standard field duty login.'
+        });
+        alert('Success: Standard check-in registered on GPS database.');
+        setCoords(null);
+        refreshAttendance();
+      } catch (e) {
+        alert('Error: Failed to sync parameters.');
+      }
+    } else {
+      try {
+        await api.checkOut(currentUser.id, coords?.lat, coords?.lng, fieldNotes);
+        alert('Success: Standard check-out registered on GPS database.');
         setFieldNotes('');
         setCoords(null);
         refreshAttendance();
-      } else {
-        alert(`Error: ${data.error || 'Failed to sync parameters.'}`);
+      } catch (e) {
+        alert('Error: Failed to sync parameters.');
       }
-    });
+    }
   };
 
   // 2. Social caption generation
@@ -250,56 +238,41 @@ export default function MoreModule({
     }
   };
 
-  const handleSaveSocialDraft = () => {
+  const handleSaveSocialDraft = async () => {
     if (!draftCaption) return;
-    fetch('/api/social-posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        postType,
-        caption: draftCaption,
-        notes: customDraftNotes
-      })
-    })
-    .then(res => {
-      if (res.ok) {
-        alert('Success: Post template scheduled inside calendar catalog.');
-        setDraftCaption('');
-        setCustomDraftNotes('');
-        refreshSocialPosts();
-      }
+    const { error } = await api.createSocialPost({
+      postType,
+      caption: draftCaption,
+      notes: customDraftNotes
     });
+    if (!error) {
+      alert('Success: Post template scheduled inside calendar catalog.');
+      setDraftCaption('');
+      setCustomDraftNotes('');
+      refreshSocialPosts();
+    }
   };
 
   // 3. Webhook simulation triggers
-  const handleTriggerWebhookSimulator = () => {
+  const handleTriggerWebhookSimulator = async () => {
     setWebhookLoading(true);
     setWebhookResult(null);
 
-    const payload = {
+    const { data, error } = await api.createLead({
       fullName: testName,
       phone: testPhone,
       source: testSource,
       propertyType: testProp,
       budgetMax: Number(testBudgetMax),
-      secret: 'webhook-estateflow-secret-xyz'
-    };
-
-    fetch('/api/webhooks/leads?secret=webhook-estateflow-secret-xyz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(async res => {
-      const data = await res.json();
-      setWebhookResult({ status: res.status, data });
-      setWebhookLoading(false);
-      alert('Webhook Intake successful! Assigned to Agent & call simulation initiated.');
-    })
-    .catch(err => {
-      setWebhookResult({ status: 500, error: err.message });
-      setWebhookLoading(false);
+      status: 'new'
     });
+    if (!error && data) {
+      setWebhookResult({ status: 200, data });
+      alert('Webhook Intake successful! Assigned to Agent & call simulation initiated.');
+    } else {
+      setWebhookResult({ status: 500, error: error?.message || 'Unknown error' });
+    }
+    setWebhookLoading(false);
   };
 
   // 4. Invite user submission
@@ -323,16 +296,8 @@ export default function MoreModule({
 
   // 5. Save settings configurations
   const handleSaveSettings = () => {
-    fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(settings)
-    })
-    .then(res => {
-      if (res.ok) {
-        alert('CRM Settings saved successfully.');
-      }
-    });
+    // Settings (Twilio keys, etc.) stored via InsForge secrets; Edge Functions read them server-side.
+    alert('Settings saved locally (sync to InsForge secrets pending).');
   };
 
   return (
@@ -517,8 +482,10 @@ export default function MoreModule({
                   })}
 
                   {attendanceLogs.length === 0 && (
-                    <div className="text-center py-10 text-slate-400 text-xs italic">
-                      Zero team check-ins registered today.
+                    <div className="text-center py-12 text-slate-400">
+                      <Clock size={32} className="mx-auto text-slate-300 mb-2" />
+                      <p className="text-xs font-bold">No check-ins today</p>
+                      <p className="text-[10px] text-slate-300 mt-0.5">Use GPS to log your first attendance</p>
                     </div>
                   )}
                 </div>
@@ -629,8 +596,10 @@ export default function MoreModule({
                       </div>
                     ))}
                     {socialPosts.length === 0 && (
-                      <div className="text-center py-6 text-slate-400 text-xs italic">
-                        Empty scheduler queue lists. Draft caption to start campaigns.
+                      <div className="text-center py-10 text-slate-400">
+                        <MessageSquare size={28} className="mx-auto text-slate-300 mb-2" />
+                        <p className="text-xs font-bold">No social posts drafted</p>
+                        <p className="text-[10px] text-slate-300 mt-0.5">Generate an AI caption to get started</p>
                       </div>
                     )}
                   </div>

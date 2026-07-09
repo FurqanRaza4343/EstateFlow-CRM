@@ -27,6 +27,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { Organization } from '../types';
+import { api } from '../lib/api';
 
 interface SuperAdminPanelProps {
   onRefreshAllData: () => void;
@@ -88,13 +89,30 @@ export default function SuperAdminPanel({
   // Load super admin data
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      fetch('/api/saas/agencies').then(res => res.json()),
-      fetch('/api/saas/super-stats').then(res => res.json())
-    ])
-      .then(([agenciesData, statsData]) => {
+    api.getAgencies()
+      .then((agenciesData: Organization[]) => {
         setAgencies(agenciesData || []);
-        setStats(statsData || null);
+        const total = agenciesData?.length || 0;
+        const active = agenciesData?.filter(a => a.status === 'Active').length || 0;
+        const suspended = agenciesData?.filter(a => a.status === 'Suspended').length || 0;
+        const plans = agenciesData?.reduce((acc, a) => {
+          const plan = a.subscriptionPlan || 'Free';
+          acc[plan] = (acc[plan] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        setStats({
+          totalAgencies: total,
+          activeAgencies: active,
+          suspendedAgencies: suspended,
+          freeCount: plans?.['Free'] || 0,
+          proCount: plans?.['Pro'] || 0,
+          bizCount: plans?.['Business'] || 0,
+          enterpriseCount: plans?.['Enterprise'] || 0,
+          totalLeads: 0,
+          totalProperties: 0,
+          totalUsers: 0,
+          totalContacts: 0,
+        });
         setLoading(false);
       })
       .catch(err => {
@@ -145,39 +163,30 @@ export default function SuperAdminPanel({
       return;
     }
 
-    try {
-      const resp = await fetch('/api/saas/agencies', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formName,
-          domain: formDomain,
-          appName: formAppName || formName,
-          primaryColor: formColor,
-          secondaryColor: formSecColor,
-          accentColor: formAccent,
-          subscriptionPlan: formPlan,
-          maxLeadsLimit: Number(formMaxLeads),
-          maxPropertiesLimit: Number(formMaxProps),
-          maxUsersLimit: Number(formMaxUsers),
-          logoUrl: formLogoUrl
-        })
-      });
+    const { error } = await api.createAgency({
+      name: formName,
+      domain: formDomain,
+      appName: formAppName || formName,
+      primaryColor: formColor,
+      secondaryColor: formSecColor,
+      accentColor: formAccent,
+      subscriptionPlan: formPlan,
+      maxLeadsLimit: Number(formMaxLeads),
+      maxPropertiesLimit: Number(formMaxProps),
+      maxUsersLimit: Number(formMaxUsers),
+      logoUrl: formLogoUrl
+    });
 
-      if (resp.ok) {
-        alert(`Success! [${formName}] registered as a workspace tenant. Default administrator invited successfully.`);
-        setFormName('');
-        setFormDomain('');
-        setFormAppName('');
-        setFormLogoUrl('');
-        setShowCreateForm(false);
-        handleRefresh();
-      } else {
-        const err = await resp.json();
-        alert(`Failed: ${err.error || 'Server rejected creation'}`);
-      }
-    } catch (err: any) {
-      alert(`Network error during creation: ${err.message}`);
+    if (!error) {
+      alert(`Success! [${formName}] registered as a workspace tenant.`);
+      setFormName('');
+      setFormDomain('');
+      setFormAppName('');
+      setFormLogoUrl('');
+      setShowCreateForm(false);
+      handleRefresh();
+    } else {
+      alert('Failed: ' + (error.message || 'Server rejected creation'));
     }
   };
 
@@ -187,61 +196,47 @@ export default function SuperAdminPanel({
       return;
     }
 
-    try {
-      const resp = await fetch(`/api/saas/agencies/${id}`, { method: 'DELETE' });
-      if (resp.ok) {
-        alert(`Workspace "${name}" and all encapsulated multi-tenant rows purged.`);
-        handleRefresh();
-      }
-    } catch (err: any) {
-      alert(`Purge error: ${err.message}`);
+    const { error } = await api.deleteAgency(id);
+    if (!error) {
+      alert(`Workspace "${name}" and all encapsulated multi-tenant rows purged.`);
+      handleRefresh();
+    } else {
+      alert(`Purge error: ${error.message}`);
     }
   };
 
   // Toggle Suspended state
   const handleToggleSuspension = async (agency: Organization) => {
     const nextStatus = agency.status === 'Active' ? 'Suspended' : 'Active';
-    try {
-      const resp = await fetch(`/api/saas/agencies/${agency.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus })
-      });
-      if (resp.ok) {
-        alert(`Security status for ${agency.name} modified to [${nextStatus}].`);
-        handleRefresh();
-      }
-    } catch (err: any) {
-      alert(`Status toggle failed: ${err.message}`);
+    const { error } = await api.updateAgency(agency.id, { status: nextStatus });
+    if (!error) {
+      alert(`Security status for ${agency.name} modified to [${nextStatus}].`);
+      handleRefresh();
+    } else {
+      alert(`Status toggle failed: ${error.message}`);
     }
   };
 
   // Save quick modifiers limits
   const handleSaveLimits = async (agencyId: string) => {
-    try {
-      const resp = await fetch(`/api/saas/agencies/${agencyId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: editName,
-          appName: editAppName,
-          logoUrl: editLogoUrl,
-          primaryColor: editColor,
-          secondaryColor: editSecColor,
-          subscriptionPlan: editPlan,
-          status: editStatus,
-          maxLeadsLimit: Number(editMaxLeads),
-          maxPropertiesLimit: Number(editMaxProps),
-          maxUsersLimit: Number(editMaxUsers)
-        })
-      });
-      if (resp.ok) {
-        alert('Agency parameters and corporate branding updated successfully.');
-        setEditingAgencyId(null);
-        handleRefresh();
-      }
-    } catch (err: any) {
-      alert(`Configuration failed: ${err.message}`);
+    const { error } = await api.updateAgency(agencyId, {
+      name: editName,
+      appName: editAppName,
+      logoUrl: editLogoUrl,
+      primaryColor: editColor,
+      secondaryColor: editSecColor,
+      subscriptionPlan: editPlan,
+      status: editStatus,
+      maxLeadsLimit: Number(editMaxLeads),
+      maxPropertiesLimit: Number(editMaxProps),
+      maxUsersLimit: Number(editMaxUsers)
+    });
+    if (!error) {
+      alert('Agency parameters and corporate branding updated successfully.');
+      setEditingAgencyId(null);
+      handleRefresh();
+    } else {
+      alert(`Configuration failed: ${error.message}`);
     }
   };
 

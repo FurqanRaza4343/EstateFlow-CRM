@@ -337,8 +337,10 @@ export default function Dashboard({
                </div>
             ))}
             {hotLeads.length === 0 && (
-              <div className="text-center py-8 text-slate-550 text-xs italic">
-                Zero active Hot Leads today. Excellent performance!
+              <div className="text-center py-10 text-slate-400">
+                <TrendingUp size={28} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-xs font-bold">No hot leads right now</p>
+                <p className="text-[10px] text-slate-300 mt-0.5">All clear — take a breather</p>
               </div>
             )}
           </div>
@@ -378,8 +380,10 @@ export default function Dashboard({
           ))}
 
           {activities.length === 0 && (
-            <div className="text-center py-8 text-slate-400 text-xs">
-              No recent CRM activities logged yet.
+            <div className="text-center py-10 text-slate-400">
+              <Activity size={28} className="mx-auto text-slate-300 mb-2" />
+              <p className="text-xs font-bold">No activity yet</p>
+              <p className="text-[10px] text-slate-300 mt-0.5">Activities will appear here as you work</p>
             </div>
           )}
         </div>

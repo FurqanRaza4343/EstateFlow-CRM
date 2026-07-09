@@ -21,7 +21,8 @@ import {
   X,
   UploadCloud,
   Image as ImageIcon,
-  Trash2
+  Trash2,
+  Building2
 } from 'lucide-react';
 import { Property, Lead, UserProfile } from '../types';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
@@ -284,8 +285,10 @@ export default function PropertiesModule({
           ))}
 
           {filteredProperties.length === 0 && (
-            <div className="col-span-2 text-center py-20 text-slate-400 text-xs italic">
-              No matching residential or commercial properties indexed.
+            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+              <Building2 size={40} className="mx-auto text-slate-300 mb-3" />
+              <p className="text-sm font-bold text-slate-400">No properties found</p>
+              <p className="text-xs text-slate-300 mt-1">Add your first property to start building inventory</p>
             </div>
           )}
         </div>

@@ -26,10 +26,13 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
-import { Lead, Property, UserProfile, DashboardStats, Activity, Notification, FollowUp, Organization } from './types';
+import { Lead, Property, UserProfile, DashboardStats, Activity, Notification, FollowUp, Organization, LeadSource, PropertyInterestedType, LeadTemperature } from './types';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from './lib/i18n';
 import { Globe, DollarSign as DollarIcon } from 'lucide-react';
 import { useAuth } from './lib/AuthContext';
+import { api } from './lib/api';
+import { AnimatePresence, motion } from 'motion/react';
+import insforge from './lib/insforge';
 import Dashboard from './components/Dashboard';
 import LeadsModule from './components/LeadsModule';
 import PropertiesModule from './components/PropertiesModule';
@@ -269,35 +272,34 @@ export default function App() {
     }
   };
 
-  // Fetch all domain elements from Express backend isolating by activeOrgId
+  // Fetch all domain elements from InsForge DB isolating by activeOrgId
   const refreshCRMData = async () => {
     try {
-      const orgQuery = activeOrgId ? `?organizationId=${activeOrgId}` : '';
-      const [rLeads, rUsers, rProps, rStats, rActs, rNotifs, rFups, rOrgs] = await Promise.all([
-        fetch(`/api/leads${orgQuery}`).then(res => res.json()),
-        fetch(`/api/users${orgQuery}`).then(res => res.json()),
-        fetch(`/api/properties${orgQuery}`).then(res => res.json()),
-        fetch(`/api/stats${orgQuery}`).then(res => res.json()),
-        fetch(`/api/activities${orgQuery}`).then(res => res.json()),
-        fetch(`/api/notifications${orgQuery}`).then(res => res.json()),
-        fetch(`/api/followups${orgQuery}`).then(res => res.json()),
-        fetch('/api/saas/agencies').then(res => res.json())
+      const [rLeads, rProps, rActs, rNotifs, rFups, rOrgs, rUsersData, rStatsData] = await Promise.all([
+        api.getLeads(activeOrgId).catch(() => []),
+        api.getProperties(activeOrgId).catch(() => []),
+        api.getActivities(activeOrgId).catch(() => []),
+        api.getNotifications(activeOrgId).catch(() => []),
+        api.getFollowups(activeOrgId).catch(() => []),
+        api.getAgencies().catch(() => []),
+        api.getOrgMembers(activeOrgId).catch(() => []),
+        api.getStats(activeOrgId).catch(() => ({} as DashboardStats))
       ]);
 
-      setLeads(rLeads || []);
-      setUsers(rUsers || []);
-      setProperties(rProps || []);
-      setStats(rStats || {});
-      setActivities(rActs || []);
-      setNotifications(rNotifs || []);
-      setFollowups(rFups || []);
-      setOrganizations(rOrgs || []);
+      setLeads(rLeads);
+      setUsers(rUsersData);
+      setProperties(rProps);
+      setStats(rStatsData);
+      setActivities(rActs);
+      setNotifications(rNotifs);
+      setFollowups(rFups);
+      setOrganizations(rOrgs);
 
       // Autofill default active current user if not configured or matches another org
-      if (rUsers && rUsers.length > 0) {
-        const hasMatchingActiveUser = currentUser && rUsers.some((u: any) => u.id === currentUser.id);
+      if (rUsersData && rUsersData.length > 0) {
+        const hasMatchingActiveUser = currentUser && rUsersData.some((u: any) => u.id === currentUser.id);
         if (!hasMatchingActiveUser) {
-          const adminUser = rUsers.find((u: any) => u.role.includes('Owner') || u.role.includes('Admin')) || rUsers[0];
+          const adminUser = rUsersData.find((u: any) => u.role.includes('Owner') || u.role.includes('Admin')) || rUsersData[0];
           setCurrentUser(adminUser);
         }
       }
@@ -332,14 +334,8 @@ export default function App() {
     if (updates.propertyUnitSystem) setPropScheme(updates.propertyUnitSystem);
 
     try {
-      const response = await fetch(`/api/saas/agencies/${activeOrgId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
-      if (response.ok) {
-        await refreshCRMData();
-      }
+      await api.updateAgency(activeOrgId, updates);
+      await refreshCRMData();
     } catch (e) {
       console.error('Failed to save agency localization settings:', e);
     }
@@ -354,137 +350,152 @@ export default function App() {
     }
 
     try {
-      const response = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName: leadName,
-          phone: leadPhone,
-          email: leadEmail,
-          source: leadSource,
-          propertyType: leadProp,
-          budgetMin: Number(leadBudgetMin),
-          budgetMax: Number(leadBudgetMax),
-          preferredLocation: leadLocation,
-          temperature: leadTemp,
-          notes: leadNotes
-        })
+      await api.createLead({
+        fullName: leadName,
+        phone: leadPhone,
+        email: leadEmail,
+        source: leadSource as LeadSource,
+        propertyType: leadProp as PropertyInterestedType,
+        budgetMin: Number(leadBudgetMin),
+        budgetMax: Number(leadBudgetMax),
+        preferredLocation: leadLocation,
+        temperature: leadTemp as LeadTemperature,
+        notes: leadNotes,
+        organizationId: activeOrgId,
       });
 
-      if (response.ok) {
-        alert('Success: Lead added. Assigned using round robin and Twilio Bridge initiated!');
-        
-        // Reset states
-        setLeadName('');
-        setLeadPhone('');
-        setLeadEmail('');
-        setLeadNotes('');
-        setShowAddLead(false);
-        
-        await refreshCRMData();
-        // Redirect to leads tab to see allocation
-        setActiveTab('leads');
-        setLeadsFilterRedirect('New');
-      } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
-      }
-    } catch (err) {
+      alert('Success: Lead added!');
+      
+      // Reset states
+      setLeadName('');
+      setLeadPhone('');
+      setLeadEmail('');
+      setLeadNotes('');
+      setShowAddLead(false);
+      
+      await refreshCRMData();
+      // Redirect to leads tab to see allocation
+      setActiveTab('leads');
+      setLeadsFilterRedirect('New');
+    } catch (err: any) {
+      alert(`Error: ${err.message || err}`);
       console.error(err);
     }
   };
 
   // Lead update action
-  const handleUpdateLeadParameters = (leadId: string, updates: Partial<Lead>) => {
-    fetch(`/api/leads/${leadId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    })
-    .then(res => {
-      if (res.ok) refreshCRMData();
-    });
+  const handleUpdateLeadParameters = async (leadId: string, updates: Partial<Lead>) => {
+    try {
+      await api.updateLead(leadId, updates);
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Lead update failed:', e);
+    }
   };
 
   // Note addition action
   const handleAddTimelineNote = async (leadId: string, text: string) => {
-    await fetch(`/api/leads/${leadId}/notes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, userId: currentUser?.id })
-    });
-    refreshCRMData();
+    try {
+      await api.createActivity({
+        organizationId: activeOrgId,
+        leadId,
+        userId: currentUser?.id,
+        type: 'Note',
+        title: 'Note Added',
+        description: text,
+      });
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Note add failed:', e);
+    }
   };
 
-  // Manual Twilio bridge command
+  // Manual Twilio bridge command (needs Edge Function)
   const handleManualCallBridge = (leadId: string) => {
     fetch('/api/calls/bridge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ leadId })
     })
-    .then(() => refreshCRMData());
+    .then(() => refreshCRMData())
+    .catch(e => console.error('Bridge call failed:', e));
   };
 
-  // Property dispatch action 
-  const handleSharePropertyBypass = (leadId: string, propertyId: string, channel: 'WhatsApp' | 'SMS' | 'Email') => {
-    fetch('/api/shares', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leadId, propertyId, agentId: currentUser?.id, channel })
-    })
-    .then(() => refreshCRMData());
+  // Property dispatch action (needs Edge Function for WhatsApp/SMS)
+  const handleSharePropertyBypass = async (leadId: string, propertyId: string, sentVia: 'WhatsApp' | 'SMS' | 'Email') => {
+    await api.createShare({
+      organizationId: activeOrgId,
+      leadId,
+      propertyId,
+      agentId: currentUser?.id || '',
+      sentVia
+    });
+    await refreshCRMData();
   };
 
   // Schedule followup tasks
-  const handleScheduleFollowup = (data: { leadId: string; datetime: string; type: string; notes: string }) => {
-    fetch('/api/followups', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...data,
-        agentId: currentUser?.id
-      })
-    })
-    .then(() => refreshCRMData());
+  const handleScheduleFollowup = async (data: { leadId: string; datetime: string; type: string; notes: string }) => {
+    try {
+      await api.createFollowup({
+        organizationId: activeOrgId,
+        leadId: data.leadId,
+        agentId: currentUser?.id,
+        datetime: data.datetime,
+        type: data.type as any,
+        notes: data.notes,
+      });
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Followup schedule failed:', e);
+    }
   };
 
   // Team Invite action callback
-  const handleInviteUserCallback = (userObj: any) => {
-    fetch('/api/users/invite', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userObj)
-    })
-    .then(() => refreshCRMData());
+  const handleInviteUserCallback = async (userObj: any) => {
+    try {
+      await insforge.database.from('profiles').insert([{
+        agency_id: activeOrgId,
+        name: userObj.name,
+        email: userObj.email,
+        role: userObj.role,
+        phone: userObj.phone,
+        avatar_seed: userObj.name?.toLowerCase().split(' ')[0] || 'user',
+      }]);
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Invite user failed:', e);
+    }
   };
 
   // Complete touchpoint
-  const handleCompleteFollowupMet = (id: string) => {
-    fetch(`/api/followups/${id}/complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(() => refreshCRMData());
+  const handleCompleteFollowupMet = async (id: string) => {
+    try {
+      await api.completeFollowup(id);
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Followup complete failed:', e);
+    }
   };
 
   // Snooze touchpoint
-  const handleSnoozeFollowupMet = (id: string, newTime: string) => {
-    fetch(`/api/followups/${id}/snooze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ newTime })
-    })
-    .then(() => refreshCRMData());
+  const handleSnoozeFollowupMet = async (id: string, newTime: string) => {
+    try {
+      await api.snoozeFollowup(id, newTime);
+      await refreshCRMData();
+    } catch (e) {
+      console.error('Followup snooze failed:', e);
+    }
   };
 
   // Mark all notifications read
-  const handleClearNotifications = () => {
-    fetch('/api/notifications/read', { method: 'POST' })
-      .then(() => {
-        refreshCRMData();
-        setShowNotifDrawer(false);
-      });
+  const handleClearNotifications = async () => {
+    try {
+      await api.markNotificationsRead(activeOrgId);
+      await refreshCRMData();
+      setShowNotifDrawer(false);
+    } catch (e) {
+      console.error('Clear notifications failed:', e);
+    }
   };
 
   // Deep Link tab navigation redirects
@@ -662,126 +673,121 @@ export default function App() {
           />
         ) : (
           <>
-            {activeTab === 'dashboard' && (
-              <Dashboard 
-                stats={stats}
-                activities={activities}
-                currentUser={currentUser}
-                leads={leads}
-                onNavigate={handleDashboardNavigateRedirect}
-                onOpenAddLead={() => setShowAddLead(true)}
-                onTriggerAiAssistant={() => setShowAiCopilot(true)}
-                onOpenLegal={(tab) => {
-                  setLegalTab(tab);
-                  setShowLegalModal(true);
-                }}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-              />
-            )}
+            <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div key="dashboard" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <Dashboard 
+                    stats={stats}
+                    activities={activities}
+                    currentUser={currentUser}
+                    leads={leads}
+                    onNavigate={handleDashboardNavigateRedirect}
+                    onOpenAddLead={() => setShowAddLead(true)}
+                    onTriggerAiAssistant={() => setShowAiCopilot(true)}
+                    onOpenLegal={(tab) => {
+                      setLegalTab(tab);
+                      setShowLegalModal(true);
+                    }}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'leads' && (
-              <LeadsModule 
-                leads={leads}
-                users={users}
-                properties={properties}
-                currentUser={currentUser}
-                onUpdateLead={handleUpdateLeadParameters}
-                onAddNote={handleAddTimelineNote}
-                onTriggerCallBridge={handleManualCallBridge}
-                onShareProperty={handleSharePropertyBypass}
-                onScheduleFollowup={handleScheduleFollowup}
-                onOpenAddLead={() => setShowAddLead(true)}
-                initialFilter={leadsFilterRedirect}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-              />
-            )}
+              {activeTab === 'leads' && (
+                <motion.div key="leads" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <LeadsModule 
+                    leads={leads}
+                    users={users}
+                    properties={properties}
+                    currentUser={currentUser}
+                    onUpdateLead={handleUpdateLeadParameters}
+                    onAddNote={handleAddTimelineNote}
+                    onTriggerCallBridge={handleManualCallBridge}
+                    onShareProperty={handleSharePropertyBypass}
+                    onScheduleFollowup={handleScheduleFollowup}
+                    onOpenAddLead={() => setShowAddLead(true)}
+                    initialFilter={leadsFilterRedirect}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'properties' && (
-              <PropertiesModule 
-                properties={properties}
-                leads={leads}
-                currentUser={currentUser}
-                onAddProperty={(prop) => {
-                  fetch('/api/properties', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...prop, organizationId: activeOrgId })
-                  }).then(async (res) => {
-                    if (res.ok) {
-                      refreshCRMData();
-                    } else {
-                      const err = await res.json();
-                      alert(`Billing Threshold Restriction: ${err.error || 'Check plans limits.'}`);
-                    }
-                  });
-                }}
-                onShareProperty={handleSharePropertyBypass}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-              />
-            )}
+              {activeTab === 'properties' && (
+                <motion.div key="properties" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <PropertiesModule 
+                    properties={properties}
+                    leads={leads}
+                    currentUser={currentUser}
+                    onAddProperty={async (prop) => {
+                      const { error } = await api.createProperty({ ...prop, organizationId: activeOrgId });
+                      if (!error) {
+                        refreshCRMData();
+                      } else {
+                        alert(`Billing Threshold Restriction: ${error.message || 'Check plans limits.'}`);
+                      }
+                    }}
+                    onShareProperty={handleSharePropertyBypass}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'followups' && (
-              <FollowUpsModule 
-                followups={followups}
-                leads={leads}
-                users={users}
-                onCompleteFollowup={handleCompleteFollowupMet}
-                onSnoozeFollowup={handleSnoozeFollowupMet}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-              />
-            )}
+              {activeTab === 'followups' && (
+                <motion.div key="followups" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <FollowUpsModule 
+                    followups={followups}
+                    leads={leads}
+                    users={users}
+                    onCompleteFollowup={handleCompleteFollowupMet}
+                    onSnoozeFollowup={handleSnoozeFollowupMet}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'contacts' && (
-              <ContactsModule 
-                currentUser={currentUser}
-                onRefreshActivities={refreshCRMData}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-              />
-            )}
+              {activeTab === 'contacts' && (
+                <motion.div key="contacts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <ContactsModule 
+                    currentUser={currentUser}
+                    onRefreshActivities={refreshCRMData}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                  />
+                </motion.div>
+              )}
 
-            {activeTab === 'more' && (
-              <MoreModule
-                properties={properties}
-                users={users}
-                currentUser={currentUser!}
-                subview={moreSubview}
-                onSetSubview={setMoreSubview}
-                activeOrg={activeOrg!}
-                organizations={organizations}
-                onRefreshAllData={refreshCRMData}
-                leads={leads}
-                onInviteUser={(userObj) => {
-                  fetch('/api/users/invite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...userObj, organizationId: activeOrgId })
-                  }).then(async (res) => {
-                    if (res.ok) {
-                      refreshCRMData();
-                    } else {
-                      const err = await res.json();
-                      alert(`Subscription Limit Warn: ${err.error}`);
-                    }
-                  });
-                }}
-                lang={lang}
-                currency={currency}
-                propScheme={propScheme}
-                onUpdateLocalization={handleUpdateLocalization}
-                theme={theme}
-                onToggleTheme={() => setTheme(prev => prev === 'dark' ? 'light' : prev === 'light' ? 'high-contrast' : 'dark')}
-              />
-            )}
+              {activeTab === 'more' && (
+                <motion.div key="more" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
+                  <MoreModule
+                    properties={properties}
+                    users={users}
+                    currentUser={currentUser!}
+                    subview={moreSubview}
+                    onSetSubview={setMoreSubview}
+                    activeOrg={activeOrg!}
+                    organizations={organizations}
+                    onRefreshAllData={refreshCRMData}
+                    leads={leads}
+                    onInviteUser={handleInviteUserCallback}
+                    lang={lang}
+                    currency={currency}
+                    propScheme={propScheme}
+                    onUpdateLocalization={handleUpdateLocalization}
+                    theme={theme}
+                    onToggleTheme={() => setTheme(prev => prev === 'dark' ? 'light' : prev === 'light' ? 'high-contrast' : 'dark')}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </>
         )}
       </main>
@@ -1047,18 +1053,18 @@ export default function App() {
       <button
         id="global-ai-copilot-bubble"
         onClick={() => setShowAiCopilot(true)}
-        className="fixed bottom-22 right-4 sm:bottom-6 sm:right-6 bg-slate-950 border border-slate-800 text-emerald-400 hover:text-white px-4 py-3.5 rounded-2xl shadow-2xl transition duration-300 z-40 flex items-center gap-2 font-black text-xs cursor-pointer group hover:bg-slate-900"
+        className="fixed bottom-22 right-4 sm:bottom-6 sm:right-6 bg-slate-950 border border-emerald-500/20 text-emerald-400 hover:text-white px-4 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 z-40 flex items-center gap-2 font-black text-xs cursor-pointer group hover:bg-slate-900 hover:shadow-emerald-500/10 hover:shadow-2xl hover:scale-105 active:scale-95"
       >
-        <Sparkles size={16} className="animate-spin text-emerald-400" style={{ animationDuration: '4s' }} />
-        <span className="font-bold text-[11px] text-emerald-400">
+        <Sparkles size={16} className="animate-pulse text-emerald-400" style={{ animationDuration: '3s' }} />
+        <span className="font-bold text-[11px] text-emerald-400 group-hover:text-white transition-colors">
           AI Co-Pilot
         </span>
       </button>
 
       {/* 7. INTRODUCED AI CO-PILOT CHATBOT SYSTEM DIALOG MODAL */}
       {showAiCopilot && (
-        <div className="fixed inset-0 bg-slate-900/65 z-50 flex items-center justify-center p-4" id="ai-copter-modal-overlay">
-          <div className="bg-slate-950 text-slate-100 rounded-3xl p-5 max-w-md w-full flex flex-col h-[520px] max-h-[85dvh] shadow-2xl border border-slate-800" id="ai-copter-layout-sheet">
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" id="ai-copter-modal-overlay">
+          <div className="bg-slate-950 text-slate-100 rounded-3xl p-5 max-w-md w-full flex flex-col h-[520px] max-h-[85dvh] shadow-2xl border border-emerald-900/30 animate-scaleIn" id="ai-copter-layout-sheet">
             
             {/* Modal Header */}
             <div className="flex justify-between items-center border-b border-solid border-slate-850 pb-3">

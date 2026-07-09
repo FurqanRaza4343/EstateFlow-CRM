@@ -219,8 +219,10 @@ export default function FollowUpsModule({
         })}
 
         {filteredFollowups.length === 0 && (
-          <div className="col-span-2 text-center py-20 bg-white border border-slate-50 rounded-2xl text-slate-400 text-xs italic">
-            Zero counseling tasks schedules currently active matching parameters.
+          <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+            <Calendar size={40} className="mx-auto text-slate-300 mb-3" />
+            <p className="text-sm font-bold text-slate-400">No follow-ups scheduled</p>
+            <p className="text-xs text-slate-300 mt-1">Schedule your first follow-up from a lead's detail view</p>
           </div>
         )}
       </div>

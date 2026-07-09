@@ -32,6 +32,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { Organization, Lead, Property, UserProfile } from '../types';
+import { api } from '../lib/api';
 
 interface SaaSPlansBillingProps {
   activeOrg: Organization;
@@ -447,19 +448,15 @@ export default function SaaSPlansBilling({
           const discountedPrice = basePrice * (1 - appliedDiscount / 100);
           const finalVal = billingPeriod === 'yearly' ? discountedPrice * 12 : discountedPrice;
 
-          const res = await fetch(`/api/saas/agencies/${activeOrg.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              subscriptionPlan: targetPlan.id as any,
-              maxUsersLimit: targetPlan.limits.maxUsers,
-              maxLeadsLimit: targetPlan.limits.maxLeads,
-              maxPropertiesLimit: targetPlan.limits.maxProperties,
-              status: 'Active' as const,
-            }),
+          const { error: updateError } = await api.updateAgency(activeOrg.id, {
+            subscriptionPlan: targetPlan.id as any,
+            maxUsersLimit: targetPlan.limits.maxUsers,
+            maxLeadsLimit: targetPlan.limits.maxLeads,
+            maxPropertiesLimit: targetPlan.limits.maxProperties,
+            status: 'Active' as const,
           });
 
-          if (res.ok) {
+          if (!updateError) {
             const newInvoice: InvoiceLog = {
               id: 'INV-' + new Date().getFullYear() + '-' + (Math.floor(Math.random()*900)+100),
               date: new Date().toISOString().split('T')[0],
@@ -496,19 +493,15 @@ export default function SaaSPlansBilling({
     setProcessLogs(['Downgrading subscription state to Free Tier...', 'Restricting staff license seats and caps...']);
     
     try {
-      const response = await fetch(`/api/saas/agencies/${activeOrg.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subscriptionPlan: 'Free',
-          maxLeadsLimit: 100,
-          maxPropertiesLimit: 10,
-          maxUsersLimit: 1,
-          status: 'Active'
-        })
+      const { error: cancelError } = await api.updateAgency(activeOrg.id, {
+        subscriptionPlan: 'Free',
+        maxLeadsLimit: 100,
+        maxPropertiesLimit: 10,
+        maxUsersLimit: 1,
+        status: 'Active'
       });
 
-      if (response.ok) {
+      if (!cancelError) {
         setIsCanceledSuccess(true);
         setSimStatus('Cancelled');
         setBillingNotification('ℹ Subscription cancelled. Account set to downgrading status.');
@@ -533,19 +526,15 @@ export default function SaaSPlansBilling({
     // Simulate payment resolution
     setTimeout(async () => {
       try {
-        const res = await fetch(`/api/saas/agencies/${activeOrg.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            subscriptionPlan: targetPlanId as any,
-            maxUsersLimit: planDetails.limits.maxUsers,
-            maxLeadsLimit: planDetails.limits.maxLeads,
-            maxPropertiesLimit: planDetails.limits.maxProperties,
-            status: 'Active'
-          })
+        const { error: resumeError } = await api.updateAgency(activeOrg.id, {
+          subscriptionPlan: targetPlanId as any,
+          maxUsersLimit: planDetails.limits.maxUsers,
+          maxLeadsLimit: planDetails.limits.maxLeads,
+          maxPropertiesLimit: planDetails.limits.maxProperties,
+          status: 'Active'
         });
 
-        if (res.ok) {
+        if (!resumeError) {
           setSimStatus('Active');
           setBillingNotification(`✨ Welcome Back! Unlimited Auto-Renewal re-established for your ${planDetails.name}.`);
           onRefreshAllData();
@@ -565,13 +554,9 @@ export default function SaaSPlansBilling({
 
     setTimeout(async () => {
       try {
-        const response = await fetch(`/api/saas/agencies/${activeOrg.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'Active' })
-        });
+        const { error: renewError } = await api.updateAgency(activeOrg.id, { status: 'Active' });
         
-        if (response.ok) {
+        if (!renewError) {
           setSimStatus('Active');
           setBillingNotification('✔ Auto-renew date reset. Premium subscription term prolonged for 30 days.');
           
