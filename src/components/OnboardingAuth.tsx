@@ -294,46 +294,46 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
   const SlideIcon = ONBOARDING_SLIDES[activeSlide].icon;
 
   return (
-    <div className="min-h-screen w-full bg-[#EFEFEF] flex flex-col items-center justify-center p-4 sm:p-6 select-none relative overflow-y-auto">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 select-none relative overflow-y-auto" style={{ background: 'var(--bg-primary)' }}>
       <ShaderBackground />
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col justify-between p-6 sm:p-8 z-20 relative my-6">
+      <div className="w-full max-w-md rounded-3xl overflow-hidden flex flex-col justify-between p-6 sm:p-8 z-20 relative my-6" style={{ background: 'var(--bg-surface)' }}>
 
         <div className="flex flex-col items-center mb-6">
-          <div className="w-11 h-11 rounded-full bg-gray-900 flex items-center justify-center text-white font-bold tracking-tight" style={{ fontSize: '12px' }}>
+          <div className="w-11 h-11 rounded-full flex items-center justify-center font-bold tracking-tight text-white" style={{ fontSize: '12px', background: 'var(--color-accent)' }}>
             EF
           </div>
-          <h2 className="text-[13px] font-semibold text-gray-900 mt-2 tracking-wide">EstateFlow</h2>
-          <p className="text-[11px] text-gray-500 font-medium mt-0.5">Mobile First CRM Suite</p>
+          <h2 className="text-[13px] font-semibold mt-2 tracking-wide" style={{ color: 'var(--text-primary)' }}>EstateFlow</h2>
+          <p className="text-[11px] font-medium mt-0.5" style={{ color: 'var(--text-muted)' }}>Mobile First CRM Suite</p>
         </div>
 
         {/* Slides */}
-        <div className="relative bg-gray-50 rounded-2xl p-4 sm:p-5 border border-gray-100 mb-6 flex flex-col items-center text-center">
-          <button onClick={handlePrevSlide} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition duration-150 cursor-pointer focus:outline-none" aria-label="Previous slide">
+        <div className="relative rounded-2xl p-4 sm:p-5 mb-6 flex flex-col items-center text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)' }}>
+          <button onClick={handlePrevSlide} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
             <ChevronLeft size={16} />
           </button>
-          <button onClick={handleNextSlide} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition duration-150 cursor-pointer focus:outline-none" aria-label="Next slide">
+          <button onClick={handleNextSlide} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
             <ChevronRight size={16} />
           </button>
-          <div className={`p-3 rounded-2xl shadow-xs inline-flex items-center justify-center ${ONBOARDING_SLIDES[activeSlide].iconBg} mb-3.5`}>
-            <SlideIcon size={22} className="animate-pulse" />
+          <div className={`p-3 rounded-2xl inline-flex items-center justify-center mb-3.5`} style={{ background: 'var(--border-light)', color: 'var(--color-accent)' }}>
+            <SlideIcon size={22} />
           </div>
           <div className="min-h-[92px] px-6">
             <div className="space-y-1 transition-all duration-300">
-              <h3 className="text-sm font-semibold text-gray-900">{ONBOARDING_SLIDES[activeSlide].title}</h3>
-              <p className="text-[11px] text-gray-500 leading-relaxed">{ONBOARDING_SLIDES[activeSlide].description}</p>
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{ONBOARDING_SLIDES[activeSlide].title}</h3>
+              <p className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{ONBOARDING_SLIDES[activeSlide].description}</p>
             </div>
           </div>
           <div className="flex justify-center gap-1.5 mt-3">
             {ONBOARDING_SLIDES.map((_, idx) => (
-              <button key={idx} onClick={() => setActiveSlide(idx)} className={`h-1.5 rounded-full transition-all duration-300 ${activeSlide === idx ? 'w-4 bg-gray-900' : 'w-1.5 bg-gray-300'}`} aria-label={`Go to slide ${idx + 1}`} />
+              <button key={idx} onClick={() => setActiveSlide(idx)} className={`h-1.5 rounded-full transition-all duration-300 ${activeSlide === idx ? 'w-4' : 'w-1.5'}`} style={{ background: activeSlide === idx ? 'var(--color-accent)' : 'var(--border-color)' }} aria-label={`Go to slide ${idx + 1}`} />
             ))}
           </div>
         </div>
 
         {/* Auth View */}
         <div className="space-y-4">
-          <div className="border-t border-gray-100 pt-2 pb-1">
-            <h4 className="text-[11px] font-medium text-gray-500 text-center">
+          <div className="pt-2 pb-1" style={{ borderTop: '1px solid var(--border-light)' }}>
+            <h4 className="text-[11px] font-medium text-center" style={{ color: 'var(--text-muted)' }}>
               {view === 'login' && 'Sign In to EstateFlow'}
               {view === 'signup' && 'Create an Administrator Account'}
               {view === 'verify' && 'Verify Your Email'}
@@ -343,13 +343,13 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           </div>
 
           {errorMsg && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-[10px] font-medium leading-relaxed">
+            <div className="p-3 rounded-xl text-[10px] font-medium leading-relaxed" style={{ background: 'rgba(244,63,94,0.1)', color: '#fb7185', border: '1px solid rgba(244,63,94,0.2)' }}>
               {errorMsg}
             </div>
           )}
           {successMsg && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-medium flex items-center gap-2">
-              <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
+            <div className="p-3 rounded-xl text-[10px] font-medium flex items-center gap-2" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+              <CheckCircle2 size={13} style={{ color: '#34d399' }} />
               <span>{successMsg}</span>
             </div>
           )}
@@ -358,30 +358,30 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {view === 'signup' && (
             <form onSubmit={handleSignUp} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Full Name</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Full Name</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><User size={14} /></span>
-                  <input type="text" placeholder="e.g. Shariq Alam" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full bg-gray-50 border border-gray-200 hover:border-gray-300 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20 transition-all duration-250" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><User size={14} /></span>
+                  <input type="text" placeholder="e.g. Shariq Alam" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Email Address</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Email Address</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={14} /></span>
-                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-gray-50 border border-gray-200 hover:border-gray-300 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20 transition-all duration-250" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Mail size={14} /></span>
+                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Password</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Password</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={14} /></span>
-                  <input type="password" placeholder="•••••••• (min 6 chars)" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-gray-50 border border-gray-200 hover:border-gray-300 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20 transition-all duration-250" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Lock size={14} /></span>
+                  <input type="password" placeholder="•••••••• (min 6 chars)" value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <TextRollButton
                 text={loading ? 'Creating Account...' : 'Create Free Account'}
-                bgColor="bg-gray-900"
-                hoverBg="hover:bg-gray-800"
+                bgColor=""
+                hoverBg=""
                 textColor="text-white"
                 circleBg="bg-white"
                 arrowIconColor="text-gray-900"
@@ -390,6 +390,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 fontSize="13px"
                 type="submit"
                 disabled={loading}
+                style={{ background: 'var(--color-accent)' }}
               />
             </form>
           )}
@@ -398,23 +399,23 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {view === 'login' && (
             <form onSubmit={handleLogin} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Email Address</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Email Address</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={14} /></span>
-                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-gray-50 border border-gray-200 hover:border-gray-300 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20 transition-all duration-250" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Mail size={14} /></span>
+                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Password</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Password</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={14} /></span>
-                  <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-gray-50 border border-gray-200 hover:border-gray-300 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20 transition-all duration-250" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Lock size={14} /></span>
+                  <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <TextRollButton
                 text={loading ? 'Signing In...' : 'Log In to System'}
-                bgColor="bg-gray-900"
-                hoverBg="hover:bg-gray-800"
+                bgColor=""
+                hoverBg=""
                 textColor="text-white"
                 circleBg="bg-white"
                 arrowIconColor="text-gray-900"
@@ -423,8 +424,9 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 fontSize="13px"
                 type="submit"
                 disabled={loading}
+                style={{ background: 'var(--color-accent)' }}
               />
-              <button type="button" onClick={() => setView('forgot-password')} className="text-[11px] text-gray-500 hover:text-gray-700 font-medium block mx-auto text-center w-full cursor-pointer">
+              <button type="button" onClick={() => setView('forgot-password')} className="text-[11px] font-medium block mx-auto text-center w-full cursor-pointer" style={{ color: 'var(--text-muted)' }}>
                 Forgot Password?
               </button>
             </form>
@@ -433,15 +435,15 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {/* Verify Email Form */}
           {view === 'verify' && (
             <form onSubmit={handleVerifyEmail} className="space-y-3">
-              <p className="text-[11px] text-gray-500 text-center">Enter the 6-digit code sent to <strong className="text-gray-900">{email}</strong></p>
+              <p className="text-[11px] text-center" style={{ color: 'var(--text-secondary)' }}>Enter the 6-digit code sent to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong></p>
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Verification Code</label>
-                <input type="text" placeholder="000000" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="w-full bg-gray-50 border border-gray-200 focus:border-gray-900 rounded-xl px-4 py-2.5 text-xs text-gray-900 text-center tracking-[8px] font-bold placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20" />
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Verification Code</label>
+                <input type="text" placeholder="000000" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="w-full rounded-xl px-4 py-2.5 text-xs text-center tracking-[8px] font-bold focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
               </div>
               <TextRollButton
                 text={loading ? 'Verifying...' : 'Verify Email'}
-                bgColor="bg-gray-900"
-                hoverBg="hover:bg-gray-800"
+                bgColor=""
+                hoverBg=""
                 textColor="text-white"
                 circleBg="bg-white"
                 arrowIconColor="text-gray-900"
@@ -450,8 +452,9 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 fontSize="13px"
                 type="submit"
                 disabled={loading}
+                style={{ background: 'var(--color-accent)' }}
               />
-              <button type="button" onClick={() => insforge.auth.resendVerificationEmail({ email, redirectTo: window.location.origin })} className="text-[11px] text-gray-500 hover:text-gray-700 font-medium block w-full text-center cursor-pointer">
+              <button type="button" onClick={() => insforge.auth.resendVerificationEmail({ email, redirectTo: window.location.origin })} className="text-[11px] font-medium block w-full text-center cursor-pointer" style={{ color: 'var(--text-muted)' }}>
                 Resend Code
               </button>
             </form>
@@ -461,16 +464,16 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {view === 'forgot-password' && (
             <form onSubmit={handleForgotPassword} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-medium text-gray-600 block">Email Address</label>
+                <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Email Address</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Mail size={14} /></span>
-                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-gray-50 border border-gray-200 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/20" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Mail size={14} /></span>
+                  <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
               <TextRollButton
                 text={loading ? 'Sending...' : 'Send Reset Code'}
-                bgColor="bg-gray-900"
-                hoverBg="hover:bg-gray-800"
+                bgColor=""
+                hoverBg=""
                 textColor="text-white"
                 circleBg="bg-white"
                 arrowIconColor="text-gray-900"
@@ -479,6 +482,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 fontSize="13px"
                 type="submit"
                 disabled={loading}
+                style={{ background: 'var(--color-accent)' }}
               />
             </form>
           )}
@@ -486,16 +490,16 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {/* Reset Password Form */}
           {view === 'reset-password' && (
             <form onSubmit={handleResetPassword} className="space-y-3">
-              <p className="text-[11px] text-gray-500 text-center">Enter the code sent to <strong className="text-gray-900">{email}</strong></p>
-              <input type="text" placeholder="000000" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="w-full bg-gray-50 border border-gray-200 focus:border-gray-900 rounded-xl px-4 py-2.5 text-xs text-gray-900 text-center tracking-[8px] font-bold placeholder:text-gray-400 focus:outline-none" />
+              <p className="text-[11px] text-center" style={{ color: 'var(--text-secondary)' }}>Enter the code sent to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong></p>
+              <input type="text" placeholder="000000" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="w-full rounded-xl px-4 py-2.5 text-xs text-center tracking-[8px] font-bold focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={14} /></span>
-                <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-gray-50 border border-gray-200 focus:border-gray-900 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none" />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Lock size={14} /></span>
+                <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
               </div>
               <TextRollButton
                 text={loading ? 'Resetting...' : 'Reset Password'}
-                bgColor="bg-gray-900"
-                hoverBg="hover:bg-gray-800"
+                bgColor=""
+                hoverBg=""
                 textColor="text-white"
                 circleBg="bg-white"
                 arrowIconColor="text-gray-900"
@@ -504,6 +508,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 fontSize="13px"
                 type="submit"
                 disabled={loading}
+                style={{ background: 'var(--color-accent)' }}
               />
             </form>
           )}
@@ -512,12 +517,12 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           {(view === 'login' || view === 'signup') && (
             <>
               <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink mx-3 text-[10px] text-gray-400 font-medium">Or Securely Connect</span>
-                <div className="flex-grow border-t border-gray-200"></div>
+                <div className="flex-grow border-t" style={{ borderColor: 'var(--border-light)' }}></div>
+                <span className="flex-shrink mx-3 text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>Or Securely Connect</span>
+                <div className="flex-grow border-t" style={{ borderColor: 'var(--border-light)' }}></div>
               </div>
 
-              <button type="button" onClick={() => handleOAuth('google')} disabled={loading} className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 border border-gray-200 hover:border-gray-300 rounded-xl text-xs flex items-center justify-center gap-2.5 transition duration-200 cursor-pointer focus:outline-none disabled:opacity-50">
+              <button type="button" onClick={() => handleOAuth('google')} disabled={loading} className="w-full font-medium py-3 rounded-xl text-xs flex items-center justify-center gap-2.5 transition cursor-pointer disabled:opacity-50" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}>
                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -527,16 +532,16 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 <span>Continue with Google</span>
               </button>
 
-              <button type="button" onClick={() => handleOAuth('github')} disabled={loading} className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 border border-gray-200 hover:border-gray-300 rounded-xl text-xs flex items-center justify-center gap-2.5 transition duration-200 cursor-pointer focus:outline-none disabled:opacity-50">
+              <button type="button" onClick={() => handleOAuth('github')} disabled={loading} className="w-full font-medium py-3 rounded-xl text-xs flex items-center justify-center gap-2.5 transition cursor-pointer disabled:opacity-50" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}>
                 <Github size={16} />
                 <span>Continue with GitHub</span>
               </button>
             </>
           )}
 
-          {/* DEMO MODE — offline bypass since InsForge server is unreachable */}
+          {/* DEMO MODE */}
           {(view === 'login' || view === 'signup') && (
-            <div className="border-t border-gray-100 pt-4 mt-2">
+            <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--border-light)' }}>
               <button
                 type="button"
                 onClick={() => {
@@ -551,28 +556,28 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                   };
                   onCompleteAuth(demoUser);
                 }}
-                className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer"
+                className="w-full font-bold py-3 rounded-xl text-xs transition cursor-pointer min-touch" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}
               >
                 Enter CRM Demo (Offline Mode)
               </button>
-              <p className="text-[9px] text-gray-400 text-center mt-2">InsForge server unreachable — use demo mode to explore CRM</p>
+              <p className="text-[9px] text-center mt-2" style={{ color: 'var(--text-muted)' }}>InsForge server unreachable? Use demo mode to explore CRM</p>
             </div>
           )}
 
           {/* Mode Toggle */}
           <div className="text-center pt-2">
             {view === 'login' && (
-              <button type="button" onClick={() => { setView('signup'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] text-gray-900 hover:text-gray-600 font-medium transition cursor-pointer">
+              <button type="button" onClick={() => { setView('signup'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] font-medium transition cursor-pointer" style={{ color: 'var(--color-accent)' }}>
                 Don't have an account? Sign Up
               </button>
             )}
             {view === 'signup' && (
-              <button type="button" onClick={() => { setView('login'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] text-gray-900 hover:text-gray-600 font-medium transition cursor-pointer">
+              <button type="button" onClick={() => { setView('login'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] font-medium transition cursor-pointer" style={{ color: 'var(--color-accent)' }}>
                 Already have an account? Log In
               </button>
             )}
             {(view === 'verify' || view === 'forgot-password' || view === 'reset-password') && (
-              <button type="button" onClick={() => { setView('login'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] text-gray-900 hover:text-gray-600 font-medium transition cursor-pointer">
+              <button type="button" onClick={() => { setView('login'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] font-medium transition cursor-pointer" style={{ color: 'var(--color-accent)' }}>
                 Back to Login
               </button>
             )}
@@ -580,7 +585,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
         </div>
       </div>
 
-      <div className="text-[10px] text-gray-400 font-medium flex items-center gap-1 mt-2 z-20">
+      <div className="text-[10px] font-medium flex items-center gap-1 mt-2 z-20" style={{ color: 'var(--text-muted)' }}>
         Powered by InsForge • EstateFlow Real Estate CRM Platform
       </div>
     </div>
