@@ -17,7 +17,7 @@ export default function AiDisclosure({ className = '', isDarkTheme = true }: AiD
       className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] leading-relaxed transition-all select-none border border-solid ${
         isDarkTheme 
           ? 'bg-slate-900/40 border-slate-800/60 text-slate-400' 
-          : 'bg-slate-50 border-slate-100 text-slate-600'
+          : 'bg-surface border-default text-secondary'
       } ${className}`}
       id="ai-content-disclosure-panel"
       role="note"

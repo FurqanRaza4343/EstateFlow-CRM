@@ -289,7 +289,7 @@ export default function SuperAdminPanel({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-slate-100 p-8 space-y-4">
+      <div className="flex flex-col items-center justify-center py-20 bg-card rounded-2xl border border-default p-8 space-y-4">
         <RefreshCw size={28} className="animate-spin text-indigo-600" />
         <p className="text-xs text-slate-500 font-semibold tracking-wide uppercase">Reading SaaS registries & statistics...</p>
       </div>
@@ -310,7 +310,7 @@ export default function SuperAdminPanel({
         <div className="flex items-center gap-2 select-none">
           <button 
             onClick={handleRefresh}
-            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 transition rounded-xl flex items-center justify-center"
+            className="p-2 bg-slate-100 hover:bg-slate-200 text-secondary transition rounded-xl flex items-center justify-center"
             title="Force refresh database records"
           >
             <RefreshCw size={15} />
@@ -327,11 +327,11 @@ export default function SuperAdminPanel({
       {/* Aggregate Platform Metrics */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3" id="super-admin-dashboard-stats">
-          <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">Total Tenants</span>
+          <div className="bg-card p-4 rounded-xl border border-default shadow-xs">
+            <span className="text-[10px] text-muted font-medium block uppercase tracking-wider">Total Tenants</span>
             <div className="flex items-baseline gap-1 mt-2">
               <span className="text-xl font-bold text-slate-900">{stats.totalAgencies}</span>
-              <span className="text-[9px] text-slate-400 font-semibold">agencies</span>
+              <span className="text-[9px] text-muted font-semibold">agencies</span>
             </div>
             <div className="mt-2 text-[9px] text-emerald-600 flex items-center gap-1">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
@@ -339,19 +339,19 @@ export default function SuperAdminPanel({
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">Enterprise Tiers</span>
+          <div className="bg-card p-4 rounded-xl border border-default shadow-xs">
+            <span className="text-[10px] text-muted font-medium block uppercase tracking-wider">Enterprise Tiers</span>
             <div className="flex items-baseline gap-1 mt-2">
               <span className="text-xl font-bold text-indigo-600">{stats.enterpriseCount}</span>
-              <span className="text-[9px] text-slate-400 font-semibold">unlimited</span>
+              <span className="text-[9px] text-muted font-semibold">unlimited</span>
             </div>
-            <span className="text-[9px] text-slate-400 block mt-2">
+            <span className="text-[9px] text-muted block mt-2">
               Business plan accounts: <strong>{stats.bizCount}</strong>
             </span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">Free Tiers</span>
+          <div className="bg-card p-4 rounded-xl border border-default shadow-xs">
+            <span className="text-[10px] text-muted font-medium block uppercase tracking-wider">Free Tiers</span>
             <div className="flex items-baseline gap-1 mt-2">
               <span className="text-xl font-bold text-slate-900">{stats.freeCount}</span>
               <span className="text-[9px] text-amber-600 font-bold">Limited</span>
@@ -361,21 +361,21 @@ export default function SuperAdminPanel({
             </span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">Platform CRM Rows</span>
+          <div className="bg-card p-4 rounded-xl border border-default shadow-xs">
+            <span className="text-[10px] text-muted font-medium block uppercase tracking-wider">Platform CRM Rows</span>
             <div className="flex items-baseline gap-1.5 mt-2">
               <span className="text-xl font-bold text-slate-900">
                 {stats.totalLeads + stats.totalProperties}
               </span>
-              <span className="text-[9px] text-slate-400 font-semibold block">Total units</span>
+              <span className="text-[9px] text-muted font-semibold block">Total units</span>
             </div>
             <span className="text-[9px] text-slate-500 block mt-2">
               Leads: <strong>{stats.totalLeads}</strong> | Properties: <strong>{stats.totalProperties}</strong>
             </span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">Suspended Pools</span>
+          <div className="bg-card p-4 rounded-xl border border-default shadow-xs">
+            <span className="text-[10px] text-muted font-medium block uppercase tracking-wider">Suspended Pools</span>
             <div className="flex items-baseline gap-1.5 mt-2">
               <span className="text-xl font-bold text-rose-600">{stats.suspendedAgencies}</span>
               <span className="text-[9px] text-rose-500 font-medium">Overdue</span>
@@ -390,16 +390,16 @@ export default function SuperAdminPanel({
 
       {/* Register New Agency Form Modal Drawer */}
       {showCreateForm && (
-        <form onSubmit={handleCreateAgency} className="bg-white border border-indigo-100 rounded-2xl p-5 space-y-4" id="create-agency-form">
-          <div className="flex justify-between items-center border-b border-solid border-slate-100 pb-2">
-            <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-800 flex items-center gap-1.5">
+        <form onSubmit={handleCreateAgency} className="bg-card border border-indigo-100 rounded-2xl p-5 space-y-4" id="create-agency-form">
+          <div className="flex justify-between items-center border-b border-solid border-default pb-2">
+            <h3 className="text-xs uppercase font-extrabold tracking-wider text-primary flex items-center gap-1.5">
               <Building2 className="text-indigo-600 animate-bounce" size={15} />
               Provision New Workspace Account (Agency Tenant)
             </h3>
             <button 
               type="button" 
               onClick={() => setShowCreateForm(false)} 
-              className="text-xs text-slate-400 hover:text-slate-600 font-bold"
+              className="text-xs text-muted hover:text-secondary font-bold"
             >
               Cancel
             </button>
@@ -407,7 +407,7 @@ export default function SuperAdminPanel({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Company / Agency Name</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Company / Agency Name</label>
               <input 
                 type="text" 
                 required
@@ -416,13 +416,13 @@ export default function SuperAdminPanel({
                   setFormName(e.target.value);
                   if(!formAppName) setFormAppName(e.target.value);
                 }}
-                className="w-full bg-slate-50 text-slate-800 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
+                className="w-full bg-surface text-primary border border-default rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
                 placeholder="e.g. London Elite Realty"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Custom Mapping Domain</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Custom Mapping Domain</label>
               <input 
                 type="text" 
                 required
@@ -430,30 +430,30 @@ export default function SuperAdminPanel({
                 onChange={e => {
                   setFormDomain(e.target.value.toLowerCase().trim());
                 }}
-                className="w-full bg-slate-50 text-slate-800 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
+                className="w-full bg-surface text-primary border border-default rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
                 placeholder="e.g. londonrealty.co.uk"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">White Label Custom App Name</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">White Label Custom App Name</label>
               <input 
                 type="text" 
                 value={formAppName}
                 onChange={e => setFormAppName(e.target.value)}
-                className="w-full bg-slate-50 text-slate-800 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
+                className="w-full bg-surface text-primary border border-default rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-indigo-500"
                 placeholder="Custom App Name (optional)"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 border-t border-slate-100 pt-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 border-t border-default pt-3">
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Subscription Licensing Plan</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Subscription Licensing Plan</label>
               <select 
                 value={formPlan}
                 onChange={e => handlePlanChangeFill(e.target.value as any, 'form')}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 text-xs"
+                className="w-full bg-surface border border-default rounded-xl px-2 py-2 text-xs"
               >
                 <option value="Free">Free (Limited Trial)</option>
                 <option value="Pro">Pro (Growing Teams)</option>
@@ -463,7 +463,7 @@ export default function SuperAdminPanel({
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Brand Main Accent Color</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Brand Main Accent Color</label>
               <div className="flex items-center gap-1">
                 <input 
                   type="color" 
@@ -474,7 +474,7 @@ export default function SuperAdminPanel({
                 <select 
                   value={formAccent}
                   onChange={e => setFormAccent(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 text-[10px] rounded-lg px-1 py-1 flex-1"
+                  className="bg-surface border border-default text-[10px] rounded-lg px-1 py-1 flex-1"
                 >
                   <option value="emerald">Emerald Green</option>
                   <option value="indigo">Royal Indigo</option>
@@ -486,34 +486,34 @@ export default function SuperAdminPanel({
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Subsciption Lead Cap Limit</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Subsciption Lead Cap Limit</label>
               <input 
                 type="number" 
                 required
                 value={formMaxLeads}
                 onChange={e => setFormMaxLeads(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs"
+                className="w-full bg-surface border border-default rounded-xl px-3 py-1.5 text-xs"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1">Max Assigned Properties Slot</label>
+              <label className="block text-[10px] uppercase font-bold text-muted mb-1">Max Assigned Properties Slot</label>
               <input 
                 type="number" 
                 required
                 value={formMaxProps}
                 onChange={e => setFormMaxProps(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs"
+                className="w-full bg-surface border border-default rounded-xl px-3 py-1.5 text-xs"
               />
             </div>
           </div>
 
           {/* Logo Upload Feature Container */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 space-y-3">
+          <div className="bg-surface p-4 rounded-xl border border-dashed border-default space-y-3">
             <span className="block text-[10px] uppercase font-bold text-slate-500">Agency Corporate Branding Logo</span>
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               {/* Preview Circle */}
-              <div className="h-16 w-32 bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden shrink-0 relative group shadow-xs">
+              <div className="h-16 w-32 bg-card border border-default rounded-lg flex items-center justify-center overflow-hidden shrink-0 relative group shadow-xs">
                 {formLogoUrl ? (
                   <>
                     <img src={formLogoUrl} className="h-full w-full object-contain p-2" alt="Logo preview" referrerPolicy="no-referrer" />
@@ -526,14 +526,14 @@ export default function SuperAdminPanel({
                     </button>
                   </>
                 ) : (
-                  <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">No Brand Logo</span>
+                  <span className="text-[10px] text-muted font-semibold uppercase tracking-wider">No Brand Logo</span>
                 )}
               </div>
 
               {/* Upload Interactions */}
               <div className="space-y-2 flex-grow w-full">
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <label className="bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl border border-slate-300 transition cursor-pointer text-center inline-block shrink-0">
+                  <label className="bg-card hover:bg-surface-alt text-secondary font-bold text-xs px-3 py-2 rounded-xl border border-default transition cursor-pointer text-center inline-block shrink-0">
                     📤 Select Corporate Logo File
                     <input 
                       type="file" 
@@ -548,16 +548,16 @@ export default function SuperAdminPanel({
                     value={formLogoUrl}
                     onChange={(e) => setFormLogoUrl(e.target.value)}
                     placeholder="Or copy and paste an external Logo image URL here..."
-                    className="flex-1 bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="flex-1 bg-card border border-default text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
-                <p className="text-[9px] text-slate-400 leading-normal">
+                <p className="text-[9px] text-muted leading-normal">
                   Ideal dimension is landscapes (aspect 4:1 max, e.g. 240x60 pixels under 1.5MB in size). Real-time uploads support standard formats securely.
                 </p>
 
                 {/* Preset Templates */}
                 <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-slate-150">
-                  <span className="text-[9px] text-slate-400 font-extrabold uppercase">Instant Tester Mock Logos:</span>
+                  <span className="text-[9px] text-muted font-extrabold uppercase">Instant Tester Mock Logos:</span>
                   <button 
                     type="button"
                     onClick={() => setFormLogoUrl('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80')}
@@ -584,7 +584,7 @@ export default function SuperAdminPanel({
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-slate-100 pt-3">
+          <div className="flex justify-end gap-2 border-t border-default pt-3">
             <button 
               type="submit"
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer"
@@ -596,9 +596,9 @@ export default function SuperAdminPanel({
       )}
 
       {/* Agencies registry table grid */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden" id="agencies-registry-sandbox">
-        <div className="px-5 py-4 border-b border-solid border-slate-50 bg-slate-50 flex justify-between items-center">
-          <h2 className="text-xs uppercase font-extrabold tracking-wider text-slate-700 flex items-center gap-1.5">
+      <div className="bg-card rounded-2xl border border-default shadow-xs overflow-hidden" id="agencies-registry-sandbox">
+        <div className="px-5 py-4 border-b border-solid border-slate-50 bg-surface flex justify-between items-center">
+          <h2 className="text-xs uppercase font-extrabold tracking-wider text-secondary flex items-center gap-1.5">
             <Layers size={15} /> Registered Client Tenants Database (SaaS Workspace Isolation)
           </h2>
           <span className="text-[10px] text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded-md animate-pulse">
@@ -627,7 +627,7 @@ export default function SuperAdminPanel({
                         agency.subscriptionPlan === 'Enterprise' ? 'bg-indigo-100 text-indigo-700' :
                         agency.subscriptionPlan === 'Business' ? 'bg-emerald-100 text-emerald-700' :
                         agency.subscriptionPlan === 'Pro' ? 'bg-blue-100 text-blue-700' :
-                        'bg-slate-100 text-slate-600'
+                        'bg-slate-100 text-secondary'
                       }`}>
                         {agency.subscriptionPlan} Plan
                       </span>
@@ -664,7 +664,7 @@ export default function SuperAdminPanel({
                       className={`font-semibold text-[11px] px-3.5 py-1.5 rounded-xl transition ${
                         isDefaultSelected 
                           ? 'bg-slate-900 text-white cursor-default font-black' 
-                          : 'bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 cursor-pointer'
+                          : 'bg-card border border-default hover:bg-surface-alt text-primary cursor-pointer'
                       }`}
                     >
                       {isDefaultSelected ? '✓ Active Context' : '🔌 Jump Into Agency Workspace'}
@@ -673,7 +673,7 @@ export default function SuperAdminPanel({
                     {!isEditing && (
                       <button 
                         onClick={() => startEditing(agency)}
-                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition"
+                        className="p-1.5 bg-slate-100 hover:bg-slate-200 text-secondary rounded-xl transition"
                         title="Configure limits and subscriptions"
                       >
                         <Sliders size={14} />
@@ -694,7 +694,7 @@ export default function SuperAdminPanel({
 
                     <button 
                       onClick={() => handleDeleteAgency(agency.id, agency.name)}
-                      className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-xl transition"
+                      className="p-1.5 bg-surface hover:bg-surface-alt text-muted hover:text-secondary rounded-xl transition"
                       title="Decommission Tenant Workspace"
                     >
                       <Trash2 size={14} />
@@ -704,7 +704,7 @@ export default function SuperAdminPanel({
 
                 {/* Inline Editing for Plan details & constraints limits */}
                 {isEditing && (
-                  <div className="bg-slate-50 p-4 rounded-xl mt-3 space-y-4 border border-slate-200 animate-slideUp">
+                  <div className="bg-surface p-4 rounded-xl mt-3 space-y-4 border border-default animate-slideUp">
                     {/* Basic details */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
@@ -714,7 +714,7 @@ export default function SuperAdminPanel({
                           required
                           value={editName}
                           onChange={e => setEditName(e.target.value)}
-                          className="bg-white border text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-full focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="bg-card border text-xs text-primary rounded-lg px-2.5 py-1.5 w-full focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </div>
                       <div>
@@ -724,7 +724,7 @@ export default function SuperAdminPanel({
                           required
                           value={editAppName}
                           onChange={e => setEditAppName(e.target.value)}
-                          className="bg-white border text-xs text-slate-800 rounded-lg px-2.5 py-1.5 w-full focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="bg-card border text-xs text-primary rounded-lg px-2.5 py-1.5 w-full focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </div>
                       <div>
@@ -740,17 +740,17 @@ export default function SuperAdminPanel({
                             type="text" 
                             value={editColor}
                             onChange={e => setEditColor(e.target.value)}
-                            className="bg-white border text-xs text-slate-800 rounded-lg px-2 py-1.5 w-24 text-center font-mono"
+                            className="bg-card border text-xs text-primary rounded-lg px-2 py-1.5 w-24 text-center font-mono"
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Logo upload feature directly inside edit */}
-                    <div className="bg-white p-3.5 rounded-xl border border-solid border-slate-205 space-y-2">
+                    <div className="bg-card p-3.5 rounded-xl border border-solid border-slate-205 space-y-2">
                       <span className="block text-[10px] uppercase font-extrabold text-slate-650">Modify Corporate Logo</span>
                       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                        <div className="h-14 w-28 bg-slate-50 border border-slate-200 rounded flex items-center justify-center overflow-hidden shrink-0 relative group">
+                        <div className="h-14 w-28 bg-surface border border-default rounded flex items-center justify-center overflow-hidden shrink-0 relative group">
                           {editLogoUrl ? (
                             <>
                               <img src={editLogoUrl} className="h-full w-full object-contain p-1.5" alt="Logo edit" referrerPolicy="no-referrer" />
@@ -763,13 +763,13 @@ export default function SuperAdminPanel({
                               </button>
                             </>
                           ) : (
-                            <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">No Logo</span>
+                            <span className="text-[9px] text-muted uppercase tracking-widest font-bold">No Logo</span>
                           )}
                         </div>
 
                         <div className="space-y-1.5 flex-1 w-full">
                           <div className="flex flex-col sm:flex-row gap-2">
-                            <label className="bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] px-3 py-1.5 rounded-lg border border-slate-300 transition cursor-pointer text-center inline-block shrink-0">
+                            <label className="bg-surface hover:bg-surface-alt text-secondary font-bold text-[11px] px-3 py-1.5 rounded-lg border border-default transition cursor-pointer text-center inline-block shrink-0">
                               📤 Upload New Logo
                               <input 
                                 type="file" 
@@ -783,7 +783,7 @@ export default function SuperAdminPanel({
                               value={editLogoUrl}
                               onChange={(e) => setEditLogoUrl(e.target.value)}
                               placeholder="Or paste an image URL directly here..."
-                              className="flex-1 bg-white border border-slate-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                              className="flex-1 bg-card border border-default text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                           </div>
                         </div>
@@ -791,13 +791,13 @@ export default function SuperAdminPanel({
                     </div>
 
                     {/* Threshold Limits */}
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-default">
                       <div>
                         <label className="block text-[10px] uppercase font-bold text-slate-450 mb-1">Set Subscription Plan</label>
                         <select 
                           value={editPlan}
                           onChange={e => handlePlanChangeFill(e.target.value as any, 'edit')}
-                          className="bg-white border text-xs text-slate-800 rounded-lg px-2 py-1.5 w-full"
+                          className="bg-card border text-xs text-primary rounded-lg px-2 py-1.5 w-full"
                         >
                           <option value="Free">Free (Limited Trial)</option>
                           <option value="Pro">Pro (Growing Teams)</option>
@@ -812,7 +812,7 @@ export default function SuperAdminPanel({
                           type="number" 
                           value={editMaxLeads}
                           onChange={e => setEditMaxLeads(Number(e.target.value))}
-                          className="bg-white border text-xs rounded-lg px-2.5 py-1 w-full"
+                          className="bg-card border text-xs rounded-lg px-2.5 py-1 w-full"
                         />
                       </div>
 
@@ -822,7 +822,7 @@ export default function SuperAdminPanel({
                           type="number" 
                           value={editMaxProps}
                           onChange={e => setEditMaxProps(Number(e.target.value))}
-                          className="bg-white border text-xs rounded-lg px-2.5 py-1 w-full"
+                          className="bg-card border text-xs rounded-lg px-2.5 py-1 w-full"
                         />
                       </div>
 
@@ -832,16 +832,16 @@ export default function SuperAdminPanel({
                           type="number" 
                           value={editMaxUsers}
                           onChange={e => setEditMaxUsers(Number(e.target.value))}
-                          className="bg-white border text-xs rounded-lg px-2.5 py-1 w-full"
+                          className="bg-card border text-xs rounded-lg px-2.5 py-1 w-full"
                         />
                       </div>
                     </div>
 
-                    <div className="flex justify-end gap-1.5 pt-3 border-t border-slate-200">
+                    <div className="flex justify-end gap-1.5 pt-3 border-t border-default">
                       <button 
                         type="button" 
                         onClick={() => setEditingAgencyId(null)}
-                        className="text-[10px] uppercase font-bold text-slate-400 px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg"
+                        className="text-[10px] uppercase font-bold text-muted px-3 py-1.5 bg-card hover:bg-surface-alt border border-default rounded-lg"
                       >
                         Abort
                       </button>
@@ -875,7 +875,7 @@ export default function SuperAdminPanel({
             All API retrievals and creations query dynamic tenant registers, securing data isolation between rival brokers in real-time. 
             When jumping into an isolated agency workspace above, standard panels dynamically adapt brand color variables, custom welcome banners, and custom application titles instantly!
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-slate-400 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-muted pt-2">
             <div className="bg-slate-950/40 p-2.5 border border-slate-800/50 rounded-lg">
               <strong className="text-white block mb-1">⭐ White Label UI Engine</strong>
               Dynamic styles insert a live style tag modifying raw theme variables according to the tenant colors config.

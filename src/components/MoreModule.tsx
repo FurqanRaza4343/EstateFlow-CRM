@@ -304,61 +304,61 @@ export default function MoreModule({
     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 h-full" id="more-module">
       
       {/* Tab select side-bar */}
-      <div className="md:col-span-3 bg-white p-3 border border-slate-100 rounded-2xl flex flex-col space-y-1.5 h-fit">
+      <div className="md:col-span-3 bg-card p-3 border border-default rounded-2xl flex flex-col space-y-1.5 h-fit">
         <button 
           onClick={() => setActiveTab('attendance')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'attendance' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'attendance' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Clock size={15} /> Field GPS Attendance
         </button>
         <button 
           onClick={() => setActiveTab('social')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'social' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'social' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <MessageSquare size={15} /> Social Captions (Gemini)
         </button>
         <button 
           onClick={() => setActiveTab('webhook_tester')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'webhook_tester' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'webhook_tester' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Webhook size={15} /> Webhook Intake Playground
         </button>
         <button 
           onClick={() => setActiveTab('team')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'team' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'team' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Users size={15} /> Team & Recruitment
         </button>
         <button 
           onClick={() => setActiveTab('reports')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'reports' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'reports' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <BarChart3 size={15} /> CRM Analytics Reports
         </button>
         <button 
           onClick={() => setActiveTab('billing')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'billing' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'billing' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <CreditCard size={15} className="text-indigo-505" strokeWidth={2.5} /> Subscription & Billing
         </button>
         <button 
           onClick={() => setActiveTab('settings')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'settings' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'settings' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Settings size={15} /> Config Settings
         </button>
         <button 
           onClick={() => setActiveTab('brand_kit')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'brand_kit' ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-705 text-slate-700'}`}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'brand_kit' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-slate-705 text-secondary'}`}
         >
           <Sparkles size={15} className="text-amber-500 animate-pulse" /> Corporate Brand Kit
         </button>
 
-        <div className="border-t border-slate-100 my-2 pt-2"></div>
+        <div className="border-t border-default my-2 pt-2"></div>
         
-        <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between text-[11px] font-bold text-slate-700">
+        <div className="p-3 bg-surface rounded-xl flex items-center justify-between text-[11px] font-bold text-secondary">
           <div className="flex flex-col gap-0.5 select-none">
-            <span className="text-slate-800 flex items-center gap-1">☀️ Outdoor Mode</span>
+            <span className="text-primary flex items-center gap-1">☀️ Outdoor Mode</span>
             <span className="text-[8px] text-slate-400 font-medium font-mono uppercase tracking-wider">High Contrast</span>
           </div>
           <button
@@ -382,24 +382,24 @@ export default function MoreModule({
       </div>
 
       {/* Main active sub-workspace panel */}
-      <div className="md:col-span-9 bg-white border border-slate-100 rounded-2xl p-5 min-h-[400px]">
+      <div className="md:col-span-9 bg-card border border-default rounded-2xl p-5 min-h-[400px]">
         
         {/* VIEW 1: FIELD GPS ATTENDANCE MODULE */}
         {activeTab === 'attendance' && (
           <div className="space-y-6" id="more-view-attendance">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Field Executive GPS Geolocation Login</h3>
+              <h3 className="text-sm font-extrabold text-primary">Field Executive GPS Geolocation Login</h3>
               <p className="text-xs text-slate-400 mt-1">Check-in dynamically to register attendance with automatic late calculation and location checks.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Daily active controls */}
-              <div className="bg-slate-50 p-4 border border-slate-100 rounded-2xl text-xs text-slate-600 space-y-4">
+              <div className="bg-surface p-4 border border-default rounded-2xl text-xs text-secondary space-y-4">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Attendance Registration Console</span>
                 
                 {/* Geolocation visual fetcher */}
                 <div className="space-y-2">
-                  <p className="text-slate-500 font-light text-[11px]">Executive check-in requires visual coordinate confirmation:</p>
+                  <p className="text-muted font-light text-[11px]">Executive check-in requires visual coordinate confirmation:</p>
                   
                   {coords ? (
                     <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-800 font-semibold space-y-1">
@@ -429,13 +429,13 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-1.5 mt-2">
-                  <label className="font-bold text-slate-700">Daily field visit notes</label>
+                  <label className="font-bold text-secondary">Daily field visit notes</label>
                   <input 
                     type="text"
                     placeholder="e.g. DLF Phase-2 client walkthrough coordinate..."
                     value={fieldNotes}
                     onChange={e => setFieldNotes(e.target.value)}
-                    className="w-full bg-white p-2 border border-slate-200 rounded-lg text-xs focus:outline-none"
+                    className="w-full bg-card p-2 border border-default rounded-lg text-xs focus:outline-none"
                   />
                 </div>
 
@@ -464,16 +464,16 @@ export default function MoreModule({
                   {attendanceLogs.map(att => {
                     const staff = users.find(u => u.id === att.userId);
                     return (
-                      <div key={att.id} className="p-3 bg-white border border-slate-100 rounded-xl shadow-xs text-xs flex justify-between items-center text-slate-600">
+                      <div key={att.id} className="p-3 bg-card border border-default rounded-xl shadow-xs text-xs flex justify-between items-center text-secondary">
                         <div>
-                          <h4 className="font-bold text-slate-800">{staff ? staff.name : 'Unknown Team Member'}</h4>
+                          <h4 className="font-bold text-primary">{staff ? staff.name : 'Unknown Team Member'}</h4>
                           <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1 text-[10px]">
                             Checkin: {new Date(att.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • 
                             Status: <span className={att.status === 'Present' ? 'text-emerald-600 font-bold' : 'text-amber-500 font-bold'}>{att.status}</span>
                           </p>
                         </div>
                         {att.checkInLatitude && (
-                          <span className="text-[10px] text-slate-400 font-mono bg-slate-50 px-2 py-1 rounded" title="GPS Verification Complete">
+                          <span className="text-[10px] text-slate-400 font-mono bg-surface px-2 py-1 rounded" title="GPS Verification Complete">
                             📍 Linked
                           </span>
                         )}
@@ -498,7 +498,7 @@ export default function MoreModule({
         {activeTab === 'social' && (
           <div className="space-y-6" id="more-view-social">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Dynamic Social Media Copywriter (Ai Captions)</h3>
+              <h3 className="text-sm font-extrabold text-primary">Dynamic Social Media Copywriter (Ai Captions)</h3>
               <p className="text-xs text-slate-400 mt-1">Instantly generate high converting real estate caption marketing packages grounded with hot sector locations, details, and call macros via Gemini.</p>
             </div>
 
@@ -506,12 +506,12 @@ export default function MoreModule({
               {/* Creator form */}
               <div className="space-y-3 text-xs">
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-600">Reel / Post Format Style</label>
+                  <label className="font-bold text-secondary">Reel / Post Format Style</label>
                   <select 
                     id="social-format-select"
                     value={postType}
                     onChange={e => setPostType(e.target.value)}
-                    className="w-full bg-slate-50 p-2 border border-slate-200 rounded-lg"
+                    className="w-full bg-surface p-2 border border-default rounded-lg"
                   >
                     <option value="Instagram Reel">Instagram Reel Video Package</option>
                     <option value="Facebook Post">Facebook Promoted Post Advertisement</option>
@@ -521,12 +521,12 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-600">Target Estate Asset listing</label>
+                  <label className="font-bold text-secondary">Target Estate Asset listing</label>
                   <select 
                     id="social-target-property-select"
                     value={draftPropertyId}
                     onChange={e => setDraftPropertyId(e.target.value)}
-                    className="w-full bg-slate-50 p-2 border border-slate-200 rounded-lg text-xs"
+                    className="w-full bg-surface p-2 border border-default rounded-lg text-xs"
                   >
                     {properties.map(p => (
                       <option key={p.id} value={p.id}>{p.title} (INR {(p.price / 10000000).toFixed(2)} Cr)</option>
@@ -535,14 +535,14 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-bold text-slate-600">Custom Campaign Focus (optional)</label>
+                  <label className="font-bold text-secondary">Custom Campaign Focus (optional)</label>
                   <input 
                     id="social-focus-input"
                     type="text"
                     placeholder="e.g. Focus on Golf Course Road elite community, limited developer offer..."
                     value={customDraftNotes}
                     onChange={e => setCustomDraftNotes(e.target.value)}
-                    className="w-full bg-slate-50 p-2 border border-slate-200 rounded-lg"
+                    className="w-full bg-surface p-2 border border-default rounded-lg"
                   />
                 </div>
 
@@ -587,12 +587,12 @@ export default function MoreModule({
                   
                   <div className="space-y-2 max-h-[170px] overflow-y-auto">
                     {socialPosts.map(p => (
-                      <div key={p.id} className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs text-slate-600">
+                      <div key={p.id} className="p-2.5 bg-surface border border-default rounded-xl text-xs text-secondary">
                         <div className="flex justify-between items-start">
-                          <span className="font-extrabold text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">{p.postType}</span>
+                          <span className="font-extrabold text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-secondary">{p.postType}</span>
                           <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">Scheduled</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{p.caption}</p>
+                        <p className="text-[11px] text-muted mt-1 line-clamp-2">{p.caption}</p>
                       </div>
                     ))}
                     {socialPosts.length === 0 && (
@@ -615,14 +615,14 @@ export default function MoreModule({
             <div className="flex items-center gap-2">
               <Webhook className="text-indigo-600" size={24} />
               <div>
-                <h3 className="text-sm font-extrabold text-slate-800">Lead Webhook Intake Playground</h3>
+                <h3 className="text-sm font-extrabold text-primary">Lead Webhook Intake Playground</h3>
                 <p className="text-xs text-slate-400 mt-1">Developer sandbox testing tool to verify standard lead captures via CRM REST API webhook integrations.</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Webhook Form sandbox */}
-              <div className="bg-slate-50 p-4 border border-slate-100 rounded-2xl text-xs space-y-3.5 text-slate-600">
+              <div className="bg-surface p-4 border border-default rounded-2xl text-xs space-y-3.5 text-secondary">
                 <span className="text-[10px] uppercase font-bold text-slate-450 tracking-wider">Configure Post Payload</span>
                 
                 <div className="grid grid-cols-2 gap-2 text-xs">
@@ -633,7 +633,7 @@ export default function MoreModule({
                       type="text" 
                       value={testName}
                       onChange={e => setTestName(e.target.value)}
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg"
+                      className="w-full bg-card border border-default p-2 rounded-lg"
                     />
                   </div>
                   <div className="space-y-1">
@@ -643,7 +643,7 @@ export default function MoreModule({
                       type="text" 
                       value={testPhone}
                       onChange={e => setTestPhone(e.target.value)}
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg"
+                      className="w-full bg-card border border-default p-2 rounded-lg"
                     />
                   </div>
                   <div className="space-y-1">
@@ -652,7 +652,7 @@ export default function MoreModule({
                       id="webhook-test-source"
                       value={testSource}
                       onChange={e => setTestSource(e.target.value)}
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs"
+                      className="w-full bg-card border border-default p-2 rounded-lg text-xs"
                     >
                       <option value="36 Acre">36 Acre</option>
                       <option value="Facebook Ads">Facebook Promo Ads</option>
@@ -666,7 +666,7 @@ export default function MoreModule({
                       id="webhook-test-type"
                       value={testProp}
                       onChange={e => setTestProp(e.target.value)}
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs"
+                      className="w-full bg-card border border-default p-2 rounded-lg text-xs"
                     >
                       <option value="Apartment">Apartment</option>
                       <option value="Villa">Villa</option>
@@ -700,7 +700,7 @@ export default function MoreModule({
                   <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-xs space-y-3.5">
                     <div className="flex justify-between items-center text-[10px] font-bold">
                       <span className="text-emerald-400 font-mono">STATUS: {webhookResult.status} OK</span>
-                      <span className="text-slate-500 font-mono">ESTATEFLOW_LOG_V2</span>
+                      <span className="text-muted font-mono">ESTATEFLOW_LOG_V2</span>
                     </div>
                     <pre className="p-2 bg-slate-950 text-slate-300 font-mono text-[10px] rounded-lg overflow-x-auto leading-relaxed max-h-[180px]">
                       {JSON.stringify(webhookResult.data, null, 2)}
@@ -710,7 +710,7 @@ export default function MoreModule({
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-16 border border-dashed border-slate-200 rounded-2xl h-full flex flex-col justify-center items-center text-slate-400 italic text-xs">
+                  <div className="text-center py-16 border border-dashed border-default rounded-2xl h-full flex flex-col justify-center items-center text-slate-400 italic text-xs">
                     No webhook simulation data recorded yet.
                   </div>
                 )}
@@ -723,13 +723,13 @@ export default function MoreModule({
         {activeTab === 'team' && (
           <div className="space-y-6" id="more-view-team">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Counselling Team Recruitment</h3>
+              <h3 className="text-sm font-extrabold text-primary">Counselling Team Recruitment</h3>
               <p className="text-xs text-slate-400 mt-1">Register new agents or managers to participate in round-robin leads routing allocation lists.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Invite Form */}
-              <form onSubmit={handleInviteSubmit} className="bg-slate-50 p-4 border border-slate-100 rounded-2xl text-xs text-slate-600 space-y-3.5">
+              <form onSubmit={handleInviteSubmit} className="bg-surface p-4 border border-default rounded-2xl text-xs text-secondary space-y-3.5">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Invite Team Member</span>
                 
                 <div className="space-y-1">
@@ -740,7 +740,7 @@ export default function MoreModule({
                     value={inviteName}
                     onChange={e => setInviteName(e.target.value)}
                     placeholder="e.g. Priyanjali Sen"
-                    className="w-full bg-white border border-slate-200 p-2 rounded-lg"
+                    className="w-full bg-card border border-default p-2 rounded-lg"
                   />
                 </div>
 
@@ -753,7 +753,7 @@ export default function MoreModule({
                       value={inviteEmail}
                       onChange={e => setInviteEmail(e.target.value)}
                       placeholder="sen@estateflow.in"
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg"
+                      className="w-full bg-card border border-default p-2 rounded-lg"
                     />
                   </div>
                   <div className="space-y-1">
@@ -764,7 +764,7 @@ export default function MoreModule({
                       value={invitePhone}
                       onChange={e => setInvitePhone(e.target.value)}
                       placeholder="+91 99000-11222"
-                      className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs"
+                      className="w-full bg-card border border-default p-2 rounded-lg text-xs"
                     />
                   </div>
                 </div>
@@ -775,7 +775,7 @@ export default function MoreModule({
                     id="invite-member-role"
                     value={inviteRole}
                     onChange={e => setInviteRole(e.target.value)}
-                    className="w-full bg-white border border-slate-200 p-2 rounded-lg"
+                    className="w-full bg-card border border-default p-2 rounded-lg"
                   >
                     <option value="Sales Agent">Sales Counselor (Agent)</option>
                     <option value="Sales Manager">Sales Manager (Supervisor)</option>
@@ -799,9 +799,9 @@ export default function MoreModule({
                 
                 <div className="space-y-2 max-h-[300px] overflow-y-auto">
                   {users.map(u => (
-                    <div key={u.id} className="p-3 bg-white border border-slate-100 rounded-xl shadow-xs text-xs flex justify-between items-center text-slate-600">
+                    <div key={u.id} className="p-3 bg-card border border-default rounded-xl shadow-xs text-xs flex justify-between items-center text-secondary">
                       <div>
-                        <h4 className="font-bold text-slate-800">{u.name}</h4>
+                        <h4 className="font-bold text-primary">{u.name}</h4>
                         <p className="text-[10px] text-slate-400 mt-1">{u.role} • {u.phone}</p>
                       </div>
                       <span className="text-[9px] uppercase tracking-widest font-black bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
@@ -819,18 +819,18 @@ export default function MoreModule({
         {activeTab === 'reports' && (
           <div className="space-y-6" id="more-view-reports">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-800">EstateFlow Team Conversion Analytics</h3>
+              <h3 className="text-sm font-extrabold text-primary">EstateFlow Team Conversion Analytics</h3>
               <p className="text-xs text-slate-400 mt-1">Real-time charts summaries showing lead channels and counselor conversion indexes.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold text-slate-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold text-secondary">
               {/* Lead sources performance */}
-              <div className="bg-slate-50 p-4 border border-slate-100 rounded-2xl space-y-3">
+              <div className="bg-surface p-4 border border-default rounded-2xl space-y-3">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Yield analysis per Channel</span>
                 
                 <div className="space-y-2 pt-1.5 font-bold">
                   <div>
-                    <div className="flex justify-between items-center text-[11px] mb-1 text-slate-600">
+                    <div className="flex justify-between items-center text-[11px] mb-1 text-secondary">
                       <span>36 Acre Campaign (Pre-qualified)</span>
                       <span>45% yield</span>
                     </div>
@@ -840,7 +840,7 @@ export default function MoreModule({
                   </div>
 
                   <div>
-                    <div className="flex justify-between items-center text-[11px] mb-1 text-slate-600">
+                    <div className="flex justify-between items-center text-[11px] mb-1 text-secondary">
                       <span>MagicBricks platform leads</span>
                       <span>30% yield</span>
                     </div>
@@ -850,7 +850,7 @@ export default function MoreModule({
                   </div>
 
                   <div>
-                    <div className="flex justify-between items-center text-[11px] mb-1 text-slate-600">
+                    <div className="flex justify-between items-center text-[11px] mb-1 text-secondary">
                       <span>Facebook promotional Ads</span>
                       <span>15% yield</span>
                     </div>
@@ -862,15 +862,15 @@ export default function MoreModule({
               </div>
 
               {/* CRM totals metrics */}
-              <div className="bg-slate-50 p-4 border border-slate-100 rounded-2xl space-y-3 text-slate-600">
+              <div className="bg-surface p-4 border border-default rounded-2xl space-y-3 text-secondary">
                 <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">CRM Ledger Totals summary</span>
                 
                 <div className="grid grid-cols-2 gap-3 pt-1 text-center font-bold">
-                  <div className="bg-white p-3 rounded-xl border border-slate-100">
+                  <div className="bg-card p-3 rounded-xl border border-default">
                     <span className="text-[10px] text-slate-450 block font-normal">Active Pipeline</span>
-                    <span className="text-lg font-black text-slate-800 block mt-1">Cr 18.5 max</span>
+                    <span className="text-lg font-black text-primary block mt-1">Cr 18.5 max</span>
                   </div>
-                  <div className="bg-white p-3 rounded-xl border border-slate-100">
+                  <div className="bg-card p-3 rounded-xl border border-default">
                     <span className="text-[10px] text-slate-450 block font-normal">Total conversions</span>
                     <span className="text-lg font-black text-emerald-600 block mt-1">3 Deals Closed</span>
                   </div>
@@ -898,11 +898,11 @@ export default function MoreModule({
         {activeTab === 'settings' && (
           <div className="space-y-6" id="more-view-settings">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Advanced Integrations & API Config</h3>
+              <h3 className="text-sm font-extrabold text-primary">Advanced Integrations & API Config</h3>
               <p className="text-xs text-slate-400 mt-1">Review active Twilio keys, dry-run state variables, and webhook credentials keys.</p>
             </div>
 
-            <div className="space-y-4 text-xs font-semibold text-slate-700">
+            <div className="space-y-4 text-xs font-semibold text-secondary">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="font-bold text-slate-605">Twilio Account Sid</label>
@@ -911,7 +911,7 @@ export default function MoreModule({
                     type="text" 
                     value={settings.twilioAccountSid}
                     onChange={e => setSettings({ ...settings, twilioAccountSid: e.target.value })}
-                    className="w-full bg-slate-50 border p-2 rounded-lg"
+                    className="w-full bg-surface border p-2 rounded-lg"
                   />
                 </div>
                 <div className="space-y-1">
@@ -921,15 +921,15 @@ export default function MoreModule({
                     type="text" 
                     value={settings.twilioPhoneNumber}
                     onChange={e => setSettings({ ...settings, twilioPhoneNumber: e.target.value })}
-                    className="w-full bg-slate-50 border p-2 rounded-lg"
+                    className="w-full bg-surface border p-2 rounded-lg"
                   />
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 border rounded-xl space-y-2">
+              <div className="bg-surface p-4 border rounded-xl space-y-2">
                 <div className="flex justify-between items-center text-xs">
                   <div>
-                    <h4 className="font-bold text-slate-800">Simulation Mode (Dry-Run Bypass)</h4>
+                    <h4 className="font-bold text-primary">Simulation Mode (Dry-Run Bypass)</h4>
                     <p className="text-[11px] text-slate-400 mt-0.5">When checked, CRM synthesizesTwilio connections and Gemini API content instantly to avoid billing exhaustion.</p>
                   </div>
                   <input 
@@ -943,9 +943,9 @@ export default function MoreModule({
               </div>
 
               {/* Theme & Display Accessibility Settings Block */}
-              <div className="bg-slate-50 p-4 border rounded-xl space-y-3">
+              <div className="bg-surface p-4 border rounded-xl space-y-3">
                 <div>
-                  <h4 className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <h4 className="font-bold text-primary flex items-center gap-1.5">
                     🎨 Theme & Display Settings
                   </h4>
                   <p className="text-[11px] text-slate-400 mt-0.5">
@@ -991,7 +991,7 @@ export default function MoreModule({
           <div className="space-y-6" id="more-view-brand-kit">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-primary flex items-center gap-2">
                   <Sparkles size={18} className="text-amber-500 animate-pulse" /> Estate Flow Corporate Brand Kit
                 </h3>
                 <p className="text-xs text-slate-400 mt-1 pb-1">
@@ -1010,9 +1010,9 @@ export default function MoreModule({
             </div>
 
             {/* Corporate Color Palette Grid */}
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
+            <div className="bg-surface border border-default rounded-2xl p-4 space-y-3">
               <div className="text-left">
-                <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Aesthetic Color Palette (B2B Global Standards)</h4>
+                <h4 className="text-xs font-extrabold text-secondary uppercase tracking-wider">Aesthetic Color Palette (B2B Global Standards)</h4>
                 <p className="text-[11px] text-slate-400">Click on any swatch code below to copy the specific hex value instantly.</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
@@ -1022,12 +1022,12 @@ export default function MoreModule({
                     navigator.clipboard.writeText('#0b132b');
                     alert('Copied Deep Navy Blue hex: #0b132b');
                   }}
-                  className="bg-white p-2.5 rounded-xl border border-slate-100 cursor-pointer hover:border-slate-300 transition group text-left"
+                  className="bg-card p-2.5 rounded-xl border border-default cursor-pointer hover:border-default transition group text-left"
                 >
                   <div className="h-10 rounded-lg bg-[#0b132b] mb-1.5 relative overflow-hidden flex items-end p-1 justify-end">
                     <span className="text-[8px] bg-slate-900/60 text-white font-mono rounded px-1 group-hover:scale-105 transition">60%</span>
                   </div>
-                  <span className="block font-bold text-slate-800 text-[11px]">Deep Navy Blue</span>
+                  <span className="block font-bold text-primary text-[11px]">Deep Navy Blue</span>
                   <span className="font-mono text-[9px] text-slate-400 block tracking-tight">#0b132b</span>
                 </div>
 
@@ -1037,12 +1037,12 @@ export default function MoreModule({
                     navigator.clipboard.writeText('#1c3d5a');
                     alert('Copied Professional Royal Blue hex: #1c3d5a');
                   }}
-                  className="bg-white p-2.5 rounded-xl border border-slate-100 cursor-pointer hover:border-slate-300 transition group text-left"
+                  className="bg-card p-2.5 rounded-xl border border-default cursor-pointer hover:border-default transition group text-left"
                 >
                   <div className="h-10 rounded-lg bg-[#1c3d5a] mb-1.5 relative overflow-hidden flex items-end p-1 justify-end">
                     <span className="text-[8px] bg-slate-900/60 text-white font-mono rounded px-1 group-hover:scale-105 transition">30%</span>
                   </div>
-                  <span className="block font-bold text-slate-800 text-[11px]">Royal Blue</span>
+                  <span className="block font-bold text-primary text-[11px]">Royal Blue</span>
                   <span className="font-mono text-[9px] text-slate-400 block tracking-tight">#1c3d5a</span>
                 </div>
 
@@ -1052,12 +1052,12 @@ export default function MoreModule({
                     navigator.clipboard.writeText('#ffffff');
                     alert('Copied Custom Crisp White hex: #ffffff');
                   }}
-                  className="bg-white p-2.5 rounded-xl border border-slate-100 cursor-pointer hover:border-slate-300 transition group text-left"
+                  className="bg-card p-2.5 rounded-xl border border-default cursor-pointer hover:border-default transition group text-left"
                 >
-                  <div className="h-10 rounded-lg bg-[#ffffff] border border-slate-200 mb-1.5 relative overflow-hidden flex items-end p-1 justify-end">
-                    <span className="text-[8px] bg-slate-900/10 text-slate-600 font-mono rounded px-1 group-hover:scale-105 transition font-bold">Fluid</span>
+                  <div className="h-10 rounded-lg bg-[#ffffff] border border-default mb-1.5 relative overflow-hidden flex items-end p-1 justify-end">
+                    <span className="text-[8px] bg-slate-900/10 text-secondary font-mono rounded px-1 group-hover:scale-105 transition font-bold">Fluid</span>
                   </div>
-                  <span className="block font-bold text-slate-800 text-[11px]">Pristine White</span>
+                  <span className="block font-bold text-primary text-[11px]">Pristine White</span>
                   <span className="font-mono text-[9px] text-slate-400 block tracking-tight">#ffffff</span>
                 </div>
 
@@ -1067,12 +1067,12 @@ export default function MoreModule({
                     navigator.clipboard.writeText('#00b4d8');
                     alert('Copied Soft Subtle Teal hex: #00b4d8');
                   }}
-                  className="bg-white p-2.5 rounded-xl border border-slate-100 cursor-pointer hover:border-slate-300 transition group text-left"
+                  className="bg-card p-2.5 rounded-xl border border-default cursor-pointer hover:border-default transition group text-left"
                 >
                   <div className="h-10 rounded-lg bg-[#00b4d8] mb-1.5 relative overflow-hidden flex items-end p-1 justify-end">
                     <span className="text-[8px] bg-slate-900/60 text-white font-mono rounded px-1 group-hover:scale-105 transition">10% Accent</span>
                   </div>
-                  <span className="block font-bold text-slate-800 text-[11px]">Subtle Teal Accent</span>
+                  <span className="block font-bold text-primary text-[11px]">Subtle Teal Accent</span>
                   <span className="font-mono text-[9px] text-slate-400 block tracking-tight">#00b4d8</span>
                 </div>
               </div>
@@ -1082,16 +1082,16 @@ export default function MoreModule({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               {/* Asset 1: Full Logo Light Mode */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-105 flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
+              <div className="bg-surface p-4 rounded-2xl border border-default flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
                 <div className="space-y-1 text-left">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] uppercase tracking-widest font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">01. Corporate Full Logo</span>
                     <span className="text-[9px] font-mono text-slate-400">1200 x 400 • Light Theme</span>
                   </div>
-                  <h4 className="font-extrabold text-slate-800 text-xs">Full Branding & Typography Layout</h4>
+                  <h4 className="font-extrabold text-primary text-xs">Full Branding & Typography Layout</h4>
                 </div>
                 
-                <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_full_logo_light.png')}>
+                <div className="bg-card p-3.5 rounded-xl border border-default flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_full_logo_light.png')}>
                   <img src="/images/estate_flow_full_logo_light.png" className="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-105" alt="Estate Flow Full Logo" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <span className="text-white text-[11px] font-bold bg-slate-900/80 px-2.5 py-1.5 rounded-xl">View Large Scale</span>
@@ -1099,7 +1099,7 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <p className="text-[11px] text-slate-500 leading-normal">
+                  <p className="text-[11px] text-muted leading-normal">
                     Displays 'Estate Flow' in high-end sleek sans-serif typography directly side-by-side with the geometric rising connection network crest icon.
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[10px]">
@@ -1114,7 +1114,7 @@ export default function MoreModule({
                         navigator.clipboard.writeText(`${window.location.origin}/images/estate_flow_full_logo_light.png`);
                         alert('Full logo absolute static URL copied to clipboard!');
                       }}
-                      className="bg-white hover:bg-slate-100 text-slate-700 border font-bold py-2 rounded-lg transition text-center"
+                      className="bg-card hover:bg-surface-alt text-secondary border font-bold py-2 rounded-lg transition text-center"
                     >
                       🔗 Copy Static Path
                     </button>
@@ -1123,13 +1123,13 @@ export default function MoreModule({
               </div>
 
               {/* Asset 2: Minimalist Dark Mode */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-105 flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
+              <div className="bg-surface p-4 rounded-2xl border border-default flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
                 <div className="space-y-1 text-left">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] uppercase tracking-widest font-bold text-slate-200 bg-slate-900 px-2 py-0.5 rounded">02. Slate Dark Mode</span>
                     <span className="text-[9px] font-mono text-slate-400">1024 x 1024 • Charcoal Canvas</span>
                   </div>
-                  <h4 className="font-extrabold text-slate-800 text-xs text-left">Vibrant Midnight Dashboard Asset</h4>
+                  <h4 className="font-extrabold text-primary text-xs text-left">Vibrant Midnight Dashboard Asset</h4>
                 </div>
                 
                 <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_logo_dark_mode.png')}>
@@ -1140,7 +1140,7 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <p className="text-[11px] text-slate-500 leading-normal">
+                  <p className="text-[11px] text-muted leading-normal">
                     Specifically formatted dark mode variant engineered with glowing neon blue metrics bars and high-contrast vector node alignments.
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[10px]">
@@ -1155,7 +1155,7 @@ export default function MoreModule({
                         navigator.clipboard.writeText(`${window.location.origin}/images/estate_flow_logo_dark_mode.png`);
                         alert('Dark-theme logo absolute static URL copied to clipboard!');
                       }}
-                      className="bg-white hover:bg-slate-100 text-slate-700 border font-bold py-2 rounded-lg transition text-center"
+                      className="bg-card hover:bg-surface-alt text-secondary border font-bold py-2 rounded-lg transition text-center"
                     >
                       🔗 Copy Static Path
                     </button>
@@ -1164,16 +1164,16 @@ export default function MoreModule({
               </div>
 
               {/* Asset 3: Icon-Only Version */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-105 flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
+              <div className="bg-surface p-4 rounded-2xl border border-default flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
                 <div className="space-y-1 text-left">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] uppercase tracking-widest font-bold text-amber-750 bg-amber-50 text-amber-700 px-2 py-0.5 rounded">03. Icon-Only Mark</span>
                     <span className="text-[9px] font-mono text-slate-400">800 x 800 • Square 1:1</span>
                   </div>
-                  <h4 className="font-extrabold text-slate-800 text-xs">CRM Connection & Growth Crest</h4>
+                  <h4 className="font-extrabold text-primary text-xs">CRM Connection & Growth Crest</h4>
                 </div>
                 
-                <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_icon_only.png')}>
+                <div className="bg-card p-3.5 rounded-xl border border-default flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_icon_only.png')}>
                   <img src="/images/estate_flow_icon_only.png" className="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-105" alt="Estate Flow Geo Mark Only" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <span className="text-white text-[11px] font-bold bg-slate-900/80 px-2.5 py-1.5 rounded-xl">View Large Scale</span>
@@ -1181,7 +1181,7 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <p className="text-[11px] text-slate-500 leading-normal">
+                  <p className="text-[11px] text-muted leading-normal">
                     Superbly clean 1:1 icon asset illustrating blocks resembling real-estate holdings, styled directly in deep navy blue, teal, and navy trends.
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[10px]">
@@ -1196,7 +1196,7 @@ export default function MoreModule({
                         navigator.clipboard.writeText(`${window.location.origin}/images/estate_flow_icon_only.png`);
                         alert('Icon mark absolute static URL copied to clipboard!');
                       }}
-                      className="bg-white hover:bg-slate-100 text-slate-700 border font-bold py-2 rounded-lg transition text-center"
+                      className="bg-card hover:bg-surface-alt text-secondary border font-bold py-2 rounded-lg transition text-center"
                     >
                       🔗 Copy Static Path
                     </button>
@@ -1205,16 +1205,16 @@ export default function MoreModule({
               </div>
 
               {/* Asset 4: Mobile App Icon */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-105 flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
+              <div className="bg-surface p-4 rounded-2xl border border-default flex flex-col justify-between space-y-3.5 hover:shadow-xs transition">
                 <div className="space-y-1 text-left">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">04. Launcher App Icon</span>
                     <span className="text-[9px] font-mono text-slate-400">512 x 512 • Squircle Backdrop</span>
                   </div>
-                  <h4 className="font-extrabold text-slate-800 text-xs">Google Play Store & Apple App Stores</h4>
+                  <h4 className="font-extrabold text-primary text-xs">Google Play Store & Apple App Stores</h4>
                 </div>
                 
-                <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_app_icon.png')}>
+                <div className="bg-card p-3.5 rounded-xl border border-default flex items-center justify-center h-40 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_app_icon.png')}>
                   <img src="/images/estate_flow_app_icon.png" className="max-h-full max-w-[140px] aspect-square object-contain rounded-3xl shadow-md transition duration-300 group-hover:scale-105" alt="Estate Flow Phone Launcher Icon" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <span className="text-white text-[11px] font-bold bg-slate-900/80 px-2.5 py-1.5 rounded-xl">View Large Scale</span>
@@ -1222,7 +1222,7 @@ export default function MoreModule({
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <p className="text-[11px] text-slate-500 leading-normal">
+                  <p className="text-[11px] text-muted leading-normal">
                     Pristinely bounded squircle gradient icon. Perfectly tailored for mobile platforms launchers, app stores catalogs, and browser bookmarks.
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[10px]">
@@ -1237,7 +1237,7 @@ export default function MoreModule({
                         navigator.clipboard.writeText(`${window.location.origin}/images/estate_flow_app_icon.png`);
                         alert('App icon absolute static URL copied to clipboard!');
                       }}
-                      className="bg-white hover:bg-slate-100 text-slate-700 border font-bold py-2 rounded-lg transition text-center"
+                      className="bg-card hover:bg-surface-alt text-secondary border font-bold py-2 rounded-lg transition text-center"
                     >
                       🔗 Copy Static Path
                     </button>
@@ -1248,8 +1248,8 @@ export default function MoreModule({
             </div>
 
             {/* Asset 5: Flat Minimalist Light Mark */}
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-105 flex flex-col md:flex-row gap-5 items-center justify-between hover:shadow-xs transition">
-              <div className="bg-white p-3 border border-slate-200 rounded-2xl flex items-center justify-center h-32 w-32 shrink-0 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_logo_light_flat.png')}>
+            <div className="bg-surface p-4 rounded-2xl border border-default flex flex-col md:flex-row gap-5 items-center justify-between hover:shadow-xs transition">
+              <div className="bg-card p-3 border border-default rounded-2xl flex items-center justify-center h-32 w-32 shrink-0 overflow-hidden relative group cursor-pointer" onClick={() => setLightboxPath('/images/estate_flow_logo_light_flat.png')}>
                 <img src="/images/estate_flow_logo_light_flat.png" className="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-105" alt="Estate Flow Light Flat Asset" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                   <span className="text-white text-[10px] font-bold bg-slate-900/85 px-2 py-1 rounded">View Large</span>
@@ -1261,8 +1261,8 @@ export default function MoreModule({
                   <span className="text-[9px] uppercase tracking-widest font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded">05. Flat Minim-light</span>
                   <span className="text-[9px] font-mono text-slate-400">800 x 800 • Transparent Style</span>
                 </div>
-                <h4 className="font-extrabold text-slate-800 text-xs">Clean, Scalable Corporate Stationery Mark</h4>
-                <p className="text-[11px] text-slate-500 leading-normal font-medium mt-1">
+                <h4 className="font-extrabold text-primary text-xs">Clean, Scalable Corporate Stationery Mark</h4>
+                <p className="text-[11px] text-muted leading-normal font-medium mt-1">
                   Specifically designed with flat elements, perfect for corporate reports header watermarks, dynamic billing invoices, and white-label client proposals.
                 </p>
 
@@ -1278,7 +1278,7 @@ export default function MoreModule({
                       navigator.clipboard.writeText(`${window.location.origin}/images/estate_flow_logo_light_flat.png`);
                       alert('Light flat logo absolute static URL copied!');
                     }}
-                    className="bg-white hover:bg-slate-100 text-slate-705 border font-bold py-2 px-4 rounded-lg transition text-center"
+                    className="bg-card hover:bg-surface-alt text-slate-705 border font-bold py-2 px-4 rounded-lg transition text-center"
                   >
                     🔗 Copy Path
                   </button>
@@ -1306,14 +1306,14 @@ export default function MoreModule({
             {/* Lightbox Modal overlay popup rendering */}
             {lightboxPath && (
               <div className="fixed inset-0 bg-slate-950/85 z-[100] flex items-center justify-center p-4 cursor-zoom-out animate-fadeIn" onClick={() => setLightboxPath(null)} id="brand-lightbox-overlay">
-                <div className="relative bg-white rounded-3xl p-5 max-w-2xl w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => setLightboxPath(null)} className="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-full cursor-pointer transition">
+                <div className="relative bg-card rounded-3xl p-5 max-w-2xl w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setLightboxPath(null)} className="absolute top-4 right-4 bg-surface hover:bg-slate-200 text-secondary p-2 rounded-full cursor-pointer transition">
                     <X size={18} />
                   </button>
-                  <img src={lightboxPath} className="max-h-[70vh] object-contain rounded-xl shadow-lg border border-slate-100" alt="Estate Flow Large Scale Brand Detail Asset" referrerPolicy="no-referrer" />
+                  <img src={lightboxPath} className="max-h-[70vh] object-contain rounded-xl shadow-lg border border-default" alt="Estate Flow Large Scale Brand Detail Asset" referrerPolicy="no-referrer" />
                   <div className="mt-4 text-center">
                     <span className="text-[10px] text-indigo-600 font-extrabold uppercase tracking-widest block mb-1">Estate Flow brand representation</span>
-                    <span className="text-xs text-slate-500 font-mono">Location: {lightboxPath}</span>
+                    <span className="text-xs text-muted font-mono">Location: {lightboxPath}</span>
                   </div>
                 </div>
               </div>

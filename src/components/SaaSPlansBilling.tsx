@@ -739,12 +739,12 @@ export default function SaaSPlansBilling({
       )}
 
       {/* Hero Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-105 shadow-xs gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-card p-5 rounded-2xl border border-default shadow-xs gap-4">
         <div>
           <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
             <Coins className="text-indigo-600 animate-pulse" size={19} /> CRM Billing, Subscription & Limits Portal
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-muted mt-1">
             Activate premium real estate whitelabel licenses, configure integrated billing cards, track usage limits, or toggle monthly & yearly subscription contracts.
           </p>
         </div>
@@ -768,7 +768,7 @@ export default function SaaSPlansBilling({
         <button
           onClick={() => setActiveSubTab('pricing')}
           className={`flex-1 min-w-[100px] py-2 text-center text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
-            activeSubTab === 'pricing' ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-800'
+            activeSubTab === 'pricing' ? 'bg-slate-900 text-white shadow' : 'text-muted hover:text-primary'
           }`}
         >
           🏷 Pricing & Upgrades
@@ -776,7 +776,7 @@ export default function SaaSPlansBilling({
         <button
           onClick={() => setActiveSubTab('billing')}
           className={`flex-1 min-w-[100px] py-2 text-center text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
-            activeSubTab === 'billing' ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-800'
+            activeSubTab === 'billing' ? 'bg-slate-900 text-white shadow' : 'text-muted hover:text-primary'
           }`}
         >
           💳 Subscriptions / Limits
@@ -784,7 +784,7 @@ export default function SaaSPlansBilling({
         <button
           onClick={() => setActiveSubTab('methods')}
           className={`flex-1 min-w-[100px] py-2 text-center text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
-            activeSubTab === 'methods' ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-800'
+            activeSubTab === 'methods' ? 'bg-slate-900 text-white shadow' : 'text-muted hover:text-primary'
           }`}
         >
           🔐 Payment Methods
@@ -792,7 +792,7 @@ export default function SaaSPlansBilling({
         <button
           onClick={() => setActiveSubTab('comparison')}
           className={`flex-1 min-w-[100px] py-2 text-center text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
-            activeSubTab === 'comparison' ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-800'
+            activeSubTab === 'comparison' ? 'bg-slate-900 text-white shadow' : 'text-muted hover:text-primary'
           }`}
         >
           📊 Capability Matrix
@@ -805,7 +805,7 @@ export default function SaaSPlansBilling({
           <div className="flex flex-col md:flex-row md:items-center justify-between bg-indigo-50/50 border border-indigo-100 p-4.5 rounded-2xl gap-4">
             <div>
               <strong className="text-indigo-950 font-black block text-xs uppercase tracking-wide">Save 20% by locking Annual Cycles</strong>
-              <p className="text-slate-500 text-[11px] mt-0.5">Toggle annual billing cycles to unlock extreme enterprise discounts instantly.</p>
+              <p className="text-muted text-[11px] mt-0.5">Toggle annual billing cycles to unlock extreme enterprise discounts instantly.</p>
             </div>
             
             <div className="flex items-center gap-3 shrink-1">
@@ -837,8 +837,8 @@ export default function SaaSPlansBilling({
               return (
                 <div 
                   key={p.id}
-                  className={`bg-white rounded-2xl p-4 border flex flex-col justify-between transition-all relative ${
-                    p.isPopular ? 'border-indigo-600 shadow-md ring-2 ring-indigo-600/20' : isCurrent ? 'border-emerald-500 ring-2 ring-emerald-500/10' : 'border-slate-100 hover:border-slate-300 shadow-3xs'
+                  className={`bg-card rounded-2xl p-4 border flex flex-col justify-between transition-all relative ${
+                    p.isPopular ? 'border-indigo-600 shadow-md ring-2 ring-indigo-600/20' : isCurrent ? 'border-emerald-500 ring-2 ring-emerald-500/10' : 'border-default hover:border-slate-300 shadow-3xs'
                   }`}
                 >
                   {p.isPopular && (
@@ -877,22 +877,22 @@ export default function SaaSPlansBilling({
                       </span>
                     </div>
 
-                    <div className="space-y-1.5 p-2.5 bg-slate-50 border rounded-xl text-[9.5px]">
-                      <div className="flex justify-between font-semibold text-slate-600">
+                    <div className="space-y-1.5 p-2.5 bg-surface border rounded-xl text-[9.5px]">
+                      <div className="flex justify-between font-semibold text-secondary">
                         <span>Staff Seats included:</span>
                         <span className="text-slate-900 font-black">{p.limits.maxUsers >= 9999 ? 'No Limit' : `${p.limits.maxUsers} License`}</span>
                       </div>
-                      <div className="flex justify-between font-semibold text-slate-600">
+                      <div className="flex justify-between font-semibold text-secondary">
                         <span>Leads Records Limit:</span>
                         <span className="text-slate-900 font-black">{p.limits.maxLeads >= 9999 ? 'No Limit' : `${p.limits.maxLeads}`}</span>
                       </div>
-                      <div className="flex justify-between font-semibold text-slate-600">
+                      <div className="flex justify-between font-semibold text-secondary">
                         <span>Property Listings slots:</span>
                         <span className="text-slate-900 font-black">{p.limits.maxProperties >= 9999 ? 'No Limit' : `${p.limits.maxProperties}`}</span>
                       </div>
                     </div>
 
-                    <ul className="space-y-1.5 pt-1 text-[9.5px] text-slate-600">
+                    <ul className="space-y-1.5 pt-1 text-[9.5px] text-secondary">
                       {p.features.map((feat, i) => (
                         <li key={i} className="flex gap-1 items-start">
                           <Check size={11} className="text-emerald-500 shrink-0 mt-0.5" />
@@ -936,7 +936,7 @@ export default function SaaSPlansBilling({
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Usage panel, upgraded limits dynamically */}
-            <div className="lg:col-span-2 bg-white rounded-2xl p-5 border shadow-xs space-y-4">
+            <div className="lg:col-span-2 bg-card rounded-2xl p-5 border shadow-xs space-y-4">
               <div>
                 <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900">Workspace Quotas Monitor</h3>
                 <p className="text-[11px] text-slate-400 mt-0.5">Compare active staff count, properties, and lead storage listings against the ceiling limits of your plan.</p>
@@ -945,7 +945,7 @@ export default function SaaSPlansBilling({
               {/* Progress dynamic bars */}
               <div className="space-y-4 pt-2">
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-xs text-slate-700 font-semibold">
+                  <div className="flex justify-between items-center text-xs text-secondary font-semibold">
                     <span>Leads storage ({currentLeadsCount} of {currentLimitLeads >= 9999 ? 'Unlimited' : currentLimitLeads})</span>
                     <span className="font-mono text-[10px] font-bold">{leadsPct}% used</span>
                   </div>
@@ -956,7 +956,7 @@ export default function SaaSPlansBilling({
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-xs text-slate-700 font-semibold">
+                  <div className="flex justify-between items-center text-xs text-secondary font-semibold">
                     <span>Property Stocks storage ({currentPropsCount} of {currentLimitProps >= 9999 ? 'Unlimited' : currentLimitProps})</span>
                     <span className="font-mono text-[10px] font-bold">{propsPct}% used</span>
                   </div>
@@ -967,7 +967,7 @@ export default function SaaSPlansBilling({
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-xs text-slate-700 font-semibold">
+                  <div className="flex justify-between items-center text-xs text-secondary font-semibold">
                     <span>Active Staff Seats ({currentUsersCount} of {currentLimitUsers >= 9999 ? 'Unlimited' : currentLimitUsers})</span>
                     <span className="font-mono text-[10px] font-bold">{usersPct}% used</span>
                   </div>
@@ -990,7 +990,7 @@ export default function SaaSPlansBilling({
                   </button>
                   <button 
                     onClick={() => setActiveSubTab('pricing')}
-                    className="bg-white border text-slate-700 hover:bg-slate-50 hover:text-slate-900 text-[10px] font-black uppercase px-4 py-2 rounded-xl transition-all"
+                    className="bg-card border text-secondary hover:bg-surface-alt hover:text-primary text-[10px] font-black uppercase px-4 py-2 rounded-xl transition-all"
                   >
                     🚀 Switch Plan Edition
                   </button>
@@ -1007,10 +1007,10 @@ export default function SaaSPlansBilling({
             </div>
 
             {/* Billing Addresses information */}
-            <div className="bg-white rounded-2xl p-5 border shadow-xs space-y-4">
+            <div className="bg-card rounded-2xl p-5 border shadow-xs space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900 flex items-center gap-1">
-                  <Building size={14} className="text-slate-500" /> Invoice Addresses
+                  <Building size={14} className="text-muted" /> Invoice Addresses
                 </h3>
                 <button 
                   onClick={() => setIsEditingBilling(e => !e)}
@@ -1023,57 +1023,57 @@ export default function SaaSPlansBilling({
               {isEditingBilling ? (
                 <form onSubmit={handleSaveBillingInformation} className="space-y-3.5 text-xs">
                   <div className="space-y-1">
-                    <label className="font-extrabold text-slate-500 text-[9px] uppercase block tracking-wider">Company Registered Name</label>
+                    <label className="font-extrabold text-muted text-[9px] uppercase block tracking-wider">Company Registered Name</label>
                     <input 
                       type="text"
                       required
                       value={companyName}
                       onChange={e => setCompanyName(e.target.value)}
-                      className="w-full bg-slate-50 p-2 border text-xs rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-full bg-surface p-2 border text-xs rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-extrabold text-slate-500 text-[9px] uppercase block tracking-wider">Invoice Address</label>
+                    <label className="font-extrabold text-muted text-[9px] uppercase block tracking-wider">Invoice Address</label>
                     <textarea 
                       required
                       value={billingAddress}
                       onChange={e => setBillingAddress(e.target.value)}
                       rows={2}
-                      className="w-full bg-slate-50 p-2 border text-xs rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-full bg-surface p-2 border text-xs rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="font-extrabold text-slate-500 text-[9px] uppercase block tracking-wider">Tax Registration ID</label>
+                      <label className="font-extrabold text-muted text-[9px] uppercase block tracking-wider">Tax Registration ID</label>
                       <input 
                         type="text" 
                         required
                         value={taxId}
                         onChange={e => setTaxId(e.target.value)}
-                        className="w-full bg-slate-50 p-2 border text-xs rounded-xl focus:outline-none"
+                        className="w-full bg-surface p-2 border text-xs rounded-xl focus:outline-none"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-extrabold text-slate-500 text-[9px] uppercase block tracking-wider">Contact Email</label>
+                      <label className="font-extrabold text-muted text-[9px] uppercase block tracking-wider">Contact Email</label>
                       <input 
                         type="email" 
                         required
                         value={billingEmail}
                         onChange={e => setBillingEmail(e.target.value)}
-                        className="w-full bg-slate-50 p-2 border text-xs rounded-xl focus:outline-none"
+                        className="w-full bg-surface p-2 border text-xs rounded-xl focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="font-extrabold text-slate-500 text-[9px] uppercase block tracking-wider">Billing Contact Phone</label>
+                    <label className="font-extrabold text-muted text-[9px] uppercase block tracking-wider">Billing Contact Phone</label>
                     <input 
                       type="text"
                       value={billingPhone}
                       onChange={e => setBillingPhone(e.target.value)}
-                      className="w-full bg-slate-50 p-2 border text-xs rounded-xl focus:outline-none"
+                      className="w-full bg-surface p-2 border text-xs rounded-xl focus:outline-none"
                     />
                   </div>
 
@@ -1089,18 +1089,18 @@ export default function SaaSPlansBilling({
                   <div className="bg-slate-50/70 p-3.5 rounded-xl space-y-2 border">
                     <span className="text-[8px] uppercase tracking-wider font-extrabold text-slate-400 block">Current Billing Party</span>
                     <p className="font-extrabold text-slate-900">{companyName}</p>
-                    <p className="font-medium text-slate-500 leading-normal flex items-start gap-1"><Mail size={12} className="mt-0.5" /> {billingEmail}</p>
-                    <p className="font-medium text-slate-500 leading-normal flex items-start gap-1"><Phone size={12} className="mt-0.5" /> {billingPhone}</p>
+                    <p className="font-medium text-muted leading-normal flex items-start gap-1"><Mail size={12} className="mt-0.5" /> {billingEmail}</p>
+                    <p className="font-medium text-muted leading-normal flex items-start gap-1"><Phone size={12} className="mt-0.5" /> {billingPhone}</p>
                   </div>
 
-                  <div className="space-y-2.5 text-slate-600 font-medium">
+                  <div className="space-y-2.5 text-secondary font-medium">
                     <p className="flex justify-between text-xs">
                       <span className="text-slate-400 font-semibold">Tax ID (Unified):</span>
                       <span className="font-mono text-slate-900 font-bold">{taxId}</span>
                     </p>
                     <p className="flex justify-between items-start text-xs">
                       <span className="text-slate-400 font-semibold shrink-0">Address:</span>
-                      <span className="text-slate-800 text-right max-w-[160px] truncate" title={billingAddress}>{billingAddress}</span>
+                      <span className="text-primary text-right max-w-[160px] truncate" title={billingAddress}>{billingAddress}</span>
                     </p>
                   </div>
 
@@ -1114,16 +1114,16 @@ export default function SaaSPlansBilling({
           </div>
 
           {/* Dynamic Invoice ledger history */}
-          <div className="bg-white rounded-2xl p-5 border shadow-xs space-y-3.5">
+          <div className="bg-card rounded-2xl p-5 border shadow-xs space-y-3.5">
             <div>
               <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900">Invoices & Payment Log Archives</h3>
               <p className="text-[11px] text-slate-400 mt-0.5">Direct printable cash transactional history ledger for current billing terms cycles.</p>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600 border-collapse">
+              <table className="w-full text-left text-xs text-secondary border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b text-[9px] uppercase font-bold text-slate-400 font-mono">
+                  <tr className="bg-surface border-b text-[9px] uppercase font-bold text-muted font-mono">
                     <th className="p-3">Cash Reference</th>
                     <th className="p-3">Charged Date</th>
                     <th className="p-3">Billed Tier</th>
@@ -1133,7 +1133,7 @@ export default function SaaSPlansBilling({
                     <th className="p-3 text-right">Receipt Sheet</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                <tbody className="divide-y divide-slate-100 font-medium text-secondary">
                   {invoices.map((inv) => (
                     <tr key={inv.id} className="hover:bg-slate-50/50">
                       <td className="p-3 font-mono font-bold text-indigo-950">{inv.id}</td>
@@ -1160,7 +1160,7 @@ export default function SaaSPlansBilling({
                             setViewingInvoice(inv);
                             setBillingNotification(`📄 Printing layout initialized for reference ${inv.id}`);
                           }}
-                          className="bg-white hover:bg-slate-50 border border-slate-200 text-[10px] py-1 px-2.5 rounded-lg font-bold transition-all cursor-pointer inline-flex items-center gap-1.5"
+                          className="bg-card hover:bg-surface-alt border border-default text-[10px] py-1 px-2.5 rounded-lg font-bold transition-all cursor-pointer inline-flex items-center gap-1.5"
                         >
                           <FileText size={11} className="text-indigo-600" /> View Invoice
                         </button>
@@ -1179,14 +1179,14 @@ export default function SaaSPlansBilling({
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Wallet list of saved payment items */}
-            <div className="bg-white rounded-2xl p-5 border shadow-xs space-y-4">
+            <div className="bg-card rounded-2xl p-5 border shadow-xs space-y-4">
               <div>
                 <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900">Your Saved Cards</h3>
                 <p className="text-[11px] text-slate-400 mt-0.5">Set default, verify card details, or remove payment methods for monthly auto-renew deals.</p>
               </div>
 
               {paymentCards.length === 0 ? (
-                <div className="text-center py-6 bg-slate-50 border rounded-xl text-slate-400 text-xs">
+                <div className="text-center py-6 bg-surface border rounded-xl text-muted text-xs">
                   No payment cards registered in active wallet. Please append new ones.
                 </div>
               ) : (
@@ -1195,7 +1195,7 @@ export default function SaaSPlansBilling({
                     <div 
                       key={card.id}
                       className={`p-4 rounded-xl border flex items-center justify-between gap-4 transition-all ${
-                        card.isDefault ? 'bg-indigo-50/30 border-indigo-400/80' : 'bg-white border-slate-100 hover:bg-slate-50'
+                        card.isDefault ? 'bg-indigo-50/30 border-indigo-400/80' : 'bg-card border-default hover:bg-surface-alt'
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -1219,7 +1219,7 @@ export default function SaaSPlansBilling({
                         {!card.isDefault && (
                           <button
                             onClick={() => handleSetCardDefault(card.id)}
-                            className="text-[9px] font-black uppercase tracking-wider text-indigo-600 hover:text-indigo-850 px-2 py-1 border border-indigo-200 bg-white rounded-lg hover:bg-indigo-50/50"
+                            className="text-[9px] font-black uppercase tracking-wider text-indigo-600 hover:text-indigo-850 px-2 py-1 border border-indigo-200 bg-card rounded-lg hover:bg-indigo-50/50"
                           >
                             Set Default
                           </button>
@@ -1244,7 +1244,7 @@ export default function SaaSPlansBilling({
             </div>
 
             {/* Form to save card instrument */}
-            <div className="bg-white rounded-2xl p-5 border shadow-xs space-y-4">
+            <div className="bg-card rounded-2xl p-5 border shadow-xs space-y-4">
               <div>
                 <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900">Add Credit / Debit Card Form</h3>
                 <p className="text-[11px] text-slate-400 mt-0.5">Saves a simulated transaction card securely to sandbox workspace profiles.</p>
@@ -1257,7 +1257,7 @@ export default function SaaSPlansBilling({
                     <select
                       value={formCardBrand}
                       onChange={e => setFormCardBrand(e.target.value as any)}
-                      className="w-full bg-slate-50 border p-2 rounded-xl text-xs text-slate-900"
+                      className="w-full bg-surface border p-2 rounded-xl text-xs text-slate-900"
                     >
                       <option value="Visa">Visa Verification card</option>
                       <option value="Mastercard">Mastercard SecureCode</option>
@@ -1273,7 +1273,7 @@ export default function SaaSPlansBilling({
                       placeholder="Prem Nath"
                       value={formCardName}
                       onChange={e => setFormCardName(e.target.value)}
-                      className="w-full bg-slate-50 border p-2 rounded-xl text-xs focus:outline-none"
+                      className="w-full bg-surface border p-2 rounded-xl text-xs focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1287,7 +1287,7 @@ export default function SaaSPlansBilling({
                     placeholder="4242 4242 4242 4242"
                     value={formCardNumber}
                     onChange={e => setFormCardNumber(e.target.value)}
-                    className="w-full bg-slate-50 border p-2 rounded-xl font-mono text-xs focus:outline-none"
+                    className="w-full bg-surface border p-2 rounded-xl font-mono text-xs focus:outline-none"
                   />
                 </div>
 
@@ -1301,7 +1301,7 @@ export default function SaaSPlansBilling({
                       placeholder="12/28"
                       value={formCardExpiry}
                       onChange={e => setFormCardExpiry(e.target.value)}
-                      className="w-full bg-slate-50 border p-2 rounded-xl text-center focus:outline-none"
+                      className="w-full bg-surface border p-2 rounded-xl text-center focus:outline-none"
                     />
                   </div>
                   <div className="space-y-1">
@@ -1313,7 +1313,7 @@ export default function SaaSPlansBilling({
                       placeholder="•••"
                       value={formCardCvv}
                       onChange={e => setFormCardCvv(e.target.value)}
-                      className="w-full bg-slate-50 border p-2 rounded-xl text-center focus:outline-none"
+                      className="w-full bg-surface border p-2 rounded-xl text-center focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1332,7 +1332,7 @@ export default function SaaSPlansBilling({
 
       {/* --- TAB 4: COMPLETE COMPARISON MATRIX --- */}
       {activeSubTab === 'comparison' && (
-        <div className="bg-white rounded-2xl p-5 border shadow-xs space-y-4">
+        <div className="bg-card rounded-2xl p-5 border shadow-xs space-y-4">
           <div>
             <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-900">Premium Real Estate CRM Matrix comparison</h3>
             <p className="text-[11px] text-slate-400 mt-0.5">Explore built-in capabilities across free, team-oriented, and high-production Whitelabel plans.</p>
@@ -1480,12 +1480,12 @@ export default function SaaSPlansBilling({
       {/* --- CHECKOUT GATEWAY SECURE MODAL --- */}
       {showCheckoutModal && selectedPlanId && (
         <div className="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4" id="checkout-gateway-modal-wrapper">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border flex flex-col overflow-hidden max-h-[92vh]">
+          <div className="bg-card rounded-2xl w-full max-w-md shadow-2xl border flex flex-col overflow-hidden max-h-[92vh]">
             
             {/* Modal security header */}
             <div className="bg-slate-950 text-white p-4.5 flex justify-between items-center shrink-0">
               <div className="flex items-center gap-1.5">
-                <div className="p-1.5 bg-emerald-500 text-slate-950 rounded-lg animate-pulse shrink-0">
+                <div className="p-1.5 bg-emerald-500 text-primary rounded-lg animate-pulse shrink-0">
                   <CreditCard size={15} />
                 </div>
                 <div>
@@ -1505,10 +1505,10 @@ export default function SaaSPlansBilling({
               {checkoutStep === 'form' && (
                 <form onSubmit={handleProcessPayment} className="space-y-4">
                   {/* Order review billing component */}
-                  <div className="bg-slate-50 border p-3.5 rounded-xl text-xs space-y-1.5">
+                  <div className="bg-surface border p-3.5 rounded-xl text-xs space-y-1.5">
                     <span className="text-[8px] uppercase font-extrabold text-indigo-700 block tracking-widest font-mono">ORDER SELECTION SUMMARY:</span>
                     <div className="flex justify-between font-bold">
-                      <span className="text-slate-800 uppercase">{plans.find(p => p.id === selectedPlanId)?.name} Edition Contract</span>
+                      <span className="text-primary uppercase">{plans.find(p => p.id === selectedPlanId)?.name} Edition Contract</span>
                       <span className="text-slate-900">
                         {convertAndFormatPrice(billingPeriod === 'monthly' ? (plans.find(p => p.id === selectedPlanId)?.priceMonthly || 0) : (plans.find(p => p.id === selectedPlanId)?.priceYearly || 0) * 12, currency)}
                         <span className="text-[10px] text-slate-400 lowercase font-medium">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>
@@ -1533,18 +1533,18 @@ export default function SaaSPlansBilling({
                   </div>
 
                   {/* Payment selector toggle */}
-                  <div className="grid grid-cols-2 gap-2 text-xs font-bold text-center bg-slate-50 p-1 rounded-xl border">
+                  <div className="grid grid-cols-2 gap-2 text-xs font-bold text-center bg-surface p-1 rounded-xl border">
                     <button 
                       type="button" 
                       onClick={() => setPaymentMethodSelection('card')}
-                      className={`py-1.5 rounded-lg transition-all ${paymentMethodSelection === 'card' ? 'bg-indigo-600 text-white shadow' : 'text-slate-500'}`}
+                      className={`py-1.5 rounded-lg transition-all ${paymentMethodSelection === 'card' ? 'bg-indigo-600 text-white shadow' : 'text-muted'}`}
                     >
                       💳 Credit / Debit Card
                     </button>
                     <button 
                       type="button" 
                       onClick={() => setPaymentMethodSelection('paypal')}
-                      className={`py-1.5 rounded-lg transition-all ${paymentMethodSelection === 'paypal' ? 'bg-amber-500 text-white shadow' : 'text-slate-500'}`}
+                      className={`py-1.5 rounded-lg transition-all ${paymentMethodSelection === 'paypal' ? 'bg-amber-500 text-white shadow' : 'text-muted'}`}
                     >
                       🌀 PayPal checkout
                     </button>
@@ -1557,7 +1557,7 @@ export default function SaaSPlansBilling({
                       placeholder="Enter promo coupon or code"
                       value={couponCode}
                       onChange={e => setCouponCode(e.target.value)}
-                      className="col-span-2 bg-slate-50 border rounded-lg px-2.5 py-1.5 uppercase focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="col-span-2 bg-surface border rounded-lg px-2.5 py-1.5 uppercase focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                     <button 
                       type="button" 
@@ -1591,7 +1591,7 @@ export default function SaaSPlansBilling({
                           <div className="space-y-3 h-full flex flex-col justify-between">
                             <div className="h-3 bg-black -mx-3" />
                             <div className="flex justify-end pr-3.5 text-[9px] items-center gap-1">
-                              <span className="bg-white text-slate-950 px-1 font-bold italic">CVC:</span>
+                              <span className="bg-white text-primary px-1 font-bold italic">CVC:</span>
                               <span className="bg-amber-100 text-slate-900 font-bold px-1.5 rounded">{formCardCvv || '•••'}</span>
                             </div>
                             <span className="text-[7.5px] text-center text-slate-400">Secure end-to-end sandbox verification token</span>
@@ -1602,7 +1602,7 @@ export default function SaaSPlansBilling({
 
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="col-span-2 space-y-1">
-                          <label className="font-extrabold text-slate-600 block text-[9.5px]">Card Number</label>
+                          <label className="font-extrabold text-secondary block text-[9.5px]">Card Number</label>
                           <input 
                             required
                             type="text" 
@@ -1610,11 +1610,11 @@ export default function SaaSPlansBilling({
                             value={formCardNumber}
                             onChange={e => setFormCardNumber(e.target.value)}
                             onFocus={() => setIsCardFlipped(false)}
-                            className="w-full bg-slate-50 border p-2 rounded-xl text-slate-900 font-mono"
+                            className="w-full bg-surface border p-2 rounded-xl text-slate-900 font-mono"
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="font-extrabold text-slate-600 block text-[9.5px]">Card Holder</label>
+                          <label className="font-extrabold text-secondary block text-[9.5px]">Card Holder</label>
                           <input 
                             required
                             type="text" 
@@ -1622,12 +1622,12 @@ export default function SaaSPlansBilling({
                             value={formCardName}
                             onChange={e => setFormCardName(e.target.value)}
                             onFocus={() => setIsCardFlipped(false)}
-                            className="w-full bg-slate-50 border p-2 rounded-xl text-xs"
+                            className="w-full bg-surface border p-2 rounded-xl text-xs"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-1.5">
                           <div className="space-y-1">
-                            <label className="font-extrabold text-slate-600 block text-[9.5px]">Expiry</label>
+                            <label className="font-extrabold text-secondary block text-[9.5px]">Expiry</label>
                             <input 
                               required
                               type="text" 
@@ -1636,11 +1636,11 @@ export default function SaaSPlansBilling({
                               value={formCardExpiry}
                               onChange={e => setFormCardExpiry(e.target.value)}
                               onFocus={() => setIsCardFlipped(false)}
-                              className="w-full bg-slate-50 border p-2 rounded-xl text-center"
+                              className="w-full bg-surface border p-2 rounded-xl text-center"
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="font-extrabold text-slate-600 block text-[9.5px]">CVV</label>
+                            <label className="font-extrabold text-secondary block text-[9.5px]">CVV</label>
                             <input 
                               required
                               type="password" 
@@ -1649,7 +1649,7 @@ export default function SaaSPlansBilling({
                               value={formCardCvv}
                               onChange={e => setFormCardCvv(e.target.value)}
                               onFocus={() => setIsCardFlipped(true)}
-                              className="w-full bg-slate-50 border p-2 rounded-xl text-center"
+                              className="w-full bg-surface border p-2 rounded-xl text-center"
                             />
                           </div>
                         </div>
@@ -1665,14 +1665,14 @@ export default function SaaSPlansBilling({
                         <strong>Mock PayPal Gateway Active:</strong> Secure checkouts bypass PayPal redirect window. Enter paypal registered email address to authorize immediately.
                       </div>
                       <div className="space-y-1">
-                        <label className="font-extrabold text-slate-600 block text-[9.5px]">PayPal Email Address</label>
+                        <label className="font-extrabold text-secondary block text-[9.5px]">PayPal Email Address</label>
                         <input 
                           required
                           type="email" 
                           value={paypalEmail}
                           onChange={e => setPaypalEmail(e.target.value)}
                           placeholder="buyer@estateflow-developer-paypal-sandbox.com"
-                          className="w-full bg-slate-50 border p-2.5 rounded-xl text-xs focus:outline-none"
+                          className="w-full bg-surface border p-2.5 rounded-xl text-xs focus:outline-none"
                         />
                       </div>
                     </div>
@@ -1683,7 +1683,7 @@ export default function SaaSPlansBilling({
                       type="button"
                       disabled={isProcessing}
                       onClick={() => setShowCheckoutModal(false)}
-                      className="flex-1 text-slate-500 hover:text-slate-800 border p-2.5 rounded-xl text-center font-bold uppercase text-[10px] cursor-pointer"
+                      className="flex-1 text-muted hover:text-primary border p-2.5 rounded-xl text-center font-bold uppercase text-[10px] cursor-pointer"
                     >
                       Dismiss
                     </button>
@@ -1704,12 +1704,12 @@ export default function SaaSPlansBilling({
                   <div className="h-12 w-12 border-4 border-indigo-505 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
                   <div className="space-y-1">
                     <h4 className="text-xs uppercase font-extrabold text-slate-900 tracking-wider">Contacting Payment Gateway...</h4>
-                    <p className="text-[11px] text-slate-500">Communicating with Sandbox processors securely</p>
+                    <p className="text-[11px] text-muted">Communicating with Sandbox processors securely</p>
                   </div>
 
-                  <div className="bg-slate-50 border p-3 rounded-xl max-w-sm mx-auto space-y-1 text-left">
+                  <div className="bg-surface border p-3 rounded-xl max-w-sm mx-auto space-y-1 text-left">
                     {processLogs.map((log, key) => (
-                      <p key={key} className="text-[9px] font-mono text-slate-600 leading-normal flex items-start gap-1">
+                      <p key={key} className="text-[9px] font-mono text-secondary leading-normal flex items-start gap-1">
                         <span className="text-indigo-650 text-indigo-600">❯</span> {log}
                       </p>
                     ))}
@@ -1725,12 +1725,12 @@ export default function SaaSPlansBilling({
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-902 text-slate-900">Subscription Updated</h3>
-                    <p className="text-xs text-slate-500 leading-normal px-2">
+                    <p className="text-xs text-muted leading-normal px-2">
                       Fantastic! Your mock banking credentials have been resolved cleanly. Your client limits upgraded to <strong>{selectedPlanId} plan level</strong>.
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border p-3.5 rounded-xl text-[10px] font-bold space-y-1.5 text-slate-600 max-w-sm mx-auto text-left font-mono">
+                  <div className="bg-surface border p-3.5 rounded-xl text-[10px] font-bold space-y-1.5 text-secondary max-w-sm mx-auto text-left font-mono">
                     <p className="flex justify-between"><span>Reference ID:</span> <span className="text-slate-900">TXN-{Math.floor(Math.random()*90000)+10000}</span></p>
                     <p className="flex justify-between"><span>Active Plan ID:</span> <span className="text-indigo-600 uppercase font-black">{selectedPlanId} tier loaded</span></p>
                     <p className="flex justify-between"><span>Limits Status:</span> <span className="text-emerald-600 uppercase">Ceilings expanded instantly</span></p>
@@ -1756,13 +1756,13 @@ export default function SaaSPlansBilling({
                   </div>
                   <div className="space-y-1 text-center">
                     <h3 className="text-xs font-black uppercase text-rose-600">Charge declined by Sandbox card issuer</h3>
-                    <p className="text-[11px] text-slate-505 text-slate-500 leading-normal max-w-xs mx-auto">
+                    <p className="text-[11px] text-slate-505 text-muted leading-normal max-w-xs mx-auto">
                       Checkout request declined securely. Exception: <strong>{checkoutErrorMsg}</strong>
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 border p-3 rounded-xl text-[9.5px] text-left text-slate-500 space-y-1 max-w-xs mx-auto font-medium leading-relaxed">
-                    <p className="font-extrabold text-slate-700 uppercase tracking-wider">Troubleshooting checks:</p>
+                  <div className="bg-surface border p-3 rounded-xl text-[9.5px] text-left text-muted space-y-1 max-w-xs mx-auto font-medium leading-relaxed">
+                    <p className="font-extrabold text-secondary uppercase tracking-wider">Troubleshooting checks:</p>
                     <p>• Avoid card inputs terminating on CVV ending in '4000'.</p>
                     <p>• Review CVV verification input codes (e.g. '123' standard sandbox).</p>
                     <p>• Check default PayPal buyer accounts registration.</p>
@@ -1799,7 +1799,7 @@ export default function SaaSPlansBilling({
       {/* --- RENEWAL CANCEL CONFIRMATION SUB MODAL --- */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-xl border">
+          <div className="bg-card rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-xl border">
             <h4 className="text-xs font-black text-rose-605 text-rose-600 uppercase flex items-center gap-1">
               <AlertCircle size={15} /> Confirm Downgrade Request
             </h4>
@@ -1807,15 +1807,15 @@ export default function SaaSPlansBilling({
             {isCanceledSuccess ? (
               <div className="text-center py-4 space-y-2">
                 <CheckCircle2 size={32} className="text-rose-500 mx-auto animate-bounce" />
-                <p className="text-[10.5px] text-slate-505 text-slate-500">Downgraded to Free Level limits successfully. Staff seat licenses reduced to 1.</p>
+                <p className="text-[10.5px] text-slate-505 text-muted">Downgraded to Free Level limits successfully. Staff seat licenses reduced to 1.</p>
               </div>
             ) : (
-              <div className="space-y-3.5 text-xs leading-normal font-medium text-slate-600">
+              <div className="space-y-3.5 text-xs leading-normal font-medium text-secondary">
                 <p>
                   Reverting will adjust your team ceilings instantly. Staff licenses reduce to 1 seat, property database slots cut back to 10 max, and AI integrations will cease.
                 </p>
                 
-                <div className="space-y-1 bg-slate-50 p-2.5 rounded-lg border text-[10px]">
+                <div className="space-y-1 bg-surface p-2.5 rounded-lg border text-[10px]">
                   <strong>Current metrics check:</strong>
                   <p>• Active Users inside your agency: {currentUsersCount}</p>
                   <p>• Registered leads records list: {currentLeadsCount}</p>
@@ -1826,7 +1826,7 @@ export default function SaaSPlansBilling({
                   <select 
                     value={cancelReason}
                     onChange={e => setCancelReason(e.target.value)}
-                    className="w-full text-xs p-1.5 border bg-slate-50 rounded-lg focus:outline-none"
+                    className="w-full text-xs p-1.5 border bg-surface rounded-lg focus:outline-none"
                   >
                     <option value="Pricing is too high">Rate list too expensive for current agents</option>
                     <option value="Temporary closure">Temporarily pausing my team</option>
@@ -1837,7 +1837,7 @@ export default function SaaSPlansBilling({
                 <div className="flex gap-2 pt-2 border-t font-extrabold uppercase text-[10px]">
                   <button 
                     onClick={() => setShowCancelModal(false)}
-                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-xl text-center cursor-pointer transition-all"
+                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-secondary py-2 rounded-xl text-center cursor-pointer transition-all"
                   >
                     Keep subscription
                   </button>
@@ -1857,7 +1857,7 @@ export default function SaaSPlansBilling({
       {/* --- PRINTABLE VIEW INVOICE DETAILED MODAL --- */}
       {viewingInvoice && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl border print:p-0 print:border-none print:shadow-none">
+          <div className="bg-card rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl border print:p-0 print:border-none print:shadow-none">
             
             {/* Invoice Header details */}
             <div className="flex justify-between items-start border-b pb-4">
@@ -1880,7 +1880,7 @@ export default function SaaSPlansBilling({
               <div className="space-y-1">
                 <span className="text-slate-400 font-bold uppercase tracking-wider text-[8px] block">ISSUER:</span>
                 <strong className="text-indigo-950 font-black block">Real Estate CRM Inc.</strong>
-                <p className="text-slate-500 leading-normal">Cloud Native SaaS Suite Ltd.<br />1 Corporate Boulevard, San Francisco, CA</p>
+                <p className="text-muted leading-normal">Cloud Native SaaS Suite Ltd.<br />1 Corporate Boulevard, San Francisco, CA</p>
               </div>
               <div className="space-y-1 text-right">
                 <span className="text-slate-400 font-bold uppercase tracking-wider text-[8px] block">BILLED TO:</span>
@@ -1890,8 +1890,8 @@ export default function SaaSPlansBilling({
             </div>
 
             {/* Line items dynamic mapping */}
-            <div className="border rounded-xl overflow-hidden text-[11px] font-medium text-slate-700">
-              <div className="bg-slate-50 border-b p-2 px-3 font-semibold text-slate-500 grid grid-cols-4 font-mono text-[9px] uppercase text-center">
+            <div className="border rounded-xl overflow-hidden text-[11px] font-medium text-secondary">
+              <div className="bg-surface border-b p-2 px-3 font-semibold text-muted grid grid-cols-4 font-mono text-[9px] uppercase text-center">
                 <span className="text-left py-0.5">Item Description</span>
                 <span className="py-0.5">Qty</span>
                 <span className="py-0.5">Rate</span>
@@ -1906,11 +1906,11 @@ export default function SaaSPlansBilling({
               <div className="bg-slate-50/50 p-2.5 px-3 select-none text-right text-[10px] space-y-1 border-t">
                 <p className="flex justify-between max-w-[180px] ml-auto">
                   <span className="text-slate-400 font-semibold">Subtotal:</span>
-                  <span className="font-bold text-slate-800">{convertAndFormatPrice(viewingInvoice.amount - viewingInvoice.taxAmount, currency)}</span>
+                  <span className="font-bold text-primary">{convertAndFormatPrice(viewingInvoice.amount - viewingInvoice.taxAmount, currency)}</span>
                 </p>
                 <p className="flex justify-between max-w-[180px] ml-auto text-slate-400">
                   <span>Standard Taxes (8%):</span>
-                  <span className="font-bold text-slate-800">{convertAndFormatPrice(viewingInvoice.taxAmount, currency)}</span>
+                  <span className="font-bold text-primary">{convertAndFormatPrice(viewingInvoice.taxAmount, currency)}</span>
                 </p>
                 <p className="flex justify-between max-w-[180px] ml-auto font-black text-xs text-indigo-950 border-t pt-1 mt-1">
                   <span>Total Settled:</span>
@@ -1923,7 +1923,7 @@ export default function SaaSPlansBilling({
             <div className="flex gap-2 pt-3 border-t print:hidden uppercase text-[10px] font-extrabold">
               <button
                 onClick={() => setViewingInvoice(null)}
-                className="flex-1 bg-slate-550 bg-slate-205 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-xl text-center cursor-pointer"
+                className="flex-1 bg-slate-550 bg-slate-205 bg-slate-100 hover:bg-slate-200 text-secondary py-2 rounded-xl text-center cursor-pointer"
               >
                 Close View
               </button>

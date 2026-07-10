@@ -70,13 +70,13 @@ export default function FollowUpsModule({
     if (targetDate.getTime() < now.getTime()) {
       return { label: 'Overdue Checklist', style: 'text-amber-600 bg-amber-50 border-amber-200' };
     }
-    return { label: 'Scheduled Alert', style: 'text-slate-600 bg-slate-50 border-slate-100' };
+    return { label: 'Scheduled Alert', style: 'text-secondary bg-surface border-default' };
   };
 
   return (
     <div className="space-y-4" id="followups-module">
       {/* Banner */}
-      <div className="bg-white p-4 border border-slate-100 rounded-2xl shadow-xs flex justify-between items-center flex-wrap gap-3">
+      <div className="bg-card p-4 border border-default rounded-2xl shadow-xs flex justify-between items-center flex-wrap gap-3">
         <div>
           <h2 className="text-sm font-extrabold text-slate-800">Touchpoints & Action Calendars</h2>
           <p className="text-[10px] text-slate-400 mt-0.5">Scheduled client engagements</p>
@@ -88,7 +88,7 @@ export default function FollowUpsModule({
             id="fup-status-filter"
             value={filterStatus} 
             onChange={e => setFilterStatus(e.target.value)}
-            className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-slate-700 focus:outline-none"
+            className="bg-surface border border-default px-3 py-1.5 rounded-xl font-bold text-slate-700 focus:outline-none"
           >
             <option value="Pending">Pending Tasks</option>
             <option value="Completed">Processed History</option>
@@ -98,7 +98,7 @@ export default function FollowUpsModule({
             id="fup-type-filter"
             value={filterType} 
             onChange={e => setFilterType(e.target.value)}
-            className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl font-bold text-slate-700 focus:outline-none"
+            className="bg-surface border border-default px-3 py-1.5 rounded-xl font-bold text-slate-700 focus:outline-none"
           >
             <option value="">All Action Types</option>
             <option value="Call">📞 Phone Calls</option>
@@ -120,8 +120,8 @@ export default function FollowUpsModule({
           return (
             <div 
               key={fup.id}
-              className={`bg-white border p-4 rounded-2xl shadow-xs space-y-3.5 transition ${
-                fup.completed ? 'border-emerald-100 bg-emerald-50/10' : 'border-slate-100'
+              className={`bg-card border p-4 rounded-2xl shadow-xs space-y-3.5 transition ${
+                fup.completed ? 'border-emerald-100 bg-emerald-50/10' : 'border-default'
               }`}
             >
               {/* Card Title & Type Icon */}
@@ -130,7 +130,7 @@ export default function FollowUpsModule({
                   <span className={`p-2 rounded-xl text-xs ${
                     fup.type === 'Call' ? 'bg-indigo-50 text-indigo-600' :
                     fup.type === 'WhatsApp' ? 'bg-emerald-50 text-emerald-600' :
-                    fup.type === 'Site Visit' ? 'bg-purple-50 text-purple-600' : 'bg-slate-50 text-slate-600'
+                    fup.type === 'Site Visit' ? 'bg-purple-50 text-purple-600' : 'bg-surface text-secondary'
                   }`}>
                     {fup.type === 'Call' ? <Phone size={14} /> :
                      fup.type === 'WhatsApp' ? <MessageSquare size={14} /> :
@@ -157,7 +157,7 @@ export default function FollowUpsModule({
               </div>
 
               {/* Action specific details */}
-              <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl text-xs text-slate-600 border border-slate-100">
+              <div className="space-y-1 bg-surface p-2.5 rounded-xl text-xs text-secondary border border-default">
                 <div className="flex items-center gap-1">
                   <Clock size={12} className="text-slate-400" />
                   <span>Datetime: <strong>{dateObj.toLocaleDateString()} {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong></span>
@@ -219,7 +219,7 @@ export default function FollowUpsModule({
         })}
 
         {filteredFollowups.length === 0 && (
-          <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+          <div className="col-span-full text-center py-16 bg-card border border-dashed border-default rounded-2xl">
             <Calendar size={40} className="mx-auto text-slate-300 mb-3" />
             <p className="text-sm font-bold text-slate-400">No follow-ups scheduled</p>
             <p className="text-xs text-slate-300 mt-1">Schedule your first follow-up from a lead's detail view</p>

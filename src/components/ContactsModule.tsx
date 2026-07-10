@@ -199,7 +199,7 @@ export default function ContactsModule({
       </div>
 
       {/* SEARCH AND DIRECTORY CARD */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-xs space-y-4">
+      <div className="bg-card border border-default rounded-3xl p-5 shadow-xs space-y-4">
         
         {/* Search controls */}
         <div className="relative">
@@ -209,13 +209,13 @@ export default function ContactsModule({
             placeholder="Search saved contacts by name, telephone or company..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 pl-11 pr-4 py-3 rounded-2xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full bg-surface border border-default pl-11 pr-4 py-3 rounded-2xl text-xs text-primary placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
           <Search size={16} className="absolute left-4 top-3.5 text-slate-450" />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-3 text-xs text-slate-400 hover:text-slate-600"
+              className="absolute right-4 top-3 text-xs text-slate-400 hover:text-secondary"
             >
               Clear
             </button>
@@ -242,7 +242,7 @@ export default function ContactsModule({
             return (
               <div 
                 key={contact.id} 
-                className="p-4 bg-slate-50 hover:bg-white border border-slate-100 hover:border-slate-200 rounded-2xl transition duration-150 flex items-center justify-between gap-3 group relative hover:shadow-md"
+                className="p-4 bg-surface hover:bg-card border border-default hover:border-default rounded-2xl transition duration-150 flex items-center justify-between gap-3 group relative hover:shadow-md"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
                   {/* WhatsApp-Style Left Greenish/Color Circle Avatar */}
@@ -254,7 +254,7 @@ export default function ContactsModule({
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="font-extrabold text-xs text-slate-800 flex items-center gap-1.5 truncate">
+                    <h3 className="font-extrabold text-xs text-primary flex items-center gap-1.5 truncate">
                       {contact.firstName} {contact.lastName}
                       {contact.company && (
                         <span className="font-semibold text-[9px] bg-slate-200/80 text-slate-650 px-1.5 py-0.5 rounded-md truncate">
@@ -274,7 +274,7 @@ export default function ContactsModule({
                     )}
 
                     {contact.notes && (
-                      <p className="text-[10px] text-slate-400 leading-relaxed italic mt-1 line-clamp-1 border-t border-slate-200/50 pt-1 border-dashed">
+                      <p className="text-[10px] text-slate-400 leading-relaxed italic mt-1 line-clamp-1 border-t border-default/50 pt-1 border-dashed">
                         "{contact.notes}"
                       </p>
                     )}
@@ -307,7 +307,7 @@ export default function ContactsModule({
           })}
 
           {filteredContacts.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+            <div className="col-span-full text-center py-16 bg-card border border-dashed border-default rounded-2xl">
               <User size={40} className="mx-auto text-slate-300 mb-3" />
               <p className="text-sm font-bold text-slate-400">No contacts found</p>
               <p className="text-xs text-slate-300 mt-1">Save a new contact to your WhatsApp directory</p>
@@ -322,7 +322,7 @@ export default function ContactsModule({
       {/* WHATSAPP CONTACT SAVING MODAL DIALOG */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/65 z-50 flex items-center justify-center p-4" id="whatsapp-save-overlay">
-          <div className="bg-white text-slate-800 rounded-3xl max-w-md w-full flex flex-col shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-150" id="whatsapp-save-form-card">
+          <div className="bg-card text-primary rounded-3xl max-w-md w-full flex flex-col shadow-2xl overflow-hidden border border-default animate-in fade-in zoom-in duration-150" id="whatsapp-save-form-card">
             
             {/* WhatsApp Green Top Banner Header */}
             <div className="bg-[#008069] text-white px-5 py-4 flex items-center justify-between border-b border-emerald-850">
@@ -349,7 +349,7 @@ export default function ContactsModule({
               <div className="flex flex-col items-center space-y-1.5 py-1">
                 <div className="relative group shrink-0 select-none">
                   {customAvatarUrl ? (
-                    <img src={customAvatarUrl} alt="Contact custom" className="h-16 w-16 rounded-full object-cover border border-slate-200" />
+                    <img src={customAvatarUrl} alt="Contact custom" className="h-16 w-16 rounded-full object-cover border border-default" />
                   ) : (
                     <div className="h-16 w-16 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 group-hover:bg-slate-50 transition">
                       <User size={24} className="text-slate-400 animate-pulse" />
@@ -384,7 +384,7 @@ export default function ContactsModule({
                       required
                       value={firstName}
                       onChange={e => setFirstName(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-250 p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
+                      className="w-full bg-surface border border-default p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
                     />
                   </div>
                   <div className="space-y-1">
@@ -394,7 +394,7 @@ export default function ContactsModule({
                       placeholder="e.g. Sen"
                       value={lastName}
                       onChange={e => setLastName(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-250 p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
+                      className="w-full bg-surface border border-default p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
                     />
                   </div>
                 </div>
@@ -409,7 +409,7 @@ export default function ContactsModule({
                       required
                       value={phone}
                       onChange={e => setPhone(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-250 pl-3 pr-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono font-bold"
+                      className="w-full bg-surface border border-default pl-3 pr-4 py-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono font-bold"
                     />
                   </div>
                 </div>
@@ -419,11 +419,11 @@ export default function ContactsModule({
                   <label className="font-bold text-slate-550 block">Email address</label>
                   <input
                     type="email"
-                    placeholder="e.g. sen@godrej.com"
+placeholder="e.g. sen@godrej.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-250 p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
+                    className="w-full bg-surface border border-default p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
                 </div>
 
                 {/* Organization / Company */}
@@ -436,7 +436,7 @@ export default function ContactsModule({
                     placeholder="e.g. Godrej Properties Developers"
                     value={company}
                     onChange={e => setCompany(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-250 p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
+                    className="w-full bg-surface border border-default p-2.5 rounded-xl placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold"
                   />
                 </div>
 
@@ -450,7 +450,7 @@ export default function ContactsModule({
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
                     rows={2}
-                    className="w-full bg-slate-50 border border-slate-250 p-2.5 rounded-xl resize-none placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full bg-surface border border-default p-2.5 rounded-xl resize-none placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
 
@@ -461,7 +461,7 @@ export default function ContactsModule({
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-center active:scale-98 transition"
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-secondary font-bold py-3 rounded-xl text-center active:scale-98 transition"
                 >
                   Discard
                 </button>
@@ -484,18 +484,18 @@ export default function ContactsModule({
       {/* WhatsApp send modal */}
       {whatsappModal?.open && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4" onClick={() => setWhatsappModal(null)}>
-          <div className="bg-white rounded-2xl p-5 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-black text-slate-800 mb-1">WhatsApp to {whatsappModal.contact.firstName}</h3>
+          <div className="bg-card rounded-2xl p-5 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-black text-primary mb-1">WhatsApp to {whatsappModal.contact.firstName}</h3>
             <p className="text-[10px] text-slate-500 mb-3">{whatsappModal.contact.phone}</p>
             <textarea
               value={whatsappModal.message}
               onChange={e => setWhatsappModal(prev => prev ? { ...prev, message: e.target.value } : null)}
               rows={3}
-              className="w-full border border-slate-200 rounded-xl p-3 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-emerald-400"
+              className="w-full border border-default rounded-xl p-3 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-emerald-400"
               placeholder="Type your message..."
             />
             <div className="flex gap-2 mt-3">
-              <button onClick={() => setWhatsappModal(null)} className="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl text-xs cursor-pointer">Cancel</button>
+              <button onClick={() => setWhatsappModal(null)} className="flex-1 bg-slate-100 text-secondary font-bold py-2.5 rounded-xl text-xs cursor-pointer">Cancel</button>
               <button onClick={sendWhatsAppMessage} disabled={whatsappModal.sending} className="flex-1 bg-emerald-600 text-white font-black py-2.5 rounded-xl text-xs cursor-pointer disabled:opacity-50">
                 {whatsappModal.sending ? 'Sending...' : 'Send via WhatsApp'}
               </button>

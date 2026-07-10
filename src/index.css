@@ -23,6 +23,9 @@
   --border-light: #141f36;
   --color-accent: #3B82F6;
   --color-accent-light: #60A5FA;
+  --color-gold: #F59E0B;
+  --color-gold-light: #FBBF24;
+  --color-gold-dark: #D97706;
   --color-emerald: #10B981;
   --color-emerald-dark: #059669;
 }
@@ -39,6 +42,9 @@
   --border-light: #F1F5F9;
   --color-accent: #3B82F6;
   --color-accent-light: #60A5FA;
+  --color-gold: #F59E0B;
+  --color-gold-light: #FBBF24;
+  --color-gold-dark: #D97706;
   --color-emerald: #10B981;
   --color-emerald-dark: #059669;
 }
@@ -213,3 +219,13 @@ button, a, [role="button"] {
   min-height: 44px;
   min-width: 44px;
 }
+
+/* Navy theme utility classes */
+.bg-card { background: var(--bg-card); }
+.bg-surface { background: var(--bg-surface); }
+.bg-surface-alt { background: var(--bg-surface-alt); }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.border-default { border-color: var(--border-color); }
+.border-light { border-color: var(--border-light); }

@@ -266,12 +266,12 @@ export default function LeadsModule({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-full" id="leads-module-container">
       {/* 1. Left Leads Listing Panel */}
-      <div className={`lg:col-span-4 bg-white rounded-2xl border border-slate-100 flex flex-col h-[calc(100vh-140px)] ${selectedLeadId ? 'hidden lg:flex' : 'flex'}`}>
+      <div className={`lg:col-span-4 bg-card rounded-2xl border border-default flex flex-col h-[calc(100vh-140px)] ${selectedLeadId ? 'hidden lg:flex' : 'flex'}`}>
         {/* Panel Header */}
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+        <div className="p-4 border-b border-default flex justify-between items-center bg-surface rounded-t-2xl">
           <div>
-            <h2 className="text-sm font-bold text-slate-800">Counseled Leads ({filteredLeads.length})</h2>
-            <p className="text-[10px] text-slate-500 mt-0.5">Round-robin live allocation</p>
+            <h2 className="text-sm font-bold text-primary">Counseled Leads ({filteredLeads.length})</h2>
+            <p className="text-[10px] text-muted mt-0.5">Round-robin live allocation</p>
           </div>
           <button 
             id="add-lead-top-btn"
@@ -284,20 +284,20 @@ export default function LeadsModule({
         </div>
 
         {/* Search & Mini Filters Bar */}
-        <div className="p-3 border-b border-slate-100 space-y-2">
+        <div className="p-3 border-b border-default space-y-2">
           {/* Search box */}
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
+            <Search className="absolute left-3 top-2.5 text-muted" size={14} />
             <input 
               id="lead-search-input"
               type="text"
               placeholder="Search by name, phone sector..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 pl-8 pr-3 py-2 rounded-xl text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
+              className="w-full bg-surface border border-default pl-8 pr-3 py-2 rounded-xl text-xs text-secondary placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-slate-300"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-muted hover:text-secondary">
                 <X size={12} />
               </button>
             )}
@@ -310,7 +310,7 @@ export default function LeadsModule({
               id="filter-status-select"
               value={statusFilter} 
               onChange={e => setStatusFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-[10px] text-slate-600 font-semibold focus:outline-none"
+              className="bg-surface border border-default px-2.5 py-1.5 rounded-lg text-[10px] text-secondary font-semibold focus:outline-none"
             >
               <option value="">All Statuses</option>
               <option value="New">New</option>
@@ -328,7 +328,7 @@ export default function LeadsModule({
               id="filter-temp-select"
               value={tempFilter} 
               onChange={e => setTempFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-[10px] text-slate-600 font-semibold focus:outline-none"
+              className="bg-surface border border-default px-2.5 py-1.5 rounded-lg text-[10px] text-secondary font-semibold focus:outline-none"
             >
               <option value="">All Temps</option>
               <option value="Hot">🔥 Hot</option>
@@ -341,7 +341,7 @@ export default function LeadsModule({
               id="filter-source-select"
               value={sourceFilter} 
               onChange={e => setSourceFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-[10px] text-slate-600 font-semibold focus:outline-none"
+              className="bg-surface border border-default px-2.5 py-1.5 rounded-lg text-[10px] text-secondary font-semibold focus:outline-none"
             >
               <option value="">All Sources</option>
               <option value="36 Acre">36 Acre</option>
@@ -379,7 +379,7 @@ export default function LeadsModule({
                         <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" title="Hot temperature Lead" />
                       )}
                     </h3>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{lead.preferredLocation}</p>
+                    <p className="text-[10px] text-muted mt-0.5">{lead.preferredLocation}</p>
                   </div>
                   
                   {/* Status Badge */}
@@ -387,14 +387,14 @@ export default function LeadsModule({
                     lead.status === 'New' ? 'bg-emerald-100 text-emerald-800' :
                     lead.status === 'Won' ? 'bg-green-100 text-green-900 border border-green-200' :
                     lead.status === 'Lost' ? 'bg-rose-100 text-rose-800' :
-                    lead.status === 'Negotiation' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-800'
+                    lead.status === 'Negotiation' ? 'bg-purple-100 text-purple-800' : 'bg-surface text-primary'
                   }`}>
                     {lead.status}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center text-[10px] text-slate-500 mt-0.5">
-                  <span className="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-600">
+                <div className="flex justify-between items-center text-[10px] text-muted mt-0.5">
+                  <span className="bg-surface px-2 py-0.5 rounded-md font-medium text-secondary">
                     {lead.source}
                   </span>
                   <span className="text-[9px]">
@@ -403,7 +403,7 @@ export default function LeadsModule({
                 </div>
 
                 {/* Agent Assignment bottom preview */}
-                <div className="flex justify-between items-center border-t border-slate-50 pt-2 text-[9px] text-slate-400">
+                <div className="flex justify-between items-center border-t border-slate-50 pt-2 text-[9px] text-muted">
                   <span>Owner: {agent ? agent.name : 'Unallocated'}</span>
                   <span>{new Date(lead.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                 </div>
@@ -412,9 +412,9 @@ export default function LeadsModule({
           })}
 
           {filteredLeads.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+            <div className="col-span-full text-center py-16 bg-card border border-dashed border-default rounded-2xl">
               <Users size={40} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-sm font-bold text-slate-400">No leads found</p>
+              <p className="text-sm font-bold text-muted">No leads found</p>
               <p className="text-xs text-slate-300 mt-1">Try changing your filters or add a new lead</p>
               <button onClick={onOpenAddLead} className="mt-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer inline-flex items-center gap-1.5">
                 <Plus size={14} /> Add Lead
@@ -425,11 +425,11 @@ export default function LeadsModule({
       </div>
 
       {/* 2. Right Actions & Lead Details Detail View Panel */}
-      <div className={`lg:col-span-8 flex flex-col h-[calc(100vh-140px)] bg-slate-50 rounded-2xl overflow-hidden ${selectedLeadId ? 'flex' : 'hidden lg:flex justify-center items-center bg-slate-50/50 border border-dashed border-slate-200'}`}>
+      <div className={`lg:col-span-8 flex flex-col h-[calc(100vh-140px)] bg-surface rounded-2xl overflow-hidden ${selectedLeadId ? 'flex' : 'hidden lg:flex justify-center items-center bg-slate-50/50 border border-dashed border-default'}`}>
         {activeLead ? (
-          <div className="flex-1 flex flex-col h-full bg-white border border-slate-100 rounded-2xl shadow-xs overflow-y-auto" id="lead-details-card">
+          <div className="flex-1 flex flex-col h-full bg-card border border-default rounded-2xl shadow-xs overflow-y-auto" id="lead-details-card">
             {/* Lead Card Header Panel */}
-            <div className="p-4 border-b border-slate-100 bg-slate-900 text-white flex justify-between items-center">
+            <div className="p-4 border-b border-default bg-slate-900 text-white flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setSelectedLeadId(null)}
@@ -474,15 +474,15 @@ export default function LeadsModule({
             </div>
 
             {/* Quick configuration settings and Details Row */}
-            <div className="p-4 bg-slate-50 border-b border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="p-4 bg-surface border-b border-default grid grid-cols-1 md:grid-cols-3 gap-3">
               {/* Status Update Trigger */}
               <div className="space-y-1">
-                <label className="text-[10px] text-slate-400 font-extrabold uppercase">Lead Progress Status</label>
+                <label className="text-[10px] text-muted font-extrabold uppercase">Lead Progress Status</label>
                 <select 
                   id="lead-details-status-select"
                   value={activeLead.status} 
                   onChange={e => onUpdateLead(activeLead.id, { status: e.target.value as LeadStatus })}
-                  className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-bold text-slate-700"
+                  className="w-full bg-card border border-default rounded-lg p-2 text-xs font-bold text-secondary"
                 >
                   <option value="New">New</option>
                   <option value="Contacted">Contacted</option>
@@ -497,12 +497,12 @@ export default function LeadsModule({
 
               {/* Agent Assign Reallocation */}
               <div className="space-y-1">
-                <label className="text-[10px] text-slate-400 font-extrabold uppercase">Assigned Counselor</label>
+                <label className="text-[10px] text-muted font-extrabold uppercase">Assigned Counselor</label>
                 <select 
                   id="lead-details-agent-select"
                   value={activeLead.assignedAgentId} 
                   onChange={e => onUpdateLead(activeLead.id, { assignedAgentId: e.target.value })}
-                  className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-bold text-slate-700"
+                  className="w-full bg-card border border-default rounded-lg p-2 text-xs font-bold text-secondary"
                 >
                   {users.filter(u => u.role === 'Sales Agent' || u.role === 'Admin / Business Owner').map(u => (
                     <option key={u.id} value={u.id}>{u.name} ({u.role.split(' ')[0]})</option>
@@ -512,12 +512,12 @@ export default function LeadsModule({
 
               {/* Temperature Selector */}
               <div className="space-y-1">
-                <label className="text-[10px] text-slate-400 font-extrabold uppercase">Lead Temperature</label>
+                <label className="text-[10px] text-muted font-extrabold uppercase">Lead Temperature</label>
                 <select 
                   id="lead-details-temp-select"
                   value={activeLead.temperature} 
                   onChange={e => onUpdateLead(activeLead.id, { temperature: e.target.value as LeadTemperature })}
-                  className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-bold text-slate-700"
+                  className="w-full bg-card border border-default rounded-lg p-2 text-xs font-bold text-secondary"
                 >
                   <option value="Hot">🔥 Hot conversion priority</option>
                   <option value="Warm">⚡ Warm option active</option>
@@ -529,37 +529,37 @@ export default function LeadsModule({
             {/* Core Action Workspace Tab Sheets */}
             <div className="p-4 flex-1 space-y-6">
               {/* Profile Meta Cards */}
-              <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-600">
+              <div className="bg-surface rounded-xl p-3.5 border border-default flex flex-wrap gap-x-6 gap-y-2 text-xs text-secondary">
                 <div className="flex items-center gap-1.5 min-w-[150px]">
-                  <Phone size={13} className="text-slate-400" />
+                  <Phone size={13} className="text-muted" />
                   <span>Phone: <strong>{activeLead.phone}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5 min-w-[200px]">
-                  <Mail size={13} className="text-slate-400" />
+                  <Mail size={13} className="text-muted" />
                   <span>Email: <strong>{activeLead.email || 'None added'}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <MapPin size={13} className="text-slate-400" />
+                  <MapPin size={13} className="text-muted" />
                   <span>Sector target: <strong>{activeLead.preferredLocation}</strong></span>
                 </div>
               </div>
 
               {/* 1. Send Property brochure one-click dispatch panel */}
               <div className="space-y-3">
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
                   <Share2 size={14} className="text-indigo-500" />
                   Instant Property Sharing & Recommendations
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3" id="recommended-properties-grid">
                   {recommendedProperties.slice(0, 2).map(prop => (
-                    <div key={prop.id} className="border border-slate-100 rounded-xl p-3.5 space-y-3.5 bg-slate-50 hover:border-indigo-100 hover:bg-indigo-50/20 transition">
+                    <div key={prop.id} className="border border-default rounded-xl p-3.5 space-y-3.5 bg-surface hover:border-indigo-100 hover:bg-indigo-50/20 transition">
                       <div className="space-y-1">
                         <span className="text-[10px] bg-slate-200 font-extrabold px-1.5 py-0.5 rounded">
                           {getLocalizedPropertyType(prop.propertyType, propScheme, lang)}
                         </span>
-                        <h4 className="text-xs font-bold text-slate-800">{prop.title}</h4>
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1">
+                        <h4 className="text-xs font-bold text-primary">{prop.title}</h4>
+                        <p className="text-[10px] text-muted flex items-center gap-1">
                           <MapPin size={10} /> {prop.location} • <strong>{formatCurrency(prop.price, currency, currency === 'PKR' || lang === 'ur' ? 'regional' : 'standard')}</strong>
                         </p>
                       </div>
@@ -580,7 +580,7 @@ export default function LeadsModule({
                             onShareProperty(activeLead.id, prop.id, 'Email');
                             alert('Success: Dispatched HTML marketing mail package.');
                           }}
-                          className="flex-1 bg-slate-900 border border-slate-200 text-white text-[10px] font-bold py-1.5 px-2 rounded-lg transition"
+                          className="flex-1 bg-slate-900 border border-default text-white text-[10px] font-bold py-1.5 px-2 rounded-lg transition"
                         >
                           Send Email
                         </button>
@@ -591,7 +591,7 @@ export default function LeadsModule({
                   {recommendedProperties.length === 0 && (
                     <div className="col-span-2 py-8 text-center">
                       <Building2 size={28} className="mx-auto text-slate-300 mb-2" />
-                      <p className="text-xs text-slate-400 font-medium">No matching properties to recommend</p>
+                      <p className="text-xs text-muted font-medium">No matching properties to recommend</p>
                     </div>
                   )}
                 </div>
@@ -604,7 +604,7 @@ export default function LeadsModule({
                     <Sparkles size={14} className="text-emerald-400 animate-pulse" />
                     AI Followup Assistant (Gemini)
                   </h3>
-                  <span className="text-[9px] uppercase tracking-widest text-slate-400 font-semibold">
+                  <span className="text-[9px] uppercase tracking-widest text-muted font-semibold">
                     Server Side Grounded
                   </span>
                 </div>
@@ -621,7 +621,7 @@ export default function LeadsModule({
                       value={aiDraftPrompt}
                       onChange={e => setAiDraftPrompt(e.target.value)}
                       placeholder="e.g. Schedule a Marbella villa walkthrough..."
-                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none"
+                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-muted focus:outline-none"
                     />
                     <button 
                       id="draft-ai-message-btn"
@@ -676,9 +676,9 @@ export default function LeadsModule({
 
               {/* 3. Manual timeline additions & action logs list */}
               <div className="space-y-4">
-                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <Clock size={14} className="text-slate-500" />
+                <div className="flex justify-between items-center border-b border-default pb-2">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                    <Clock size={14} className="text-muted" />
                     Timeline & History Log
                   </h3>
                   <button 
@@ -697,7 +697,7 @@ export default function LeadsModule({
                     placeholder="Type counselor note to add to patient sheet..."
                     value={newNote}
                     onChange={e => setNewNote(e.target.value)}
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none placeholder:text-slate-400"
+                    className="flex-1 bg-surface border border-default rounded-xl px-3 py-2 text-xs text-secondary focus:outline-none placeholder:text-muted"
                   />
                   <button 
                     id="add-note-submit-btn"
@@ -709,23 +709,23 @@ export default function LeadsModule({
                 </form>
 
                 {/* Timeline items list */}
-                <div className="relative pl-3 border-l border-slate-100 space-y-3.5 mt-2">
+                <div className="relative pl-3 border-l border-default space-y-3.5 mt-2">
                   {timeline.map((act) => (
                     <div key={act.id} className="relative text-xs">
                       {/* marker dot icon */}
                       <span className="absolute -left-[17px] top-1 w-2.5 h-2.5 rounded-full border border-white bg-slate-400" />
                       <div className="flex justify-between items-start text-xs">
-                        <span className="font-bold text-slate-800 leading-tight block">{act.title}</span>
-                        <span className="text-[9px] text-slate-400">{new Date(act.timestamp).toLocaleDateString()}</span>
+                        <span className="font-bold text-primary leading-tight block">{act.title}</span>
+                        <span className="text-[9px] text-muted">{new Date(act.timestamp).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-slate-500 mt-1 max-w-xl">{act.description}</p>
+                      <p className="text-muted mt-1 max-w-xl">{act.description}</p>
                     </div>
                   ))}
 
                   {timeline.length === 0 && (
                     <div className="text-center py-8">
                       <Clock size={28} className="mx-auto text-slate-300 mb-2" />
-                      <p className="text-xs text-slate-400 font-medium">No activity recorded yet</p>
+                      <p className="text-xs text-muted font-medium">No activity recorded yet</p>
                       <p className="text-[10px] text-slate-300 mt-0.5">Add a note or make a call to start the timeline</p>
                     </div>
                   )}
@@ -734,11 +734,11 @@ export default function LeadsModule({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-4">
-            <User size={48} className="text-slate-200 border-2 border-dashed border-slate-200 p-2.5 rounded-full" />
+          <div className="flex flex-col items-center justify-center py-20 text-muted space-y-4">
+            <User size={48} className="text-slate-200 border-2 border-dashed border-default p-2.5 rounded-full" />
             <div className="text-center">
-              <h3 className="text-slate-700 font-bold text-sm">Select Counseling Candidate Sheet</h3>
-              <p className="text-[11px] text-slate-400 mt-1 max-w-xs px-4">Choose a client from the left-hand panel list or trigger webhook logs to evaluate round robin auto-routing.</p>
+              <h3 className="text-secondary font-bold text-sm">Select Counseling Candidate Sheet</h3>
+              <p className="text-[11px] text-muted mt-1 max-w-xs px-4">Choose a client from the left-hand panel list or trigger webhook logs to evaluate round robin auto-routing.</p>
               <button 
                 onClick={onOpenAddLead} 
                 className="mt-4 bg-slate-900 text-white text-xs font-bold py-1.5 px-3 rounded-lg"
@@ -760,7 +760,7 @@ export default function LeadsModule({
 
             <div className="space-y-1">
               <h3 className="font-bold text-sm text-slate-100">Twilio Bridge Connect</h3>
-              <p className="text-xs text-slate-400">Step sequence tracker (Dry-run mode)</p>
+              <p className="text-xs text-muted">Step sequence tracker (Dry-run mode)</p>
             </div>
 
             {/* Simulated Sequence track */}
@@ -768,19 +768,19 @@ export default function LeadsModule({
               {callSession.step === 'ring_agent' && (
                 <div className="space-y-1.5">
                   <p className="text-amber-400 font-bold animate-pulse">Dialing Sales agent first...</p>
-                  <p className="text-[10px] text-slate-400">Target phone: +91 99999-00003</p>
+                  <p className="text-[10px] text-muted">Target phone: +91 99999-00003</p>
                 </div>
               )}
               {callSession.step === 'connected_agent' && (
                 <div className="space-y-1.5">
                   <p className="text-emerald-400 font-bold">✔ Counselor Arjun Kumar Connected</p>
-                  <p className="text-[10px] text-slate-400">“New 36 Acre property lead. Press any key to bind connection with Zain Malik.”</p>
+                  <p className="text-[10px] text-muted">“New 36 Acre property lead. Press any key to bind connection with Zain Malik.”</p>
                 </div>
               )}
               {callSession.step === 'dial_client' && (
                 <div className="space-y-1.5">
                   <p className="text-indigo-400 font-bold animate-pulse">Arjun accepted. Dialing client Zain Malik...</p>
-                  <p className="text-[10px] text-slate-400">Target routing: +92 300 1234567</p>
+                  <p className="text-[10px] text-muted">Target routing: +92 300 1234567</p>
                 </div>
               )}
               {callSession.step === 'active_bridge' && (
@@ -792,7 +792,7 @@ export default function LeadsModule({
               )}
               {callSession.step === 'ended' && (
                 <div className="space-y-1">
-                  <p className="text-slate-400 font-bold">Bridge terminated or saved.</p>
+                  <p className="text-muted font-bold">Bridge terminated or saved.</p>
                   <p className="text-[10px] text-xs text-emerald-400 font-semibold mt-1">Status logged: Spoke to client successfully.</p>
                 </div>
               )}
@@ -823,22 +823,22 @@ export default function LeadsModule({
       {/* SCHEDULE FOLLOWUP MODAL */}
       {showFollowupModal && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-xl border border-slate-100" id="followup-scheduler-modal">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-              <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wider">Schedule Lead Action Checklist</h3>
-              <button onClick={() => setShowFollowupModal(false)} className="text-slate-400 hover:text-slate-600">
+          <div className="bg-card rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-xl border border-default" id="followup-scheduler-modal">
+            <div className="flex justify-between items-center border-b border-default pb-2">
+              <h3 className="font-bold text-xs text-primary uppercase tracking-wider">Schedule Lead Action Checklist</h3>
+              <button onClick={() => setShowFollowupModal(false)} className="text-muted hover:text-secondary">
                 <X size={16} />
               </button>
             </div>
 
             <div className="space-y-3.5 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Action Type</label>
+                <label className="font-bold text-secondary">Action Type</label>
                 <select 
                   id="followup-type-select"
                   value={followupType} 
                   onChange={e => setFollowupType(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs"
+                  className="w-full bg-surface border border-default rounded-lg p-2 text-xs"
                 >
                   <option value="Call">Call Back Reminder</option>
                   <option value="WhatsApp">WhatsApp Touchpoint</option>
@@ -849,25 +849,25 @@ export default function LeadsModule({
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Target Date & Time</label>
+                <label className="font-bold text-secondary">Target Date & Time</label>
                 <input 
                   id="followup-time-input"
                   type="datetime-local" 
                   value={followupDatetime}
                   onChange={e => setFollowupDatetime(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs"
+                  className="w-full bg-surface border border-default rounded-lg p-2 text-xs"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">Specific Guidelines Note</label>
+                <label className="font-bold text-secondary">Specific Guidelines Note</label>
                 <textarea 
                   id="followup-notes-input"
                   value={followupNotes}
                   onChange={e => setFollowupNotes(e.target.value)}
                   placeholder="Need to review floor registry authorization..."
                   rows={2}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"
+                  className="w-full bg-surface border border-default rounded-lg p-2 text-xs focus:outline-none"
                 />
               </div>
             </div>

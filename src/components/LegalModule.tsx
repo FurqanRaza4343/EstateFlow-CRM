@@ -70,7 +70,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
     >
       {/* Container Card */}
       <div 
-        className="bg-white rounded-3xl w-full max-w-2xl h-[85dvh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-slideUp relative" 
+        className="bg-card rounded-3xl w-full max-w-2xl h-[85dvh] flex flex-col shadow-2xl border border-default overflow-hidden animate-slideUp relative" 
         id="legal-modal-container"
         onClick={(e) => e.stopPropagation()}
       >
@@ -100,13 +100,13 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
         </header>
 
         {/* Tab Switcher */}
-        <div className="bg-slate-50 border-b border-slate-150 p-2 flex shrink-0 select-none" id="legal-tabs-wrapper">
+        <div className="bg-surface border-b border-default p-2 flex shrink-0 select-none" id="legal-tabs-wrapper">
           <button
             onClick={() => setActiveTab('privacy')}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'privacy' 
                 ? 'bg-slate-900 text-white shadow-sm' 
-                : 'text-slate-600 hover:bg-slate-200/50 active:bg-slate-200'
+                : 'text-secondary hover:bg-slate-200/50 active:bg-slate-200'
             }`}
             aria-selected={activeTab === 'privacy'}
             role="tab"
@@ -121,7 +121,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'terms' 
                 ? 'bg-slate-900 text-white shadow-sm' 
-                : 'text-slate-600 hover:bg-slate-200/50 active:bg-slate-200'
+                : 'text-secondary hover:bg-slate-200/50 active:bg-slate-200'
             }`}
             aria-selected={activeTab === 'terms'}
             role="tab"
@@ -144,7 +144,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
                 <Lock className="text-indigo-600 shrink-0 mt-0.5" size={18} />
                 <div>
                   <h3 className="font-extrabold text-xs text-indigo-900">Your Data Security is Our Absolute Priority</h3>
-                  <p className="text-[11px] text-slate-600 mt-1">
+                  <p className="text-[11px] text-secondary mt-1">
                     At **Estate Flow CRM**, we protect administrative listings and customer interactions using advanced cryptographic measures. This document outlines how we collect, process, and safeguard your data.
                   </p>
                 </div>
@@ -153,11 +153,11 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 1. Data Collection List */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <Database size={15} className="text-slate-600" />
+                  <Database size={15} className="text-secondary" />
                   1. Information We Collect
                 </h3>
                 <p>We only ingest data essential to delivering high-efficiency real-estate workflows and communication tools. This is limited to:</p>
-                <ul className="list-disc pl-4 space-y-2 text-[11px] text-slate-600">
+                <ul className="list-disc pl-4 space-y-2 text-[11px] text-secondary">
                   <li>
                     <strong className="text-slate-800">Account Credentials:</strong> Full name, verified business email, telephone numbers, and secure passwords.
                   </li>
@@ -179,24 +179,24 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 2. Purpose of Collection */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <FileText size={15} className="text-slate-600" />
+                  <FileText size={15} className="text-secondary" />
                   2. Purpose & Use of Collected Information
                 </h3>
                 <p>All data acquired is utilized strictly for executing core business logistics. We process data to:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <div className="bg-surface p-3 rounded-xl border border-default">
                     <span className="font-bold text-slate-800 block text-[11px] mb-0.5">Optimize CRM Flows</span>
                     <span className="text-[10px] text-slate-500 block">Deliver intelligent sorting of hot leads, fast calendar events tracking, and agent location stats.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <div className="bg-surface p-3 rounded-xl border border-default">
                     <span className="font-bold text-slate-800 block text-[11px] mb-0.5">Maintain Call Logs</span>
                     <span className="text-[10px] text-slate-500 block">Provide quick-dial verification metrics and instant Twilio outbound dispatch queues.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <div className="bg-surface p-3 rounded-xl border border-default">
                     <span className="font-bold text-slate-800 block text-[11px] mb-0.5">Enable Custom Branding</span>
                     <span className="text-[10px] text-slate-500 block">Provide white-label agency panels matching applied corporate background swatches and banners.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <div className="bg-surface p-3 rounded-xl border border-default">
                     <span className="font-bold text-slate-800 block text-[11px] mb-0.5">Prevent System Exploits</span>
                     <span className="text-[10px] text-slate-500 block">Enforce standard seat limits, API utilization thresholds, and detect payment delinquencies.</span>
                   </div>
@@ -206,19 +206,19 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 3. Third-Party Disclosures */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <CreditCard size={15} className="text-slate-600" />
+                  <CreditCard size={15} className="text-secondary" />
                   3. Critical Third-Party Integrations & Datastores
                 </h3>
                 <p>We do not lease or sell agency customer listings. Information is shared strictly with secure service-level operators to facilitate the platform:</p>
                 <div className="space-y-2">
-                  <div className="flex gap-2 p-2 bg-slate-50 rounded-xl border border-slate-150">
+                  <div className="flex gap-2 p-2 bg-surface rounded-xl border border-default">
                     <span className="text-xs font-bold py-1 px-2.5 bg-blue-100 text-blue-800 rounded-lg h-fit">Firebase</span>
                     <p className="text-[10px] text-slate-650 pt-0.5">
                       All structured records, activities timeline, notifications and leads are stored using secured cloud instances of <strong className="text-slate-800">Google Firestore</strong> databases. Backups are encrypted at-rest.
                     </p>
                   </div>
                   
-                  <div className="flex gap-2 p-2 bg-slate-50 rounded-xl border border-slate-150">
+                  <div className="flex gap-2 p-2 bg-surface rounded-xl border border-default">
                     <span className="text-xs font-bold py-1 px-3 bg-purple-100 text-purple-800 rounded-lg h-fit">Stripe</span>
                     <p className="text-[10px] text-slate-650 pt-0.5">
                       SaaS billing subscriptions, invoices, card inputs, and tier upgrades are transmitted directly over HTTPS to <strong className="text-slate-800">Stripe Payments</strong>. No payment keys or CVV info is held locally.
@@ -230,7 +230,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 4. User Rights */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <UserCheck size={15} className="text-slate-600" />
+                  <UserCheck size={15} className="text-secondary" />
                   4. Your Clear Legal Rights & Purging Rules
                 </h3>
                 <p>We guarantee full sovereign rights over your real estate business records. At any point, users can:</p>
@@ -263,7 +263,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
                 <AlertOctagon className="text-amber-600 shrink-0 mt-0.5" size={18} />
                 <div>
                   <h3 className="font-extrabold text-xs text-amber-900">Important Advisory Notice</h3>
-                  <p className="text-[11px] text-slate-600 mt-1">
+                  <p className="text-[11px] text-secondary mt-1">
                     By creating an active seat, registering listings, or applying styling parameters on this portal (collectively the "Service"), you agree to these legal Terms of Service in full.
                   </p>
                 </div>
@@ -272,13 +272,13 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 1. Liability Disclaimer */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <AlertOctagon size={15} className="text-slate-600" />
+                  <AlertOctagon size={15} className="text-secondary" />
                   1. absolute Liability Disclaimers ("As-Is" Standard)
                 </h3>
                 <p className="text-slate-705 leading-relaxed font-medium">
                   The Service is provided under industry benchmark <strong className="text-slate-900">"AS-IS" and "AS-AVAILABLE"</strong> models. Estate Flow CRM explicitly, and to the maximum extent permitted by applicable law, declares that:
                 </p>
-                <div className="bg-slate-50 border-l-4 border-slate-600 p-3 rounded-r-xl space-y-1.5 font-mono text-[10px] text-slate-500">
+                <div className="bg-surface border-l-4 border-slate-600 p-3 rounded-r-xl space-y-1.5 font-mono text-[10px] text-slate-500">
                   <p>• OPERATORS ARE NOT liable for lost real-estate agency sales commissions, dropped hot leads, or buyer negotiation failures resulting from software downtime.</p>
                   <p>• TELECOM & outbound call dispatch logs rely on Twilio gateways; call performance delays do not form ground for service-level penalty claims.</p>
                   <p>• REAL ESTATE valuation approximations or catalog analytics calculations do not represent binding investment certifications.</p>
@@ -288,11 +288,11 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 2. Account Termination Rules */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <X size={15} className="text-slate-600" />
+                  <X size={15} className="text-secondary" />
                   2. Account Terminations & Deactivation Clauses
                 </h3>
                 <p>We respect the independence of real estate agency networks but require adherence to compliance parameters. These include:</p>
-                <ul className="list-disc pl-4 space-y-2 text-[11px] text-slate-600 text-left">
+                <ul className="list-disc pl-4 space-y-2 text-[11px] text-secondary text-left">
                   <li>
                     <strong className="text-slate-800">Voluntary Exit:</strong> Agencies can cancel their SaaS billing renewals instantly through the Billing Console. System access continues cleanly until the active invoice period ends.
                   </li>
@@ -310,7 +310,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
               {/* 3. User Content Ownership */}
               <section className="space-y-2.5">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b pb-1.5">
-                  <UserCheck size={15} className="text-slate-600" />
+                  <UserCheck size={15} className="text-secondary" />
                   3. 100% User Database Ownership & Listing Assets
                 </h3>
                 <p className="leading-relaxed">
@@ -331,7 +331,7 @@ export default function LegalModule({ isOpen, onClose, defaultTab = 'privacy' }:
         </div>
 
         {/* Footer actions for compliance confirmation */}
-        <footer className="p-4 bg-slate-50 border-t border-slate-150 flex items-center justify-between shrink-0 select-none">
+        <footer className="p-4 bg-surface border-t border-default flex items-center justify-between shrink-0 select-none">
           <div className="text-[10px] text-slate-400 font-medium">
             🔒 Fully encrypted B2B portal compliance
           </div>

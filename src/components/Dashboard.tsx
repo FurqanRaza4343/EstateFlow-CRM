@@ -146,7 +146,7 @@ export default function Dashboard({
           tabIndex={0}
           role="button"
           aria-label={`View ${stats.newLeadsToday} new leads registered today`}
-          className="bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="bg-card p-4 rounded-2xl border border-default hover:border-default hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <div className="flex justify-between items-start">
             <span className="text-slate-650 text-slate-600 text-xs font-bold">{t('dash.leadsToday', lang)}</span>
@@ -171,7 +171,7 @@ export default function Dashboard({
           tabIndex={0}
           role="button"
           aria-label={`View ${stats.followupsDueToday} followups due today`}
-          className="bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="bg-card p-4 rounded-2xl border border-default hover:border-default hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <div className="flex justify-between items-start">
             <span className="text-slate-650 text-slate-600 text-xs font-bold">{t('dash.followupsDue', lang)}</span>
@@ -196,7 +196,7 @@ export default function Dashboard({
           tabIndex={0}
           role="button"
           aria-label={`View ${stats.hotLeadsCount} hot high temperature leads`}
-          className="bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="bg-card p-4 rounded-2xl border border-default hover:border-default hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <div className="flex justify-between items-start">
             <span className="text-slate-650 text-slate-600 text-xs font-bold">{t('dash.hotLeads', lang)}</span>
@@ -221,7 +221,7 @@ export default function Dashboard({
           tabIndex={0}
           role="button"
           aria-label={`View ${stats.presentAgentsCount} active staff members in the field`}
-          className="bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="bg-card p-4 rounded-2xl border border-default hover:border-default hover:shadow-md transition cursor-pointer flex flex-col justify-between shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <div className="flex justify-between items-start">
             <span className="text-slate-650 text-slate-600 text-xs font-bold">{t('dash.activeAgents', lang)}</span>
@@ -239,7 +239,7 @@ export default function Dashboard({
       {/* Secondary Quick Overview Bento bar */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Quick Inventory & Visits */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-4">
+        <div className="bg-card p-4 rounded-2xl border border-default shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-1.5 select-none">
             <Home size={16} className="text-indigo-500" aria-hidden="true" />
             Active Properties Summary
@@ -256,7 +256,7 @@ export default function Dashboard({
               tabIndex={0}
               role="button"
               aria-label={`View available property inventory: ${stats.availableInventoryCount} available`}
-              className="bg-slate-50 hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-[0.98] p-4 rounded-xl text-center cursor-pointer transition-all duration-150 border border-transparent active:border-slate-300 flex flex-col justify-between h-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-surface hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-[0.98] p-4 rounded-xl text-center cursor-pointer transition-all duration-150 border border-transparent active:border-default flex flex-col justify-between h-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
               style={{ touchAction: 'manipulation' }}
             >
               <span className="text-xs text-slate-600 block font-bold">Available Inventory</span>
@@ -277,7 +277,7 @@ export default function Dashboard({
               tabIndex={0}
               role="button"
               aria-label={`View scheduled site visits: ${stats.siteVisitsScheduledCount} scheduled`}
-              className="bg-slate-50 hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-[0.98] p-4 rounded-xl text-center cursor-pointer transition-all duration-150 border border-transparent active:border-slate-300 flex flex-col justify-between h-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-surface hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-[0.98] p-4 rounded-xl text-center cursor-pointer transition-all duration-150 border border-transparent active:border-default flex flex-col justify-between h-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
               style={{ touchAction: 'manipulation' }}
             >
               <span className="text-xs text-slate-600 block font-bold">Site Visits Scheduled</span>
@@ -290,7 +290,7 @@ export default function Dashboard({
         </div>
 
         {/* Hot Leads Mini Strip List */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-3">
+        <div className="bg-card p-4 rounded-2xl border border-default shadow-xs space-y-3">
           <div className="flex justify-between items-center select-none">
             <h2 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
               <Sparkles size={16} className="text-amber-500" aria-hidden="true" />
@@ -298,7 +298,7 @@ export default function Dashboard({
             </h2>
             <button 
               onClick={() => onNavigate('leads', 'Hot')}
-              className="text-xs text-indigo-600 hover:underline active:text-indigo-800 font-bold px-3 py-1.5 -mr-2 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="text-xs text-indigo-600 hover:underline active:text-indigo-800 font-bold px-3 py-1.5 -mr-2 rounded-lg hover:bg-surface-alt focus:outline-none focus:ring-1 focus:ring-indigo-500"
               aria-label="See all hot leads"
             >
               See All
@@ -343,7 +343,7 @@ export default function Dashboard({
       </div>
 
       {/* Recent CRM Activities timeline */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs space-y-4">
+      <div className="bg-card p-5 rounded-2xl border border-default shadow-xs space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
             <Activity size={16} className="text-emerald-500" />
@@ -354,7 +354,7 @@ export default function Dashboard({
           </span>
         </div>
 
-        <div className="relative pl-3 border-l-2 border-slate-100 space-y-4" id="activities-timeline">
+        <div className="relative pl-3 border-l-2 border-default space-y-4" id="activities-timeline">
           {activities.slice(0, 6).map((act, index) => (
             <div key={act.id || index} className="relative space-y-1">
               {/* Dot marker */}

@@ -190,10 +190,10 @@ export default function PropertiesModule({
       <div className={`lg:col-span-8 flex flex-col space-y-4 h-[calc(100vh-140px)] overflow-y-auto ${selectedPropertyId ? 'hidden lg:block' : 'block'}`}>
         
         {/* Banner with controls */}
-        <div className="flex justify-between items-center bg-white p-4 border border-slate-100 rounded-2xl shadow-xs">
+        <div className="flex justify-between items-center bg-card p-4 border border-default rounded-2xl shadow-xs">
           <div>
             <h2 className="text-sm font-extrabold text-slate-800">Exclusive Inventory ({filteredProperties.length})</h2>
-            <p className="text-[10px] text-slate-400 mt-0.5">Real Estate available for distribution</p>
+            <p className="text-[10px] text-muted mt-0.5">Real Estate available for distribution</p>
           </div>
           <button 
             id="add-property-toggle-btn"
@@ -205,17 +205,17 @@ export default function PropertiesModule({
         </div>
 
         {/* Filter bar */}
-        <div className="bg-white p-3 border border-slate-100 rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="bg-card p-3 border border-default rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-2">
           {/* Search text */}
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
+            <Search className="absolute left-3 top-2.5 text-muted" size={14} />
             <input 
               id="property-search-input"
               type="text" 
               placeholder="Search properties, sector..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 pl-8 pr-3 py-2 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-surface border border-default pl-8 pr-3 py-2 rounded-xl text-xs placeholder:text-muted focus:outline-none"
             />
           </div>
 
@@ -223,7 +223,7 @@ export default function PropertiesModule({
             id="property-type-filter"
             value={typeFilter} 
             onChange={e => setTypeFilter(e.target.value)}
-            className="bg-slate-50 border border-slate-100 p-2 rounded-xl text-xs"
+            className="bg-surface border border-default p-2 rounded-xl text-xs"
           >
             <option value="">All Types</option>
             <option value="Apartment">Apartment</option>
@@ -236,7 +236,7 @@ export default function PropertiesModule({
             id="property-location-filter"
             value={locationFilter} 
             onChange={e => setLocationFilter(e.target.value)}
-            className="bg-slate-50 border border-slate-100 p-2 rounded-xl text-xs"
+            className="bg-surface border border-default p-2 rounded-xl text-xs"
           >
             <option value="">All Locations</option>
             <option value="Golf Course">Golf Course Road</option>
@@ -252,7 +252,7 @@ export default function PropertiesModule({
             <div 
               key={prop.id}
               onClick={() => setSelectedPropertyId(prop.id)}
-              className="bg-white border border-slate-100 rounded-2xl shadow-xs overflow-hidden hover:border-indigo-200 hover:shadow-md cursor-pointer transition flex flex-col"
+              className="bg-card border border-default rounded-2xl shadow-xs overflow-hidden hover:border-indigo-200 hover:shadow-md cursor-pointer transition flex flex-col"
             >
               <div className="relative h-44 overflow-hidden">
                 <img 
@@ -271,12 +271,12 @@ export default function PropertiesModule({
               <div className="p-4 flex-1 flex flex-col justify-between space-y-2">
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 leading-snug">{prop.title}</h3>
-                  <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                    <MapPin size={11} className="text-slate-400" /> {prop.location}
+                  <p className="text-[10px] text-muted mt-1 flex items-center gap-1">
+                    <MapPin size={11} className="text-muted" /> {prop.location}
                   </p>
                 </div>
 
-                <div className="flex justify-between items-center border-t border-slate-50 pt-3 text-[10px] text-slate-500 font-medium">
+                <div className="flex justify-between items-center border-t border-slate-50 pt-3 text-[10px] text-muted font-medium">
                   <span>Bedrooms: {prop.bedrooms || 'Plot'}</span>
                   <span>Size: {prop.size}</span>
                 </div>
@@ -285,9 +285,9 @@ export default function PropertiesModule({
           ))}
 
           {filteredProperties.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-white border border-dashed border-slate-200 rounded-2xl">
+            <div className="col-span-full text-center py-16 bg-card border border-dashed border-default rounded-2xl">
               <Building2 size={40} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-sm font-bold text-slate-400">No properties found</p>
+              <p className="text-sm font-bold text-muted">No properties found</p>
               <p className="text-xs text-slate-300 mt-1">Add your first property to start building inventory</p>
             </div>
           )}
@@ -295,11 +295,11 @@ export default function PropertiesModule({
       </div>
 
       {/* Right Property Details & One-Click Sharing ledger */}
-      <div className={`lg:col-span-4 bg-white border border-slate-100 rounded-2xl h-[calc(100vh-140px)] flex flex-col overflow-y-auto ${selectedPropertyId ? 'block' : 'hidden lg:flex justify-center items-center text-slate-350'}`}>
+      <div className={`lg:col-span-4 bg-card border border-default rounded-2xl h-[calc(100vh-140px)] flex flex-col overflow-y-auto ${selectedPropertyId ? 'block' : 'hidden lg:flex justify-center items-center text-slate-350'}`}>
         {activeProperty ? (
           <div className="p-5 space-y-6 flex-1 flex flex-col" id="property-details-view">
             {/* Toggle header info */}
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div className="flex justify-between items-center border-b border-default pb-3">
               <div>
                 <span className="text-[9px] uppercase tracking-wider font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
                   Specs Dashboard
@@ -308,13 +308,13 @@ export default function PropertiesModule({
               </div>
               <button 
                 onClick={() => setSelectedPropertyId(null)}
-                className="bg-slate-50 text-slate-400 p-1 rounded-lg hover:bg-slate-100 transition"
+                className="bg-surface text-muted p-1 rounded-lg hover:bg-surface-alt transition"
               >
                 <X size={16} />
               </button>
             </div>
 
-            <div className="space-y-4 text-xs font-medium text-slate-600">
+            <div className="space-y-4 text-xs font-medium text-secondary">
               {/* Image stack */}
               <img 
                 src={activeProperty.images[0]} 
@@ -324,38 +324,38 @@ export default function PropertiesModule({
 
               {/* Specs Bento block */}
               <div className="grid grid-cols-2 gap-2 text-center">
-                <div className="bg-slate-50 p-2.5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 block font-normal">Pricing</span>
+                <div className="bg-surface p-2.5 rounded-xl">
+                  <span className="text-[10px] text-muted block font-normal">Pricing</span>
                   <span className="text-xs font-extrabold text-slate-800 block mt-0.5">{formatCurrency(activeProperty.price, currency, currency === 'PKR' || lang === 'ur' ? 'regional' : 'standard')}</span>
                 </div>
-                <div className="bg-slate-50 p-2.5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 block font-normal">Size Scale</span>
+                <div className="bg-surface p-2.5 rounded-xl">
+                  <span className="text-[10px] text-muted block font-normal">Size Scale</span>
                   <span className="text-xs font-bold text-slate-800 block mt-0.5">{activeProperty.size}</span>
                 </div>
-                <div className="bg-slate-50 p-2.5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 block font-normal">Furnishing</span>
+                <div className="bg-surface p-2.5 rounded-xl">
+                  <span className="text-[10px] text-muted block font-normal">Furnishing</span>
                   <span className="text-xs font-bold text-slate-800 block mt-0.5">{activeProperty.furnishingStatus}</span>
                 </div>
-                <div className="bg-slate-50 p-2.5 rounded-xl">
-                  <span className="text-[10px] text-slate-400 block font-normal">Project Floor</span>
+                <div className="bg-surface p-2.5 rounded-xl">
+                  <span className="text-[10px] text-muted block font-normal">Project Floor</span>
                   <span className="text-xs font-bold text-slate-800 block mt-0.5">Lvl {activeProperty.floor || 'G'}</span>
                 </div>
               </div>
 
               {/* Overview body */}
               <div className="space-y-1">
-                <h4 className="font-extrabold text-slate-700 text-[10px] uppercase">Property Overview</h4>
-                <p className="text-slate-500 font-light leading-relaxed">{activeProperty.description}</p>
+                <h4 className="font-extrabold text-secondary text-[10px] uppercase">Property Overview</h4>
+                <p className="text-muted font-light leading-relaxed">{activeProperty.description}</p>
               </div>
 
               {/* Amenities list */}
               <div className="space-y-1">
-                <h4 className="font-extrabold text-slate-700 text-[10px] uppercase">Highlights</h4>
+                <h4 className="font-extrabold text-secondary text-[10px] uppercase">Highlights</h4>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {activeProperty.amenities.map((item, index) => (
                     <span 
                       key={index}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-md text-[10px] font-semibold"
+                      className="bg-slate-100 hover:bg-slate-200 text-secondary px-2 py-1 rounded-md text-[10px] font-semibold"
                     >
                       {item}
                     </span>
@@ -364,15 +364,15 @@ export default function PropertiesModule({
               </div>
 
               {/* Developer info */}
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1.5">
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-extrabold">Listing Owner Contact</span>
+              <div className="bg-surface border border-default rounded-xl p-3 space-y-1.5">
+                <span className="text-[9px] uppercase tracking-wider text-muted block font-extrabold">Listing Owner Contact</span>
                 <p className="text-xs font-bold text-slate-800">{activeProperty.ownerInfo.name}</p>
-                <p className="text-[10px] text-slate-500 flex items-center gap-1">📞 {activeProperty.ownerInfo.phone} ({activeProperty.ownerInfo.role})</p>
+                <p className="text-[10px] text-muted flex items-center gap-1">📞 {activeProperty.ownerInfo.phone} ({activeProperty.ownerInfo.role})</p>
               </div>
             </div>
 
             {/* ONE-CLICK SHARING DIALOG ENCRYPTED IN DETAILS */}
-            <div className="border-t border-slate-100 pt-4 mt-auto space-y-3">
+            <div className="border-t border-default pt-4 mt-auto space-y-3">
               <span className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-600 block">
                 One-Click Client Dispatch Ledger
               </span>
@@ -382,7 +382,7 @@ export default function PropertiesModule({
                   id="share-target-lead-select"
                   value={sharingLeadId}
                   onChange={e => setSharingLeadId(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg p-2 text-xs"
+                  className="w-full border border-default rounded-lg p-2 text-xs"
                 >
                   <option value="">-- Choose target lead client --</option>
                   {leads.map(lead => (
@@ -395,7 +395,7 @@ export default function PropertiesModule({
                     id="share-channel-select"
                     value={sharingChannel}
                     onChange={e => setSharingChannel(e.target.value as any)}
-                    className="border border-slate-200 rounded-lg p-2 text-xs flex-1"
+                    className="border border-default rounded-lg p-2 text-xs flex-1"
                   >
                     <option value="WhatsApp">WhatsApp</option>
                     <option value="SMS">SMS Message</option>
@@ -414,7 +414,7 @@ export default function PropertiesModule({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-20 text-slate-400 space-y-2">
+          <div className="flex flex-col items-center justify-center p-20 text-muted space-y-2">
             <Home size={36} />
             <span className="text-xs">Select listed home properties</span>
           </div>
@@ -428,35 +428,35 @@ export default function PropertiesModule({
             <div className="flex justify-between items-center border-b border-slate-800 pb-3">
               <div>
                 <h3 className="font-extrabold text-sm text-white uppercase tracking-wider">Catalog New Residential Listing</h3>
-                <p className="text-[10px] text-slate-400 mt-0.5">Define property variables in local context scale</p>
+                <p className="text-[10px] text-muted mt-0.5">Define property variables in local context scale</p>
               </div>
-              <button onClick={() => setShowAddProperty(false)} className="text-slate-400 hover:text-white transition p-1.5 hover:bg-slate-900 rounded-lg">
+              <button onClick={() => setShowAddProperty(false)} className="text-muted hover:text-white transition p-1.5 hover:bg-slate-900 rounded-lg">
                 <X size={16} />
               </button>
             </div>
 
             {/* Premium Market Region Selector Toggle */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Select Market Localization</label>
+              <label className="text-[10px] font-black uppercase tracking-wider text-muted">Select Market Localization</label>
               <div className="grid grid-cols-3 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
                 <button
                   type="button"
                   onClick={() => setMarketRegion('PK')}
-                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'PK' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
+                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'PK' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-muted hover:text-white'}`}
                 >
                   Pakistan (PKR)
                 </button>
                 <button
                   type="button"
                   onClick={() => setMarketRegion('US')}
-                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'US' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
+                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'US' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-muted hover:text-white'}`}
                 >
                   USA (USD)
                 </button>
                 <button
                   type="button"
                   onClick={() => setMarketRegion('AE')}
-                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'AE' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
+                  className={`py-2 rounded-lg text-xs font-black transition cursor-pointer ${marketRegion === 'AE' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md' : 'text-muted hover:text-white'}`}
                 >
                   Dubai (AED)
                 </button>
@@ -472,7 +472,7 @@ export default function PropertiesModule({
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                   placeholder={marketRegion === 'PK' ? 'e.g. DHA Phase 6 Luxury Villa' : marketRegion === 'US' ? 'e.g. Beverly Hills Mansion' : 'e.g. Marina Gate Penthouse'}
-                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-400"
                 />
               </div>
 
@@ -486,7 +486,7 @@ export default function PropertiesModule({
                     value={newLocation}
                     onChange={e => setNewLocation(e.target.value)}
                     placeholder="e.g. Beverly Hills, CA 90210"
-                    className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                    className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-400"
                   />
                 ) : (
                   <select 
@@ -565,7 +565,7 @@ export default function PropertiesModule({
                     marketRegion === 'US' ? 'e.g. 1250000 (meaning $1.25M)' :
                     'e.g. 2400000 (meaning 2.4M AED)'
                   }
-                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-400"
                 />
               </div>
 
@@ -582,7 +582,7 @@ export default function PropertiesModule({
                     marketRegion === 'US' ? 'e.g. 2,500 Sq. Ft. Single Family' :
                     'e.g. 1,800 Sq. Ft. BUA'
                   }
-                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-400"
                 />
               </div>
 
@@ -619,7 +619,7 @@ export default function PropertiesModule({
                   onChange={e => setNewDescription(e.target.value)}
                   placeholder="Write persuasive property listing descriptions..."
                   rows={2}
-                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl resize-none text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                  className="w-full bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl resize-none text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-emerald-400"
                 />
               </div>
 
@@ -631,14 +631,14 @@ export default function PropertiesModule({
                     <button
                       type="button"
                       onClick={() => setActiveUploadTab('files')}
-                      className={`px-3 py-1.5 rounded-md transition font-black cursor-pointer ${activeUploadTab === 'files' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-xs' : 'text-slate-400 hover:text-white'}`}
+                      className={`px-3 py-1.5 rounded-md transition font-black cursor-pointer ${activeUploadTab === 'files' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-xs' : 'text-muted hover:text-white'}`}
                     >
                       Browse Files
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveUploadTab('gallery')}
-                      className={`px-3 py-1.5 rounded-md transition font-black cursor-pointer ${activeUploadTab === 'gallery' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-xs' : 'text-slate-400 hover:text-white'}`}
+                      className={`px-3 py-1.5 rounded-md transition font-black cursor-pointer ${activeUploadTab === 'gallery' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-xs' : 'text-muted hover:text-white'}`}
                     >
                       Select From Gallery
                     </button>
@@ -657,11 +657,11 @@ export default function PropertiesModule({
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         title="Upload from files"
                       />
-                      <div className="flex flex-col items-center justify-center space-y-1.5 text-slate-400">
-                        <UploadCloud className="text-slate-500 group-hover:text-emerald-400 transition duration-150 animate-bounce" size={20} style={{ animationDuration: '3s' }} />
+                      <div className="flex flex-col items-center justify-center space-y-1.5 text-muted">
+                        <UploadCloud className="text-muted group-hover:text-emerald-400 transition duration-150 animate-bounce" size={20} style={{ animationDuration: '3s' }} />
                         <div>
                           <p className="font-bold text-slate-300 text-[11px]">Click to upload pictures from devices or files</p>
-                          <p className="text-[9px] text-slate-500 mt-0.5">Acceptable formats: JPEG, PNG, WEBP (Auto-compressed)</p>
+                          <p className="text-[9px] text-muted mt-0.5">Acceptable formats: JPEG, PNG, WEBP (Auto-compressed)</p>
                         </div>
                       </div>
                     </div>
@@ -671,7 +671,7 @@ export default function PropertiesModule({
                 {/* Select from pre-populated gallery stock */}
                 {activeUploadTab === 'gallery' && (
                   <div className="space-y-1.5 bg-slate-900/40 p-2.5 rounded-2xl border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block font-semibold">Available Exclusive Gallery Assets (<span className="text-emerald-400">Select multiple</span>):</span>
+                    <span className="text-[10px] text-muted block font-semibold">Available Exclusive Gallery Assets (<span className="text-emerald-400">Select multiple</span>):</span>
                     <div className="grid grid-cols-3 gap-2 max-h-36 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
                       {REAL_ESTATE_STOCK_GALLERY.map((g) => {
                         const isSelected = propertyImages.includes(g.url);
