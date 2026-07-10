@@ -508,9 +508,8 @@ export default function App() {
     }
   };
 
-  if (!isAuthed && !authLoading && authUser) {
-    // Auto-login when InsForge auth is ready
-    const autoLogin = async () => {
+  useEffect(() => {
+    if (!isAuthed && !authLoading && authUser) {
       const userProfile: UserProfile = {
         id: profile?.id || authUser.id,
         organizationId: profile?.agency_id || 'org-estateflow-1',
@@ -523,12 +522,9 @@ export default function App() {
       setCurrentUser(userProfile);
       setActiveOrgId(userProfile.organizationId);
       setIsAuthed(true);
-      localStorage.setItem('estateflow_is_authed', 'true');
-      localStorage.setItem('estateflow_authed_user', JSON.stringify(userProfile));
       refreshCRMData();
-    };
-    autoLogin();
-  }
+    }
+  }, [isAuthed, authLoading, authUser, profile]);
 
   if (!isAuthed || !currentUser) {
     return (
@@ -556,109 +552,94 @@ export default function App() {
   const themeClass = theme === 'light' ? 'theme-light' : theme === 'high-contrast' ? 'theme-high-contrast' : '';
 
   return (
-    <ClickSpark sparkColor="#ff5f03" sparkSize={8} sparkRadius={12} sparkCount={6} duration={350}>
-    <div className={`min-h-[100dvh] w-full max-w-[100dvw] flex flex-col font-sans overflow-x-hidden relative ${themeClass}`} id="crm-app-shell" data-agency={activeOrg?.id} style={{ '--agency-primary': activeOrg?.primaryColor || '#10B981', '--agency-secondary': activeOrg?.secondaryColor || '#1E293B' } as React.CSSProperties}>
-        {/* 1. AXION-STYLE NAVBAR */}
-      <nav className="sticky top-0 z-40 w-full max-w-[1440px] mx-auto p-2 sm:p-3">
-        <div className="bg-white rounded-full p-[5px] flex items-center justify-between shadow-sm">
+    <ClickSpark sparkColor="#3b82f6" sparkSize={8} sparkRadius={12} sparkCount={6} duration={350}>
+    <div className={`min-h-[100dvh] w-full max-w-[100dvw] flex flex-col font-sans overflow-x-hidden relative ${themeClass}`} id="crm-app-shell" data-agency={activeOrg?.id} style={{ '--agency-primary': activeOrg?.primaryColor || '#3B82F6', '--agency-secondary': activeOrg?.secondaryColor || '#0a0e1a' } as React.CSSProperties}>
+        {/* 1. MOBILE-OPTIMIZED NAVBAR */}
+      <nav className="sticky top-0 z-40 w-full safe-top" style={{ background: 'var(--bg-surface)' }}>
+        <div className="border-b border-[var(--border-light)] px-3 py-2.5 flex items-center justify-between" style={{ background: 'var(--bg-surface)' }}>
           {/* LEFT: Logo + Desktop nav links */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             {activeOrg?.logoUrl ? (
-              <img src={activeOrg.logoUrl} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shrink-0" alt={activeOrg.name} referrerPolicy="no-referrer" />
+              <img src={activeOrg.logoUrl} className="w-8 h-8 rounded-full object-cover shrink-0" alt={activeOrg.name} referrerPolicy="no-referrer" />
             ) : (
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center justify-center shrink-0">
-                <span className="text-white font-bold tracking-tight" style={{ fontSize: '10px' }}>{activeOrg?.appName?.substring(0, 2).toUpperCase() || 'EF'}</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--color-accent)' }}>
+                <span className="text-white font-bold tracking-tight text-[9px]">{activeOrg?.appName?.substring(0, 2).toUpperCase() || 'EF'}</span>
               </div>
             )}
-            <div className="hidden md:flex items-center gap-6">
-              <button onClick={() => setActiveTab('dashboard')} className="text-[14px] text-gray-900 hover:text-gray-500 transition-colors duration-300 cursor-pointer">Dashboard</button>
-              <button onClick={() => setActiveTab('leads')} className="text-[14px] text-gray-900 hover:text-gray-500 transition-colors duration-300 cursor-pointer">Leads</button>
-              <button onClick={() => setActiveTab('properties')} className="text-[14px] text-gray-900 hover:text-gray-500 transition-colors duration-300 cursor-pointer">Properties</button>
-              <button onClick={() => setActiveTab('contacts')} className="text-[14px] text-gray-900 hover:text-gray-500 transition-colors duration-300 cursor-pointer">Contacts</button>
-              <button onClick={() => setActiveTab('more')} className="text-[14px] text-gray-900 hover:text-gray-500 transition-colors duration-300 cursor-pointer">More</button>
+            <span className="text-[var(--text-primary)] text-xs font-bold tracking-tight hidden sm:block">{activeOrg?.appName || 'EstateFlow'}</span>
+            <div className="hidden md:flex items-center gap-1">
+              {['dashboard','leads','properties','contacts','more'].map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition cursor-pointer ${activeTab === tab ? 'text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} style={activeTab === tab ? { background: 'var(--color-accent)' } : {}}>
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT: Desktop controls */}
-          <div className="hidden md:flex items-center gap-2">
-            {/* SaaS Toggle */}
-            <button onClick={() => setIsSuperAdminMode(prev => !prev)} className={`text-[11px] font-medium px-3 py-1.5 rounded-full transition cursor-pointer ${isSuperAdminMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              {isSuperAdminMode ? '👑 Admin' : '🏢 SaaS'}
+          {/* RIGHT: Controls */}
+          <div className="flex items-center gap-1.5">
+            {/* Desktop controls */}
+            <div className="hidden md:flex items-center gap-1.5">
+              <button onClick={() => setIsSuperAdminMode(prev => !prev)} className={`text-[10px] font-medium px-2.5 py-1.5 rounded-lg transition cursor-pointer ${isSuperAdminMode ? 'text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} style={isSuperAdminMode ? { background: 'var(--color-accent)' } : { background: 'var(--border-light)' }}>
+                {isSuperAdminMode ? 'Admin' : 'SaaS'}
+              </button>
+              <select value={currentUser.id} onChange={e => { const t = users.find(u => u.id === e.target.value); if (t) { setCurrentUser(t); } }} className="text-[var(--text-secondary)] text-[10px] font-medium px-2 py-1.5 rounded-lg focus:outline-none cursor-pointer appearance-none border-0" style={{ background: 'var(--border-light)' }}>
+                {users.map(u => (<option key={u.id} value={u.id} style={{ background: 'var(--bg-surface)' }}>{u.name}</option>))}
+              </select>
+              <select value={lang} onChange={e => handleUpdateLocalization({ languagePreference: e.target.value as LanguageCode })} className="text-[var(--text-secondary)] text-[10px] font-medium px-2 py-1.5 rounded-lg focus:outline-none cursor-pointer appearance-none border-0" style={{ background: 'var(--border-light)' }}>
+                <option value="en" style={{ background: 'var(--bg-surface)' }}>EN</option>
+                <option value="ur" style={{ background: 'var(--bg-surface)' }}>UR</option>
+                <option value="roman-urdu" style={{ background: 'var(--bg-surface)' }}>ROM</option>
+              </select>
+              <select value={currency} onChange={e => handleUpdateLocalization({ currencyPreference: e.target.value as CurrencyCode })} className="text-[var(--text-secondary)] text-[10px] font-medium px-2 py-1.5 rounded-lg focus:outline-none cursor-pointer appearance-none border-0" style={{ background: 'var(--border-light)' }}>
+                <option value="USD" style={{ background: 'var(--bg-surface)' }}>USD</option>
+                <option value="AED" style={{ background: 'var(--bg-surface)' }}>AED</option>
+                <option value="PKR" style={{ background: 'var(--bg-surface)' }}>PKR</option>
+              </select>
+              <button onClick={() => handleUpdateLocalization({ propertyUnitSystem: propScheme === 'global' ? 'regional' : 'global' })} className="text-[var(--text-secondary)] text-[10px] font-medium px-2.5 py-1.5 rounded-lg cursor-pointer hover:text-[var(--text-primary)] transition" style={{ background: 'var(--border-light)' }}>
+                {propScheme === 'regional' ? 'Regional' : 'Global'}
+              </button>
+            </div>
+
+            {/* Notifications bell */}
+            <button onClick={() => setShowNotifDrawer(true)} className="relative p-2 min-touch rounded-lg text-[var(--text-secondary)] hover:bg-[var(--border-light)] transition cursor-pointer">
+              <Bell size={16} />
+              {unreadCount > 0 && <span className="absolute top-1 right-1 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: 'var(--color-accent)' }}>{unreadCount}</span>}
             </button>
 
-            {/* User select */}
-            <select value={currentUser.id} onChange={e => { const t = users.find(u => u.id === e.target.value); if (t) { setCurrentUser(t); alert(`Identity changed to ${t.name}`); } }} className="bg-gray-100 text-gray-700 text-[11px] font-medium px-2.5 py-1.5 rounded-full focus:outline-none cursor-pointer appearance-none">
-              {users.map(u => (<option key={u.id} value={u.id}>{u.name}</option>))}
-            </select>
-
-            {/* Lang */}
-            <select value={lang} onChange={e => handleUpdateLocalization({ languagePreference: e.target.value as LanguageCode })} className="bg-gray-100 text-gray-700 text-[11px] font-medium px-2.5 py-1.5 rounded-full focus:outline-none cursor-pointer appearance-none">
-              <option value="en">EN</option>
-              <option value="ur">UR</option>
-              <option value="roman-urdu">ROM</option>
-            </select>
-
-            {/* Currency */}
-            <select value={currency} onChange={e => handleUpdateLocalization({ currencyPreference: e.target.value as CurrencyCode })} className="bg-gray-100 text-gray-700 text-[11px] font-medium px-2.5 py-1.5 rounded-full focus:outline-none cursor-pointer appearance-none">
-              <option value="USD">USD</option>
-              <option value="AED">AED</option>
-              <option value="PKR">PKR</option>
-            </select>
-
-            {/* Unit */}
-            <button onClick={() => handleUpdateLocalization({ propertyUnitSystem: propScheme === 'global' ? 'regional' : 'global' })} className="bg-gray-100 text-gray-600 text-[11px] font-medium px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-gray-200 transition">
-              {propScheme === 'regional' ? '🌾 Regional' : '🌐 Global'}
-            </button>
-
-            {/* Notifications */}
-            <button onClick={() => setShowNotifDrawer(true)} className="relative p-1.5 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition cursor-pointer">
-              <Bell size={14} />
-              {unreadCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{unreadCount}</span>}
-            </button>
+            {/* Mobile slide menu */}
+            <div className="md:hidden">
+              <MobileSlideMenu navLinks={[
+                { label: 'Dashboard', href: '#' },
+                { label: 'Leads', href: '#' },
+                { label: 'Properties', href: '#' },
+                { label: 'Contacts', href: '#' },
+                { label: 'More', href: '#' },
+              ]} />
+            </div>
 
             {/* Sign Out */}
-            <button onClick={async () => { await signOut(); setIsAuthed(false); setCurrentUser(null); localStorage.removeItem('estateflow_is_authed'); localStorage.removeItem('estateflow_authed_user'); }} className="text-[11px] font-medium text-gray-500 hover:text-rose-500 px-2 py-1.5 transition cursor-pointer">
+            <button onClick={async () => { await signOut(); setIsAuthed(false); setCurrentUser(null); localStorage.removeItem('estateflow_is_authed'); localStorage.removeItem('estateflow_authed_user'); }} className="hidden md:inline-flex text-[10px] font-medium text-[var(--text-muted)] hover:text-rose-400 px-2 py-1.5 transition cursor-pointer">
               Sign Out
             </button>
-          </div>
-
-          {/* Mobile menu toggle */}
-          <div className="md:hidden flex items-center gap-2">
-            <button onClick={() => setShowNotifDrawer(true)} className="relative p-1.5 bg-gray-100 rounded-full text-gray-600 cursor-pointer">
-              <Bell size={14} />
-              {unreadCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">{unreadCount}</span>}
-            </button>
-            <button onClick={() => setIsSuperAdminMode(prev => !prev)} className="bg-gray-100 text-gray-600 text-[11px] font-medium px-2.5 py-1.5 rounded-full cursor-pointer">
-              {isSuperAdminMode ? '👑' : '🏢'}
-            </button>
-            <MobileSlideMenu navLinks={[
-              { label: 'Dashboard', href: '#' },
-              { label: 'Leads', href: '#' },
-              { label: 'Properties', href: '#' },
-              { label: 'Contacts', href: '#' },
-              { label: 'More', href: '#' },
-            ]} />
           </div>
         </div>
       </nav>
 
       {/* 2. CORE WORKSPACE CONTENT PANEL */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 pb-24" id="crm-workspace">
+      <main className="flex-1 w-full mx-auto px-3 pb-24 safe-bottom" id="crm-workspace">
         {activeOrg?.status === 'Suspended' && !isSuperAdminMode ? (
-          <div className="bg-white p-6 sm:p-10 rounded-2xl border border-rose-100 shadow-xl max-w-lg mx-auto text-center space-y-4 my-10 animate-slideUp" id="agency-suspended-blocker">
-            <div className="h-16 w-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto">
-              <ShieldAlert className="text-rose-600" size={32} />
+          <div className="p-5 rounded-2xl border max-w-lg mx-auto text-center space-y-4 my-8 animate-fadeIn" id="agency-suspended-blocker" style={{ background: 'var(--bg-card)', borderColor: 'rgba(244, 63, 94, 0.2)' }}>
+            <div className="h-14 w-14 rounded-full flex items-center justify-center mx-auto" style={{ background: 'rgba(244, 63, 94, 0.1)' }}>
+              <ShieldAlert className="text-rose-400" size={28} />
             </div>
-            <h2 className="text-lg font-black text-slate-900">Workspace Suspended</h2>
-            <p className="text-xs text-slate-505 leading-normal">
-              Access to this white-label agency platform (<strong>{activeOrg.appName || activeOrg.name}</strong>) has been restricted by the system administrator due to billing issues.
+            <h2 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>Workspace Suspended</h2>
+            <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Access to <strong style={{ color: 'var(--text-primary)' }}>{activeOrg.appName || activeOrg.name}</strong> has been restricted due to billing issues.
             </p>
-            <div className="bg-slate-50 p-4 rounded-xl text-left text-xs text-slate-600 border border-solid border-slate-100 space-y-2">
-              <strong className="block text-slate-800 font-bold uppercase tracking-wider text-[10px]">Payment Required:</strong>
-              <p>Under the <strong>{activeOrg.subscriptionPlan} Plan</strong>, automatic renewal failed on the registered payment method.</p>
-              <div className="pt-2 border-t border-slate-200 text-[11px] text-slate-400">
-                💡 <strong>Tester Tip:</strong> Click the <strong>👑 Super Admin Console</strong> button in the top navigation strip bar, select another agency or toggle London Head Office to active, or adjust this agency's status back to Active.
-              </div>
+            <div className="p-4 rounded-xl text-left text-xs space-y-2" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-light)' }}>
+              <strong className="block font-bold uppercase tracking-wider text-[10px]" style={{ color: 'var(--text-primary)' }}>Payment Required</strong>
+              <p>Under the <strong style={{ color: 'var(--text-primary)' }}>{activeOrg.subscriptionPlan}</strong> plan, automatic renewal failed.</p>
             </div>
           </div>
         ) : isSuperAdminMode ? (
@@ -793,83 +774,38 @@ export default function App() {
       </main>
 
       {/* 3. MOBILE BOTTOM NAVIGATION STRIP BAR */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2 z-40 flex justify-around items-center text-center shadow-lg sm:max-w-md sm:mx-auto sm:border sm:rounded-full sm:bottom-4 sm:shadow-xl" id="bottom-navigation-bar" aria-label="Primary Mobile Navigation">
-        <button 
-          id="nav-tab-dashboard"
-          onClick={() => { setActiveTab('dashboard'); setLeadsFilterRedirect(''); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'dashboard' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to Home Dashboard"
-          aria-current={activeTab === 'dashboard' ? 'page' : undefined}
-        >
-          <Home size={18} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight">{t('nav.home', lang)}</span>
-        </button>
- 
-        <button 
-          id="nav-tab-leads"
-          onClick={() => { setActiveTab('leads'); setLeadsFilterRedirect(''); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'leads' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to Leads CRM list"
-          aria-current={activeTab === 'leads' ? 'page' : undefined}
-        >
-          <Users size={18} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight font-sans">{t('nav.leads', lang)}</span>
-        </button>
- 
-        <button 
-          id="nav-tab-properties"
-          onClick={() => { setActiveTab('properties'); setLeadsFilterRedirect(''); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'properties' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to Hot Estates property catalog"
-          aria-current={activeTab === 'properties' ? 'page' : undefined}
-        >
-          <Award size={18} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight">{t('nav.hotEstates', lang)}</span>
-        </button>
- 
-        <button 
-          id="nav-tab-followups"
-          onClick={() => { setActiveTab('followups'); setLeadsFilterRedirect(''); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'followups' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to Followup schedules planner"
-          aria-current={activeTab === 'followups' ? 'page' : undefined}
-        >
-          <Calendar size={18} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight">{t('nav.schedules', lang)}</span>
-        </button>
- 
-        <button 
-          id="nav-tab-contacts"
-          onClick={() => { setActiveTab('contacts'); setLeadsFilterRedirect(''); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'contacts' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to WhatsApp conversation contacts tool"
-          aria-current={activeTab === 'contacts' ? 'page' : undefined}
-        >
-          <MessageSquare size={18} className={activeTab === 'contacts' ? 'text-emerald-700' : ''} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight">{t('nav.whatsapp', lang)}</span>
-        </button>
- 
-        <button 
-          id="nav-tab-more"
-          onClick={() => { setActiveTab('more'); setMoreSubview('attendance'); }}
-          className={`flex-1 flex flex-col items-center py-1 transition rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 ${activeTab === 'more' ? 'text-slate-950 scale-105 font-bold' : 'text-slate-650 text-slate-600 hover:text-slate-800'}`}
-          aria-label="Navigate to More tools and settings options"
-          aria-current={activeTab === 'more' ? 'page' : undefined}
-        >
-          <MoreHorizontal size={18} aria-hidden="true" />
-          <span className="text-[10px] uppercase font-bold mt-1 tracking-tight">{t('nav.more', lang)}</span>
-        </button>
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around items-center safe-bottom" id="bottom-navigation-bar" aria-label="Primary Mobile Navigation" style={{ background: 'var(--bg-surface)', borderTop: '1px solid var(--border-light)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        {[
+          { id: 'dashboard', icon: Home, label: t('nav.home', lang) },
+          { id: 'leads', icon: Users, label: t('nav.leads', lang) },
+          { id: 'properties', icon: Award, label: t('nav.hotEstates', lang) },
+          { id: 'followups', icon: Calendar, label: t('nav.schedules', lang) },
+          { id: 'contacts', icon: MessageSquare, label: t('nav.whatsapp', lang) },
+          { id: 'more', icon: MoreHorizontal, label: t('nav.more', lang) },
+        ].map(({ id, icon: Icon, label }) => (
+          <button
+            key={id}
+            onClick={() => { setActiveTab(id); if (id === 'more') setMoreSubview('attendance'); setLeadsFilterRedirect(''); }}
+            className="flex-1 flex flex-col items-center py-1.5 transition min-touch"
+            style={{ color: activeTab === id ? 'var(--color-accent)' : 'var(--text-muted)' }}
+            aria-label={`Navigate to ${label}`}
+            aria-current={activeTab === id ? 'page' : undefined}
+          >
+            <Icon size={18} />
+            <span className="text-[9px] uppercase font-bold mt-0.5 tracking-tight">{label}</span>
+          </button>
+        ))}
       </nav>
 
       {/* 4. NOTIFICATION FEED SIDE DRAWER */}
       {showNotifDrawer && (
-        <div className="fixed inset-0 bg-slate-900/60 z-50 flex justify-end" id="notif-drawer-overlay">
-          <div className="bg-white max-w-sm w-full h-[100dvh] p-5 flex flex-col shadow-2xl relative" id="notif-drawer">
-            <div className="flex justify-between items-center border-b border-solid border-slate-100 pb-3">
-              <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-800">Notifications Feed ({notifications.length})</h3>
+        <div className="fixed inset-0 z-50 flex justify-end animate-fadeIn" id="notif-drawer-overlay" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full sm:max-w-sm h-[100dvh] p-4 flex flex-col" id="notif-drawer" style={{ background: 'var(--bg-surface)' }}>
+            <div className="flex justify-between items-center pb-3" style={{ borderBottom: '1px solid var(--border-light)' }}>
+              <h3 className="text-xs uppercase font-extrabold tracking-wider" style={{ color: 'var(--text-primary)' }}>Notifications ({notifications.length})</h3>
               <button 
                 onClick={() => setShowNotifDrawer(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="p-1.5 min-touch rounded-lg" style={{ color: 'var(--text-muted)' }}
               >
                 <X size={18} />
               </button>
@@ -878,17 +814,17 @@ export default function App() {
             {/* Notification Cards list */}
             <div className="flex-1 overflow-y-auto py-3 space-y-2.5">
               {notifications.map(n => (
-                <div key={n.id} className={`p-3 rounded-xl border border-solid text-xs text-slate-650 ${n.isRead ? 'bg-slate-50 border-slate-100' : 'bg-indigo-50/40 border-indigo-100'}`}>
+                <div key={n.id} className="p-3 rounded-xl border text-xs" style={{ background: n.isRead ? 'var(--bg-card)' : 'var(--border-light)', borderColor: n.isRead ? 'var(--border-light)' : 'var(--color-accent)' }}>
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-900">{n.title}</span>
-                    <span className="text-[9px] text-slate-400">{new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{n.title}</span>
+                    <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>{new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1">{n.description}</p>
+                  <p className="text-[11px] mt-1" style={{ color: 'var(--text-secondary)' }}>{n.description}</p>
                 </div>
               ))}
 
               {notifications.length === 0 && (
-                <div className="text-center py-12 text-slate-400 text-xs italic">
+                <div className="text-center py-12 text-xs italic" style={{ color: 'var(--text-muted)' }}>
                   Zero notifications received.
                 </div>
               )}
@@ -897,7 +833,7 @@ export default function App() {
             <button 
               id="clear-all-notifs-btn"
               onClick={handleClearNotifications}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition"
+              className="w-full font-bold py-2.5 rounded-xl text-xs transition min-touch" style={{ background: 'var(--color-accent)', color: '#fff' }}
             >
               Mark all notifications read
             </button>
@@ -907,141 +843,71 @@ export default function App() {
 
       {/* 5. ADD MANUAL LEAD BOTTOM DRAWER OR MODAL */}
       {showAddLead && (
-        <div className="fixed inset-0 bg-slate-900/65 z-50 flex items-center justify-center p-4" id="add-lead-modal-overlay">
-          <div className="bg-white rounded-2xl p-5 max-w-md w-full max-h-[85dvh] overflow-y-auto space-y-4 shadow-xl border border-slate-100" id="add-lead-form-modal">
-            <div className="flex justify-between items-center border-b border-solid border-slate-100 pb-2">
-              <h3 className="font-black text-xs text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                <Plus size={16} className="text-emerald-500" /> {t('action.createLead', lang)}
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn" id="add-lead-modal-overlay" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="rounded-t-2xl sm:rounded-2xl p-5 w-full sm:max-w-md max-h-[90dvh] overflow-y-auto space-y-4" id="add-lead-form-modal" style={{ background: 'var(--bg-surface)' }}>
+            <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1px solid var(--border-light)' }}>
+              <h3 className="font-black text-xs uppercase tracking-widest flex items-center gap-1.5" style={{ color: 'var(--text-primary)' }}>
+                <Plus size={16} style={{ color: 'var(--color-accent)' }} /> {t('action.createLead', lang)}
               </h3>
-              <button onClick={() => setShowAddLead(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowAddLead(false)} className="p-1.5 min-touch rounded-lg" style={{ color: 'var(--text-muted)' }}>
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateLeadManual} className="grid grid-cols-2 gap-3 text-xs leading-relaxed">
+            <form onSubmit={handleCreateLeadManual} className="grid grid-cols-2 gap-3 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.fullName', lang)}</label>
-                <input 
-                  id="add-lead-name"
-                  type="text" 
-                  value={leadName}
-                  onChange={e => setLeadName(e.target.value)}
-                  placeholder="Zain Malik"
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.fullName', lang)}</label>
+                <input type="text" value={leadName} onChange={e => setLeadName(e.target.value)} placeholder="Zain Malik" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none" />
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.phone', lang)}</label>
-                <input 
-                  id="add-lead-phone"
-                  type="text" 
-                  value={leadPhone}
-                  onChange={e => setLeadPhone(e.target.value)}
-                  placeholder="+92 300 1234567"
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.phone', lang)}</label>
+                <input type="text" value={leadPhone} onChange={e => setLeadPhone(e.target.value)} placeholder="+92 300 1234567" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none" />
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.email', lang)}</label>
-                <input 
-                  id="add-lead-email"
-                  type="email" 
-                  value={leadEmail}
-                  onChange={e => setLeadEmail(e.target.value)}
-                  placeholder="sharma@example.com"
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.email', lang)}</label>
+                <input type="email" value={leadEmail} onChange={e => setLeadEmail(e.target.value)} placeholder="sharma@example.com" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none" />
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.source', lang)}</label>
-                <select 
-                  id="add-lead-source"
-                  value={leadSource}
-                  onChange={e => setLeadSource(e.target.value)}
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                >
-                  <option value="36 Acre">36 Acre Campaign</option>
-                  <option value="MagicBricks">MagicBricks</option>
-                  <option value="Housing.com">Housing.com</option>
-                  <option value="Facebook Ads">Facebook Promo</option>
-                  <option value="Manual Referral">Referral</option>
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.source', lang)}</label>
+                <select value={leadSource} onChange={e => setLeadSource(e.target.value)} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none cursor-pointer">
+                  <option className="bg-[var(--bg-surface)]">36 Acre Campaign</option>
+                  <option className="bg-[var(--bg-surface)]">MagicBricks</option>
+                  <option className="bg-[var(--bg-surface)]">Housing.com</option>
+                  <option className="bg-[var(--bg-surface)]">Facebook Promo</option>
+                  <option className="bg-[var(--bg-surface)]">Referral</option>
                 </select>
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.propertyType', lang)}</label>
-                <select 
-                  id="add-lead-type"
-                  value={leadProp}
-                  onChange={e => setLeadProp(e.target.value)}
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                >
-                  <option value="Apartment">{getLocalizedPropertyType('Apartment', propScheme, lang)}</option>
-                  <option value="Villa">{getLocalizedPropertyType('Villa', propScheme, lang)}</option>
-                  <option value="Plot">{getLocalizedPropertyType('Plot', propScheme, lang)}</option>
-                  <option value="Commercial">{getLocalizedPropertyType('Commercial', propScheme, lang)}</option>
-                  <option value="Rental">{getLocalizedPropertyType('Rental', propScheme, lang)}</option>
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.propertyType', lang)}</label>
+                <select value={leadProp} onChange={e => setLeadProp(e.target.value)} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none cursor-pointer">
+                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Apartment', propScheme, lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Villa', propScheme, lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Plot', propScheme, lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Commercial', propScheme, lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Rental', propScheme, lang)}</option>
                 </select>
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.location', lang)}</label>
-                <input 
-                  id="add-lead-location"
-                  type="text" 
-                  value={leadLocation}
-                  onChange={e => setLeadLocation(e.target.value)}
-                  placeholder="DHA Phase 6, Lahore, Pakistan"
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.location', lang)}</label>
+                <input type="text" value={leadLocation} onChange={e => setLeadLocation(e.target.value)} placeholder="DHA Phase 6, Lahore" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none" />
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.budgetMax', lang)} ({currency})</label>
-                <input 
-                  id="add-lead-budget-max"
-                  type="number" 
-                  value={leadBudgetMax}
-                  onChange={e => setLeadBudgetMax(e.target.value)}
-                  placeholder="e.g. 7500000"
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.budgetMax', lang)} ({currency})</label>
+                <input type="number" value={leadBudgetMax} onChange={e => setLeadBudgetMax(e.target.value)} placeholder="e.g. 7500000" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none" />
               </div>
-
               <div className="space-y-1">
-                <label className="font-bold text-slate-600">{t('field.temperature', lang)}</label>
-                <select 
-                  id="add-lead-temp"
-                  value={leadTemp}
-                  onChange={e => setLeadTemp(e.target.value)}
-                  className="w-full bg-slate-50 border p-2 rounded-lg"
-                >
-                  <option value="Hot">🔥 {t('temp.Hot', lang)}</option>
-                  <option value="Warm">⚡ {t('temp.Warm', lang)}</option>
-                  <option value="Cold">❄️ {t('temp.Cold', lang)}</option>
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.temperature', lang)}</label>
+                <select value={leadTemp} onChange={e => setLeadTemp(e.target.value)} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none cursor-pointer">
+                  <option className="bg-[var(--bg-surface)]">🔥 {t('temp.Hot', lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">⚡ {t('temp.Warm', lang)}</option>
+                  <option className="bg-[var(--bg-surface)]">❄️ {t('temp.Cold', lang)}</option>
                 </select>
               </div>
-
               <div className="col-span-2 space-y-1">
-                <label className="font-bold text-slate-600">{t('field.notes', lang)}</label>
-                <textarea 
-                  id="add-lead-notes"
-                  value={leadNotes}
-                  onChange={e => setLeadNotes(e.target.value)}
-                  placeholder="Prefers high floor, modular developer kitchens..."
-                  rows={2}
-                  className="w-full bg-slate-50 border p-1 rounded-lg shrink-0 text-xs resize-none"
-                />
+                <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.notes', lang)}</label>
+                <textarea value={leadNotes} onChange={e => setLeadNotes(e.target.value)} placeholder="Prefers high floor, modular developer kitchens..." rows={2} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2 rounded-lg text-xs resize-none focus:outline-none" />
               </div>
-
-              <button 
-                id="submit-add-lead-btn"
-                type="submit"
-                className="col-span-2 mt-2 bg-slate-905 bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-2.5 rounded-xl text-center shadow-md transition"
-              >
+              <button id="submit-add-lead-btn" type="submit" className="col-span-2 min-touch font-bold py-2.5 rounded-xl text-center transition text-xs" style={{ background: 'var(--color-accent)', color: '#fff' }}>
                 Confirm Add & Allocate Agent
               </button>
             </form>
@@ -1049,16 +915,15 @@ export default function App() {
         </div>
       )}
 
-      {/* 6. GLOBAL AI CO-PILOT FLOATING ACTION ACTION BUBBLE */}
+      {/* 6. GLOBAL AI CO-PILOT FLOATING BUTTON */}
       <button
         id="global-ai-copilot-bubble"
         onClick={() => setShowAiCopilot(true)}
-        className="fixed bottom-22 right-4 sm:bottom-6 sm:right-6 bg-slate-950 border border-emerald-500/20 text-emerald-400 hover:text-white px-4 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 z-40 flex items-center gap-2 font-black text-xs cursor-pointer group hover:bg-slate-900 hover:shadow-emerald-500/10 hover:shadow-2xl hover:scale-105 active:scale-95"
+        className="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 font-black text-xs cursor-pointer min-touch px-4 py-3 rounded-2xl shadow-2xl active:scale-95 transition-transform"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--color-accent)' }}
       >
-        <Sparkles size={16} className="animate-pulse text-emerald-400" style={{ animationDuration: '3s' }} />
-        <span className="font-bold text-[11px] text-emerald-400 group-hover:text-white transition-colors">
-          AI Co-Pilot
-        </span>
+        <Sparkles size={16} style={{ color: 'var(--color-accent)' }} />
+        <span className="font-bold text-[11px]">AI Co-Pilot</span>
       </button>
 
       {/* 7. INTRODUCED AI CO-PILOT CHATBOT SYSTEM DIALOG MODAL */}

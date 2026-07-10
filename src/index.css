@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #10B981;
-  --color-brand-primary-dark: #059669;
-  --color-brand-secondary: #0B132B;
-  --color-brand-accent: #2DD4BF;
+  --color-brand-primary: #3B82F6;
+  --color-brand-primary-dark: #2563EB;
+  --color-brand-secondary: #0a0e1a;
+  --color-brand-accent: #60A5FA;
 
   --font-size-xxs: 10px;
   --font-size-xxs--line-height: 14px;
 }
 
 :root {
-  /* Dark mode (default) */
-  --bg-primary: #0B132B;
-  --bg-surface: #1E293B;
-  --bg-surface-alt: #0F172A;
-  --bg-card: #1E293B;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --border-color: #334155;
-  --border-light: #1E293B;
+  /* Dark navy (default) — mobile-first */
+  --bg-primary: #0a0e1a;
+  --bg-surface: #0f1529;
+  --bg-surface-alt: #080c18;
+  --bg-card: #131c35;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: #1e2a45;
+  --border-light: #141f36;
+  --color-accent: #3B82F6;
+  --color-accent-light: #60A5FA;
+  --color-emerald: #10B981;
+  --color-emerald-dark: #059669;
 }
 
 .theme-light {
@@ -33,6 +37,10 @@
   --text-muted: #94A3B8;
   --border-color: #E2E8F0;
   --border-light: #F1F5F9;
+  --color-accent: #3B82F6;
+  --color-accent-light: #60A5FA;
+  --color-emerald: #10B981;
+  --color-emerald-dark: #059669;
 }
 
 .theme-high-contrast {
@@ -45,6 +53,10 @@
   --text-muted: #475569;
   --border-color: #000000;
   --border-light: #000000;
+  --color-accent: #2563EB;
+  --color-accent-light: #3B82F6;
+  --color-emerald: #059669;
+  --color-emerald-dark: #047857;
 }
 
 html, body, #root {
@@ -67,6 +79,14 @@ html, body, #root {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Safe area insets for notched phones */
+@supports (padding: env(safe-area-inset-top)) {
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left { padding-left: env(safe-area-inset-left); }
+  .safe-right { padding-right: env(safe-area-inset-right); }
+}
+
 button, a, [role="button"] {
   cursor: pointer;
   user-select: none;
@@ -74,16 +94,18 @@ button, a, [role="button"] {
   touch-action: manipulation;
 }
 
+/* Prevent iOS zoom on input focus */
 @media screen and (max-width: 767px) {
   input, select, textarea {
     font-size: 16px !important;
   }
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+/* Thin scrollbar for webkit */
+::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 
 .webview-scroll-area {
   height: calc(100dvh - 3.5rem);
@@ -91,20 +113,16 @@ button, a, [role="button"] {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Animations */
+/* ─── Mobile-first animations (lightweight, GPU-friendly) ─── */
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes shimmer {
@@ -113,7 +131,7 @@ button, a, [role="button"] {
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -122,30 +140,49 @@ button, a, [role="button"] {
   50% { opacity: 0.5; }
 }
 
-.animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-.animate-slideUp { animation: slideUp 0.4s ease-out; }
-.animate-slideInRight { animation: slideInRight 0.3s ease-out; }
-.animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.animate-fadeIn { animation: fadeIn 0.2s ease-out; will-change: transform, opacity; }
+.animate-slideUp { animation: slideUp 0.25s ease-out; will-change: transform, opacity; }
+.animate-scaleIn { animation: scaleIn 0.15s ease-out; will-change: transform, opacity; }
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-slideUp,
+  .animate-scaleIn,
+  .animate-pulse,
+  .animate-pulse-subtle {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-surface-alt) 50%, var(--bg-surface) 75%);
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-surface) 50%, var(--bg-card) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.2s infinite;
   border-radius: 8px;
 }
 
-/* Card styles */
+/* Card styles — mobile first */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
-  transition: all 0.2s ease;
+  border-radius: 14px;
+  padding: 14px;
+  transition: border-color 0.2s ease;
 }
-.card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  transform: translateY(-1px);
+.card:active {
+  border-color: var(--color-accent-light);
 }
 
 /* Badge */
@@ -162,33 +199,17 @@ button, a, [role="button"] {
 
 /* Agency brand colors */
 [data-agency] {
-  --brand-primary: var(--agency-primary, #10B981);
-  --brand-secondary: var(--agency-secondary, #1E293B);
+  --brand-primary: var(--agency-primary, #3B82F6);
+  --brand-secondary: var(--agency-secondary, #0a0e1a);
 }
 
-/* Liquid glass utilities (defined but not actively used) */
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(4px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  position: relative;
-}
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  pointer-events: none;
+/* Touch-friendly tap highlight */
+.tap-highlight {
+  -webkit-tap-highlight-color: rgba(59, 130, 246, 0.15);
 }
 
-.liquid-glass-strong {
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(50px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+/* Min touch target */
+.min-touch {
+  min-height: 44px;
+  min-width: 44px;
 }

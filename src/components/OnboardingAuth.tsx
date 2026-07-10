@@ -83,6 +83,41 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    let retries = 0;
+    const MAX_RETRIES = 8;
+    const RETRY_MS = 600;
+
+    const checkExistingSession = async () => {
+      while (retries < MAX_RETRIES && !cancelled) {
+        try {
+          const { data, error } = await insforge.auth.getCurrentUser();
+          if (!cancelled && !error && data?.user) {
+            const { data: profile } = await insforge.database
+              .from('profiles')
+              .select('*')
+              .eq('user_id', data.user.id)
+              .maybeSingle();
+            if (!cancelled) {
+              const userProfile = mapToUserProfile(data.user, profile);
+              onCompleteAuth(userProfile);
+            }
+            return;
+          }
+        } catch {
+          // SDK might still be exchanging OAuth code
+        }
+        retries++;
+        if (retries < MAX_RETRIES && !cancelled) {
+          await new Promise(r => setTimeout(r, RETRY_MS));
+        }
+      }
+    };
+    checkExistingSession();
+    return () => { cancelled = true; };
+  }, []);
+
   const handleNextSlide = () => {
     setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
   };

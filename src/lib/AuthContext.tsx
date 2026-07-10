@@ -29,9 +29,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     async function hydrateAuth() {
       try {
+        // Check if OAuth code exchange might be in progress
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasOAuthCode = urlParams.has('insforge_code');
+
         const { data, error } = await insforge.auth.getCurrentUser();
+        if (cancelled) return;
+
         if (!error && data?.user) {
           setUser({
             id: data.user.id,
@@ -39,15 +46,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             profile: data.user,
           });
           const { data: profData } = await insforge.auth.getProfile(data.user.id);
-          if (profData) setProfile(profData);
+          if (profData && !cancelled) setProfile(profData);
+          setLoading(false);
+          return;
+        }
+
+        // OAuth redirect — SDK might still be exchanging the code
+        if (hasOAuthCode) {
+          await new Promise(r => setTimeout(r, 3000));
+          if (cancelled) return;
+          const retryResult = await insforge.auth.getCurrentUser();
+          if (!retryResult.error && retryResult.data?.user) {
+            setUser({
+              id: retryResult.data.user.id,
+              email: retryResult.data.user.email,
+              profile: retryResult.data.user,
+            });
+            const { data: profData } = await insforge.auth.getProfile(retryResult.data.user.id);
+            if (profData && !cancelled) setProfile(profData);
+          }
         }
       } catch {
         // No session
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     void hydrateAuth();
+    return () => { cancelled = true; };
   }, []);
 
   const signOut = async () => {
