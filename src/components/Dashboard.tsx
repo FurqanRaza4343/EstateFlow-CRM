@@ -62,39 +62,37 @@ export default function Dashboard({
   return (
     <div className="space-y-6" id="dashboard-module">
       {/* Personalized Greeting banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-5 shadow-sm relative overflow-hidden" id="dashboard-hero">
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-6 translate-x-6">
+      <div className="rounded-2xl p-5 relative overflow-hidden" id="dashboard-hero" style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>
+        <div className="absolute right-0 bottom-0 opacity-5 pointer-events-none transform translate-y-6 translate-x-6">
           <TrendingUp size={200} aria-hidden="true" />
         </div>
         <div className="relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-450 text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-full">
-            EstateFlow CRM Live
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ color: 'var(--color-accent)', background: 'var(--border-light)' }}>
+            EstateFlow CRM
           </span>
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black mt-3 tracking-tight text-white leading-tight">
+          <h1 className="text-lg sm:text-xl font-black mt-3 tracking-tight leading-tight" style={{ color: 'var(--text-primary)' }}>
             {greeting()}, {currentUser.name}!
           </h1>
-          <p className="text-sm text-slate-200 mt-1 max-w-md">
-            Managed role: <strong className="text-emerald-300 font-bold">{currentUser.role}</strong>. Here is your team's real-time productivity overview.
+          <p className="text-xs mt-1 max-w-md" style={{ color: 'var(--text-secondary)' }}>
+            Role: <strong style={{ color: 'var(--color-accent)' }}>{currentUser.role}</strong>
           </p>
           
-          <div className="mt-5 flex flex-wrap gap-2.5">
+          <div className="mt-4 flex flex-wrap gap-2">
             <button 
               id="quick-add-lead-btn"
               onClick={onOpenAddLead}
-              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-black px-4 py-2 rounded-xl transition duration-150 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-400 outline-none cursor-pointer"
-              aria-label="Add new manual CRM lead"
-              style={{ touchAction: 'manipulation' }}
+              className="min-touch text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+              style={{ background: 'var(--color-accent)', color: '#fff' }}
             >
-              <Plus size={14} aria-hidden="true" /> {t('action.createLead', lang)}
+              <Plus size={14} /> {t('action.createLead', lang)}
             </button>
             <button 
               id="quick-attendance-btn"
               onClick={() => onNavigate('more', 'attendance')}
-              className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition duration-150 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 outline-none cursor-pointer"
-              aria-label="Mark attendance register and check-in"
-              style={{ touchAction: 'manipulation' }}
+              className="min-touch text-xs font-extrabold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+              style={{ background: 'var(--border-light)', color: 'var(--text-secondary)' }}
             >
-              <MapPin size={14} aria-hidden="true" /> Attendance Login
+              <MapPin size={14} /> Attendance Login
             </button>
           </div>
         </div>
@@ -113,25 +111,22 @@ export default function Dashboard({
         tabIndex={0}
         role="button"
         aria-label="Launch voice and text CRM AI co-pilot assistant"
-        className="bg-slate-950 p-5 rounded-2xl border border-slate-850 shadow-xl relative overflow-hidden cursor-pointer hover:border-emerald-500/50 transition duration-150 group focus:outline-none focus:ring-2 focus:ring-emerald-500/80"
+        className="p-4 rounded-2xl border relative overflow-hidden cursor-pointer transition active:scale-[0.98] focus:outline-none"
+        style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-light)' }}
       >
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-3 translate-x-3">
-          <Sparkles size={110} className="text-emerald-400 animate-pulse" aria-hidden="true" />
-        </div>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-black tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2.5 py-1 rounded-full flex items-center gap-1.5 w-fit select-none">
-              <Sparkles size={11} className="animate-spin text-emerald-400" aria-hidden="true" style={{ animationDuration: '3s' }} /> Co-Pilot Automation Active
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 relative z-10">
+          <div className="space-y-1.5">
+            <span className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 w-fit" style={{ color: 'var(--color-accent)', background: 'var(--border-light)' }}>
+              <Sparkles size={11} /> AI Co-Pilot
             </span>
-            <h3 className="text-xs sm:text-sm md:text-base font-bold text-white mt-1.5">Voice & Text CRM Assistant</h3>
-            <p className="text-[11px] text-slate-350 leading-normal max-w-2xl text-left">
-              Tap here to quickly tell the custom Gemini model to map candidate profiles, write notes, schedule site visit tasks, and draft planner events directly from chat or spoken voice commands.
+            <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Voice & Text CRM Assistant</h3>
+            <p className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+              Tell the AI to create leads, schedule visits, draft notes, or manage tasks using voice or text.
             </p>
           </div>
           <button 
-            className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-4 py-2 rounded-xl transition font-black text-xs flex items-center gap-1.5 group-hover:scale-105 select-none shrink-0"
-            aria-label="Launch voice and text CRM AI co-pilot assistant dialog"
-            style={{ touchAction: 'manipulation' }}
+            className="min-touch px-4 py-2 rounded-xl font-bold text-xs shrink-0"
+            style={{ background: 'var(--color-accent)', color: '#fff' }}
           >
             Launch Co-Pilot
           </button>

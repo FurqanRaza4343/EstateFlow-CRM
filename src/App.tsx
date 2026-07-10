@@ -926,30 +926,30 @@ export default function App() {
         <span className="font-bold text-[11px]">AI Co-Pilot</span>
       </button>
 
-      {/* 7. INTRODUCED AI CO-PILOT CHATBOT SYSTEM DIALOG MODAL */}
+      {/* 7. AI CO-PILOT CHAT MODAL */}
       {showAiCopilot && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" id="ai-copter-modal-overlay">
-          <div className="bg-slate-950 text-slate-100 rounded-3xl p-5 max-w-md w-full flex flex-col h-[520px] max-h-[85dvh] shadow-2xl border border-emerald-900/30 animate-scaleIn" id="ai-copter-layout-sheet">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn" id="ai-copter-modal-overlay" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="rounded-t-2xl sm:rounded-2xl p-4 w-full sm:max-w-md flex flex-col h-[85dvh] sm:max-h-[600px]" id="ai-copter-layout-sheet" style={{ background: 'var(--bg-surface)' }}>
             
             {/* Modal Header */}
-            <div className="flex justify-between items-center border-b border-solid border-slate-850 pb-3">
+            <div className="flex justify-between items-center pb-3 shrink-0" style={{ borderBottom: '1px solid var(--border-light)' }}>
               <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-emerald-400 animate-pulse" />
+                <Sparkles size={16} style={{ color: 'var(--color-accent)' }} />
                 <div>
-                  <h3 className="font-black text-xs uppercase tracking-widest text-white leading-none">CRM AI Co-Pilot</h3>
-                  <span className="text-[9px] text-slate-400">Powered by Gemini 3.5 Flash</span>
+                  <h3 className="font-bold text-xs tracking-wider" style={{ color: 'var(--text-primary)' }}>AI Co-Pilot</h3>
+                  <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Gemini 3.5 Flash</span>
                 </div>
               </div>
               <button 
                 onClick={() => setShowAiCopilot(false)} 
-                className="text-slate-400 hover:text-slate-200 transition p-1 rounded-lg hover:bg-slate-850"
+                className="min-touch rounded-lg" style={{ color: 'var(--text-muted)' }}
               >
                 <X size={16} />
               </button>
             </div>
 
-            {/* AI Unobtrusive Disclosure Banner */}
-            <AiDisclosure className="mt-2.5 mb-1 bg-slate-900/60 border-slate-850 shrink-0" isDarkTheme={true} />
+            {/* AI Disclosure */}
+            <AiDisclosure className="mt-2 mb-1 shrink-0" isDarkTheme={true} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)' }} />
 
             {/* Conversation list */}
             <div className="flex-1 overflow-y-auto py-3 space-y-3 pr-1 text-xs" style={{ scrollbarWidth: 'thin' }}>
@@ -958,100 +958,78 @@ export default function App() {
                   key={index} 
                   className={`flex flex-col ${msg.sender === 'agent' ? 'items-end' : 'items-start'} max-w-[88%] ${msg.sender === 'agent' ? 'ml-auto' : 'mr-auto'}`}
                 >
-                  <div className={`p-3 rounded-2xl leading-relaxed ${
-                    msg.sender === 'agent' 
-                      ? 'bg-indigo-600 text-white rounded-tr-none' 
-                      : 'bg-slate-900 text-slate-200 border border-slate-800 rounded-tl-none'
-                  }`}>
+                  <div className="p-3 rounded-2xl leading-relaxed" style={{
+                    background: msg.sender === 'agent' ? 'var(--color-accent)' : 'var(--bg-card)',
+                    color: msg.sender === 'agent' ? '#fff' : 'var(--text-primary)',
+                    border: msg.sender === 'agent' ? 'none' : '1px solid var(--border-light)',
+                    borderRadius: msg.sender === 'agent' ? '16px 16px 4px 16px' : '16px 16px 16px 4px'
+                  }}>
                     {msg.text}
-
-                    {/* Integrated Action Pillar Badges */}
                     {msg.action && msg.action !== 'UNRECOGNIZED' && (
-                      <div className="mt-2 flex items-center gap-1.5 select-none font-bold text-[9px] uppercase tracking-wider bg-emerald-950/80 border border-emerald-900 text-emerald-400 px-2 py-0.5 rounded-lg w-fit">
-                        <Check size={11} /> Successfully Integrated: {msg.action}
+                      <div className="mt-1.5 flex items-center gap-1 font-bold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-lg w-fit" style={{ background: 'var(--border-light)', color: 'var(--color-accent)' }}>
+                        <Check size={10} /> {msg.action}
                       </div>
                     )}
                   </div>
-                  <span className="text-[8px] text-slate-500 mt-1 px-1">
+                  <span className="text-[8px] mt-1 px-1" style={{ color: 'var(--text-muted)' }}>
                     {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               ))}
 
               {copilotLoading && (
-                <div className="flex items-center gap-2 text-[11px] text-emerald-400 font-bold bg-slate-900/40 p-3 rounded-2xl border border-dashed border-slate-800 max-w-[70%] select-none">
-                  <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping" />
+                <div className="flex items-center gap-2 text-[11px] font-bold p-3 rounded-2xl border border-dashed max-w-[70%]" style={{ color: 'var(--color-accent)', background: 'var(--bg-card)', borderColor: 'var(--border-color)' }}>
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--color-accent)' }} />
                   AI agent incorporating request...
                 </div>
               )}
             </div>
 
-            {/* Micro Quick Suggestion Tabs */}
-            <div className="space-y-1 mt-1 border-t border-slate-850 pt-2 pb-1.5">
-              <span className="text-[9px] text-slate-500 uppercase font-extrabold tracking-widest block pl-1">Suggestion Shortcuts:</span>
-              <div className="flex gap-1 overflow-x-auto py-0.5" style={{ scrollbarWidth: 'none' }}>
-                <button 
-                  onClick={() => handleSendCopilotCommand('Add quick hot lead Zain Malik, phone +923001234567')}
-                  className="bg-slate-900 hover:bg-slate-850 text-slate-300 text-[10px] px-2.5 py-1 rounded-full whitespace-nowrap border border-slate-800 transition shrink-0 cursor-pointer"
-                >
-                  + Add Lead Zain
-                </button>
-                <button 
-                  onClick={() => handleSendCopilotCommand('Schedule site visit with Sarah Jenkins tomorrow afternoon')}
-                  className="bg-slate-900 hover:bg-slate-850 text-slate-300 text-[10px] px-2.5 py-1 rounded-full whitespace-nowrap border border-slate-800 transition shrink-0 cursor-pointer"
-                >
-                  + Visit tomorrow
-                </button>
-                <button 
-                  onClick={() => handleSendCopilotCommand('Add a counselor note to Tariq Al-Mansoor confirming sea-view target')}
-                  className="bg-slate-900 hover:bg-slate-850 text-slate-300 text-[10px] px-2.5 py-1 rounded-full whitespace-nowrap border border-slate-800 transition shrink-0 cursor-pointer"
-                >
-                  + Note Tariq target
-                </button>
+            {/* Suggestion Shortcuts */}
+            <div className="space-y-1 mt-1 shrink-0 pt-2" style={{ borderTop: '1px solid var(--border-light)' }}>
+              <span className="text-[9px] uppercase font-bold tracking-widest block pl-1" style={{ color: 'var(--text-muted)' }}>Shortcuts:</span>
+              <div className="flex gap-1 overflow-x-auto py-0.5 no-scrollbar">
+                {[
+                  { label: '+ Add Lead Zain', cmd: 'Add quick hot lead Zain Malik, phone +923001234567' },
+                  { label: '+ Visit tomorrow', cmd: 'Schedule site visit with Sarah Jenkins tomorrow afternoon' },
+                  { label: '+ Note Tariq target', cmd: 'Add a counselor note to Tariq Al-Mansoor confirming sea-view target' },
+                ].map(s => (
+                  <button key={s.label} onClick={() => handleSendCopilotCommand(s.cmd)} className="min-touch text-[10px] px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border-light)' }}>
+                    {s.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Input Action Panel Form */}
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-850">
+            {/* Input */}
+            <div className="flex items-center gap-2 pt-2 shrink-0" style={{ borderTop: '1px solid var(--border-light)' }}>
               <div className="flex flex-col items-center shrink-0">
                 <button 
                   onClick={startSpeechListening}
-                  className={`p-2.5 rounded-xl transition cursor-pointer ${
-                    isListening 
-                      ? 'bg-rose-600 text-white animate-pulse' 
-                      : 'bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-800'
-                  }`}
-                  title={isListening ? "Listening... Click to stop" : "Talk to AI Chatbot (Voice Activation)"}
+                  className="min-touch p-2.5 rounded-xl transition cursor-pointer" style={{
+                    background: isListening ? '#e11d48' : 'var(--bg-card)',
+                    color: isListening ? '#fff' : 'var(--text-secondary)',
+                    border: isListening ? 'none' : '1px solid var(--border-light)'
+                  }}
                 >
-                  <Mic size={15} className={isListening ? 'animate-bounce' : ''} />
+                  <Mic size={15} />
                 </button>
-                <button 
-                  onClick={() => setCopilotSpeechLang(prev => prev === 'en-US' ? 'ur-PK' : 'en-US')}
-                  className="text-[8px] font-black uppercase text-emerald-400 mt-1 hover:text-emerald-300 transition select-none"
-                  title="Toggle voice language: English (en-US) / Urdu (ur-PK)"
-                >
+                <button onClick={() => setCopilotSpeechLang(prev => prev === 'en-US' ? 'ur-PK' : 'en-US')} className="text-[8px] font-bold uppercase mt-1" style={{ color: 'var(--color-accent)' }}>
                   {copilotSpeechLang === 'en-US' ? 'EN' : 'اردو'}
                 </button>
               </div>
-              
               <input 
-                id="ai-copilot-text-input"
                 type="text"
-                placeholder={isListening ? `Listening (${copilotSpeechLang === 'en-US' ? 'English' : 'Urdu'})...` : "Speak in English/Urdu or type..."}
+                placeholder={isListening ? "Listening..." : "Type or speak..."}
                 value={copilotPrompt}
                 onChange={e => setCopilotPrompt(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    handleSendCopilotCommand();
-                  }
-                }}
-                className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                onKeyDown={e => { if (e.key === 'Enter') handleSendCopilotCommand(); }}
+                className="flex-1 rounded-xl px-3 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}
               />
-              
               <button 
                 onClick={() => handleSendCopilotCommand()}
                 disabled={copilotLoading || !copilotPrompt.trim()}
-                className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 p-2.5 rounded-xl transition duration-150 disabled:opacity-50 disabled:hover:bg-emerald-500 shrink-0 cursor-pointer"
+                className="min-touch p-2.5 rounded-xl transition disabled:opacity-50 shrink-0 cursor-pointer" style={{ background: 'var(--color-accent)', color: '#fff' }}
               >
                 <Send size={14} />
               </button>
