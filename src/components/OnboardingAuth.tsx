@@ -8,10 +8,10 @@ import {
   Mail,
   Lock,
   User,
-  ArrowRight,
   CheckCircle2,
   Github
 } from 'lucide-react';
+import { useUser, useSignIn, useSignUp } from '@clerk/clerk-react';
 import insforge from '../lib/insforge';
 import { UserProfile } from '../types';
 import ShaderBackground from './ShaderBackground';
@@ -67,6 +67,10 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
   const [agencies, setAgencies] = useState<any[]>([]);
 
+  const { isSignedIn, user: clerkUser, isLoaded } = useUser();
+  const { signIn, setActive: setSignInActive } = useSignIn();
+  const { signUp, setActive: setSignUpActive } = useSignUp();
+
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
@@ -84,39 +88,28 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    let retries = 0;
-    const MAX_RETRIES = 8;
-    const RETRY_MS = 600;
-
-    const checkExistingSession = async () => {
-      while (retries < MAX_RETRIES && !cancelled) {
-        try {
-          const { data, error } = await insforge.auth.getCurrentUser();
-          if (!cancelled && !error && data?.user) {
-            const { data: profile } = await insforge.database
-              .from('profiles')
-              .select('*')
-              .eq('user_id', data.user.id)
-              .maybeSingle();
-            if (!cancelled) {
-              const userProfile = mapToUserProfile(data.user, profile);
-              onCompleteAuth(userProfile);
-            }
-            return;
-          }
-        } catch {
-          // SDK might still be exchanging OAuth code
-        }
-        retries++;
-        if (retries < MAX_RETRIES && !cancelled) {
-          await new Promise(r => setTimeout(r, RETRY_MS));
-        }
-      }
-    };
-    checkExistingSession();
-    return () => { cancelled = true; };
-  }, []);
+    if (!isLoaded) return;
+    if (isSignedIn && clerkUser) {
+      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
+      const finishAuth = async () => {
+        const { data: profile } = await insforge.database
+          .from('profiles')
+          .select('*')
+          .eq('clerk_id', clerkUser.id)
+          .maybeSingle();
+        onCompleteAuth({
+          id: profile?.id || clerkUser.id,
+          organizationId: profile?.agency_id || agencies[0]?.id || '',
+          name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+          email,
+          role: profile?.role || 'Admin / Business Owner',
+          phone: profile?.phone || '',
+          avatarSeed: profile?.avatar_seed || 'user',
+        });
+      };
+      finishAuth();
+    }
+  }, [isSignedIn, clerkUser, isLoaded]);
 
   const handleNextSlide = () => {
     setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
@@ -124,18 +117,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
   const handlePrevSlide = () => {
     setActiveSlide(prev => (prev - 1 + ONBOARDING_SLIDES.length) % ONBOARDING_SLIDES.length);
-  };
-
-  const mapToUserProfile = (authUser: any, profile: any): UserProfile => {
-    return {
-      id: profile?.id || authUser.id,
-      organizationId: profile?.agency_id || agencies[0]?.id || 'org-estateflow-1',
-      name: profile?.name || authUser.profile?.name || authUser.email?.split('@')[0] || 'User',
-      email: authUser.email || '',
-      role: profile?.role || 'Admin / Business Owner',
-      phone: profile?.phone || '',
-      avatarSeed: profile?.avatar_seed || 'user',
-    };
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -150,30 +131,36 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
     setLoading(true);
     try {
-      const { data, error } = await insforge.auth.signUp({
-        email,
+      const result = await signUp.create({
+        emailAddress: email,
         password,
-        name: fullName,
-        redirectTo: window.location.origin,
+        firstName: fullName,
       });
 
-      if (error) throw error;
-
-      if (data?.requireEmailVerification) {
-        setSuccessMsg('Account created! Please check your email for the verification code.');
-        setView('verify');
-      } else if (data?.accessToken) {
-        setSuccessMsg('Account created successfully!');
+      if (result.status === 'complete') {
+        await setSignUpActive({ session: result.createdSessionId });
         const { data: profile } = await insforge.database
           .from('profiles')
           .select('*')
-          .eq('user_id', data.user.id)
+          .eq('clerk_id', result.createdUserId)
           .maybeSingle();
-        const userProfile = mapToUserProfile(data.user, profile);
-        setTimeout(() => onCompleteAuth(userProfile), 1000);
+        setSuccessMsg('Account created successfully!');
+        onCompleteAuth({
+          id: profile?.id || result.createdUserId,
+          organizationId: profile?.agency_id || agencies[0]?.id || '',
+          name: fullName,
+          email,
+          role: profile?.role || 'Admin / Business Owner',
+          phone: profile?.phone || '',
+          avatarSeed: profile?.avatar_seed || 'user',
+        });
+      } else if (result.status === 'missing_fields') {
+        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+        setSuccessMsg('Account created! Please check your email for the verification code.');
+        setView('verify');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Sign up failed. Please try again.');
+      setErrorMsg(err.errors?.[0]?.message || err.message || 'Sign up failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -185,23 +172,28 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setLoading(true);
 
     try {
-      const { data, error } = await insforge.auth.verifyEmail({
-        email,
-        otp,
-      });
+      const result = await signUp.attemptEmailAddressVerification({ code: otp });
 
-      if (error) throw error;
-
-      setSuccessMsg('Email verified! Signing you in...');
-      const { data: profile } = await insforge.database
-        .from('profiles')
-        .select('*')
-        .eq('user_id', data.user.id)
-        .maybeSingle();
-      const userProfile = mapToUserProfile(data.user, profile);
-      setTimeout(() => onCompleteAuth(userProfile), 1000);
+      if (result.status === 'complete') {
+        await setSignUpActive({ session: result.createdSessionId });
+        setSuccessMsg('Email verified! Signing you in...');
+        const { data: profile } = await insforge.database
+          .from('profiles')
+          .select('*')
+          .eq('clerk_id', result.createdUserId)
+          .maybeSingle();
+        onCompleteAuth({
+          id: profile?.id || result.createdUserId,
+          organizationId: profile?.agency_id || agencies[0]?.id || '',
+          name: fullName,
+          email,
+          role: profile?.role || 'Admin / Business Owner',
+          phone: profile?.phone || '',
+          avatarSeed: profile?.avatar_seed || 'user',
+        });
+      }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Verification failed. Check your code.');
+      setErrorMsg(err.errors?.[0]?.message || err.message || 'Verification failed. Check your code.');
     } finally {
       setLoading(false);
     }
@@ -219,27 +211,17 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
     setLoading(true);
     try {
-      const { data, error } = await insforge.auth.signInWithPassword({ email, password });
+      const result = await signIn.create({ identifier: email, password });
 
-      if (error) {
-        if (error.statusCode === 403) {
-          setSuccessMsg('Email not verified. Check your inbox for the verification code.');
-          setView('verify');
-          return;
-        }
-        throw error;
+      if (result.status === 'complete') {
+        await setSignInActive({ session: result.createdSessionId });
+        setSuccessMsg('Login successful! Entering dashboard...');
+      } else if (result.status === 'needs_prepare') {
+        setSuccessMsg('Email not verified. Check your inbox.');
+        setView('verify');
       }
-
-      setSuccessMsg('Login successful! Entering dashboard...');
-      const { data: profile } = await insforge.database
-        .from('profiles')
-        .select('*')
-        .eq('user_id', data.user.id)
-        .maybeSingle();
-      const userProfile = mapToUserProfile(data.user, profile);
-      setTimeout(() => onCompleteAuth(userProfile), 1200);
     } catch (err: any) {
-      setErrorMsg(err.message || 'Login failed. Please check your credentials.');
+      setErrorMsg(err.errors?.[0]?.message || err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -248,13 +230,16 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
   const handleOAuth = async (provider: 'google' | 'github') => {
     setErrorMsg(null);
     setLoading(true);
+
     try {
-      await insforge.auth.signInWithOAuth(provider, {
-        redirectTo: window.location.origin,
+      await signIn.authenticateWithRedirect({
+        strategy: `oauth_${provider}`,
+        redirectUrl: window.location.origin,
+        redirectUrlComplete: window.location.origin,
       });
     } catch (err: any) {
-      setErrorMsg(err.message || `${provider} login failed.`);
       setLoading(false);
+      setErrorMsg(err.errors?.[0]?.message || `${provider} login failed.`);
     }
   };
 
@@ -264,11 +249,14 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setLoading(true);
 
     try {
-      await insforge.auth.sendResetPasswordEmail({ email });
+      await signIn.create({
+        strategy: 'reset_password_email_code',
+        identifier: email,
+      });
       setSuccessMsg('Password reset code sent to your email!');
       setView('reset-password');
     } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to send reset email.');
+      setErrorMsg(err.errors?.[0]?.message || 'Failed to send reset email.');
     } finally {
       setLoading(false);
     }
@@ -280,12 +268,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setLoading(true);
 
     try {
-      const { data } = await insforge.auth.exchangeResetPasswordToken({ email, code: otp });
-      await insforge.auth.resetPassword({ newPassword, otp: data.token });
-      setSuccessMsg('Password reset successfully! You can now login.');
-      setTimeout(() => setView('login'), 2000);
+      const result = await signIn.attemptFirstFactor({
+        strategy: 'reset_password_email_code',
+        code: otp,
+        password: newPassword,
+      });
+
+      if (result.status === 'complete') {
+        await setSignInActive({ session: result.createdSessionId });
+        setSuccessMsg('Password reset successfully!');
+        setTimeout(() => setView('login'), 2000);
+      }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Password reset failed.');
+      setErrorMsg(err.errors?.[0]?.message || 'Password reset failed.');
     } finally {
       setLoading(false);
     }
@@ -306,7 +301,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           <p className="text-[11px] font-medium mt-0.5" style={{ color: 'var(--text-muted)' }}>Mobile First CRM Suite</p>
         </div>
 
-        {/* Slides */}
         <div className="relative rounded-2xl p-4 sm:p-5 mb-6 flex flex-col items-center text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)' }}>
           <button onClick={handlePrevSlide} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
             <ChevronLeft size={16} />
@@ -330,7 +324,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           </div>
         </div>
 
-        {/* Auth View */}
         <div className="space-y-4">
           <div className="pt-2 pb-1" style={{ borderTop: '1px solid var(--border-light)' }}>
             <h4 className="text-[11px] font-medium text-center" style={{ color: 'var(--text-muted)' }}>
@@ -354,7 +347,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </div>
           )}
 
-          {/* Sign Up Form */}
           {view === 'signup' && (
             <form onSubmit={handleSignUp} className="space-y-3">
               <div className="space-y-1">
@@ -395,7 +387,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </form>
           )}
 
-          {/* Login Form */}
           {view === 'login' && (
             <form onSubmit={handleLogin} className="space-y-3">
               <div className="space-y-1">
@@ -432,7 +423,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </form>
           )}
 
-          {/* Verify Email Form */}
           {view === 'verify' && (
             <form onSubmit={handleVerifyEmail} className="space-y-3">
               <p className="text-[11px] text-center" style={{ color: 'var(--text-secondary)' }}>Enter the 6-digit code sent to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong></p>
@@ -454,13 +444,9 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 disabled={loading}
                 style={{ background: 'var(--color-accent)' }}
               />
-              <button type="button" onClick={() => insforge.auth.resendVerificationEmail({ email, redirectTo: window.location.origin })} className="text-[11px] font-medium block w-full text-center cursor-pointer" style={{ color: 'var(--text-muted)' }}>
-                Resend Code
-              </button>
             </form>
           )}
 
-          {/* Forgot Password Form */}
           {view === 'forgot-password' && (
             <form onSubmit={handleForgotPassword} className="space-y-3">
               <div className="space-y-1">
@@ -487,7 +473,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </form>
           )}
 
-          {/* Reset Password Form */}
           {view === 'reset-password' && (
             <form onSubmit={handleResetPassword} className="space-y-3">
               <p className="text-[11px] text-center" style={{ color: 'var(--text-secondary)' }}>Enter the code sent to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong></p>
@@ -513,7 +498,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </form>
           )}
 
-          {/* OAuth + Toggle - only on login/signup */}
           {(view === 'login' || view === 'signup') && (
             <>
               <div className="relative flex py-1 items-center">
@@ -539,7 +523,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </>
           )}
 
-          {/* DEMO MODE */}
           {(view === 'login' || view === 'signup') && (
             <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--border-light)' }}>
               <button
@@ -547,7 +530,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 onClick={() => {
                   const demoUser: UserProfile = {
                     id: 'user-demo-1',
-                    organizationId: 'org-estateflow-1',
+                    organizationId: agencies[0]?.id || '',
                     name: 'Admin User',
                     email: 'admin@estateflow.com',
                     role: 'Admin / Business Owner',
@@ -564,7 +547,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
             </div>
           )}
 
-          {/* Mode Toggle */}
           <div className="text-center pt-2">
             {view === 'login' && (
               <button type="button" onClick={() => { setView('signup'); setErrorMsg(null); setSuccessMsg(null); }} className="text-[11px] font-medium transition cursor-pointer" style={{ color: 'var(--color-accent)' }}>
@@ -586,7 +568,7 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
       </div>
 
       <div className="text-[10px] font-medium flex items-center gap-1 mt-2 z-20" style={{ color: 'var(--text-muted)' }}>
-        Powered by InsForge • EstateFlow Real Estate CRM Platform
+        Powered by Clerk + InsForge • EstateFlow Real Estate CRM Platform
       </div>
     </div>
   );

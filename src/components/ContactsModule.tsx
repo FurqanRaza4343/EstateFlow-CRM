@@ -22,6 +22,7 @@ import {
 import { ContactPerson } from '../types';
 import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
+import insforge from '../lib/insforge';
 
 interface ContactsModuleProps {
   currentUser: any;
@@ -135,18 +136,15 @@ export default function ContactsModule({
     setWhatsappModal(prev => prev ? { ...prev, sending: true } : null);
 
     try {
-      const waUrl = `https://api.whatsapp.com/send?phone=${whatsappModal.contact.phone.replace(/\+/g, '')}&text=${encodeURIComponent(whatsappModal.message)}`;
+      const waUrl = `https://wa.me/923422582415?text=${encodeURIComponent(whatsappModal.message)}`;
       window.open(waUrl, '_blank');
 
-      // Also try server-side API (real Twilio)
-      await fetch('/api/whatsapp/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await insforge.functions.invoke('whatsapp-send', {
+        body: {
           leadId: whatsappModal.contact.id,
           agentId: currentUser?.id || 'user-admin-1',
           message: whatsappModal.message,
-        }),
+        },
       }).catch(() => {});
     } catch {}
 

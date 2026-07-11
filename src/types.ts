@@ -254,6 +254,23 @@ export interface DashboardStats {
   presentAgentsCount: number;
 }
 
+export type CommissionStatus = 'pending' | 'paid' | 'cancelled';
+
+export interface Commission {
+  id: string;
+  agency_id: string;
+  agent_user_id: string;
+  lead_id: string;
+  property_id: string;
+  commission_amount: number;
+  commission_percentage: number;
+  deal_value: number;
+  status: CommissionStatus;
+  paid_at?: string;
+  paid_note?: string;
+  created_at: string;
+}
+
 export interface ContactPerson {
   id: string;
   organizationId: string;

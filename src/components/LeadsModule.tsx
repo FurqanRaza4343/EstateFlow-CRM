@@ -35,6 +35,7 @@ import { Lead, UserProfile, LeadStatus, LeadTemperature, Property, LeadSource } 
 import AiDisclosure from './AiDisclosure';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
+import insforge from '../lib/insforge';
 
 interface LeadsModuleProps {
   leads: Lead[];
@@ -103,6 +104,8 @@ export default function LeadsModule({
   const [aiDraftPrompt, setAiDraftPrompt] = useState('Ask for weekend site visit confirmation');
   const [aiDraftText, setAiDraftText] = useState('');
   const [loadingAi, setLoadingAi] = useState(false);
+  const [aiScore, setAiScore] = useState<{ score: number; reasoning: string; suggestedTemperature: string } | null>(null);
+  const [loadingScore, setLoadingScore] = useState(false);
   
   const [timeline, setTimeline] = useState<any[]>([]);
 
@@ -189,21 +192,44 @@ export default function LeadsModule({
     setLoadingAi(true);
     setAiDraftText('');
     try {
-      const response = await fetch('/api/ai/draft-message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ leadId: selectedLeadId, templateContext: aiDraftPrompt })
+      const { data, error } = await insforge.functions.invoke('ai-draft-message', {
+        body: { leadId: selectedLeadId, templateContext: aiDraftPrompt }
       });
-      const data = await response.json();
-      if (data.draftedText) {
+      if (!error && data?.draftedText) {
         setAiDraftText(data.draftedText);
       } else {
-        setAiDraftText('Could not generate message content.');
+        setAiDraftText(error?.message || 'Could not generate message content.');
       }
     } catch (e) {
       setAiDraftText('Fallback: Hi! We have a few new exclusive apartments matching your price and sector target. When can we coordinate a short video preview or site visit today?');
     } finally {
       setLoadingAi(false);
+    }
+  };
+
+  // AI Lead Scoring
+  const handleScoreLead = async () => {
+    if (!activeLead) return;
+    setLoadingScore(true);
+    setAiScore(null);
+    try {
+      const { data } = await insforge.functions.invoke('ai-score-lead', {
+        body: {
+          fullName: activeLead.fullName,
+          source: activeLead.source,
+          budgetMin: activeLead.budgetMin,
+          budgetMax: activeLead.budgetMax,
+          preferredLocation: activeLead.preferredLocation,
+          status: activeLead.status,
+          notes: activeLead.notes,
+          temperature: activeLead.temperature,
+        },
+      });
+      if (data) setAiScore(data);
+    } catch {
+      setAiScore({ score: 50, reasoning: 'Scoring unavailable right now.', suggestedTemperature: 'Warm' });
+    } finally {
+      setLoadingScore(false);
     }
   };
 
@@ -458,7 +484,7 @@ export default function LeadsModule({
                   <Phone size={13} /> Bridge Call
                 </button>
                 <a 
-                  href={`https://wa.me/${activeLead.phone.replace(/[^0-9]/g, '')}`}
+                  href="https://wa.me/923422582415"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
@@ -524,6 +550,42 @@ export default function LeadsModule({
                   <option value="Cold">❄️ Cold lead pool</option>
                 </select>
               </div>
+            </div>
+
+            {/* AI Lead Scoring */}
+            <div className="bg-indigo-950/30 border border-indigo-800/40 rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                  <Sparkles size={13} /> AI Lead Score
+                </h3>
+                <button
+                  onClick={handleScoreLead}
+                  disabled={loadingScore}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition disabled:opacity-40 cursor-pointer"
+                >
+                  {loadingScore ? 'Scoring...' : 'Auto-Score'}
+                </button>
+              </div>
+              {aiScore && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className={`text-lg font-black ${
+                      aiScore.score >= 75 ? 'text-emerald-400' : aiScore.score >= 40 ? 'text-amber-400' : 'text-slate-400'
+                    }`}>
+                      {aiScore.score}/100
+                    </div>
+                    <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      aiScore.suggestedTemperature === 'Hot' ? 'bg-rose-900/40 text-rose-300' :
+                      aiScore.suggestedTemperature === 'Warm' ? 'bg-amber-900/40 text-amber-300' :
+                      'bg-slate-800 text-slate-400'
+                    }`}>
+                      {aiScore.suggestedTemperature === 'Hot' ? '🔥 Hot' : aiScore.suggestedTemperature === 'Warm' ? '⚡ Warm' : '❄️ Cold'}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-indigo-200/70 leading-relaxed">{aiScore.reasoning}</p>
+                  <AiDisclosure isDarkTheme={true} className="bg-transparent border-indigo-800/30 px-0 py-0.5" />
+                </div>
+              )}
             </div>
 
             {/* Core Action Workspace Tab Sheets */}

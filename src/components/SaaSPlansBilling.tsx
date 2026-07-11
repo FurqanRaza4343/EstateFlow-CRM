@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { Organization, Lead, Property, UserProfile } from '../types';
 import { api } from '../lib/api';
+import insforge from '../lib/insforge';
 
 interface SaaSPlansBillingProps {
   activeOrg: Organization;
@@ -418,19 +419,17 @@ export default function SaaSPlansBilling({
       };
 
       try {
-        const checkoutRes = await fetch('/api/payments/create-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const { data: checkoutData, error: checkoutError } = await insforge.functions.invoke('stripe-create-checkout', {
+          body: {
             priceId: priceMap[priceKey] || `${selectedPlanId}_monthly`,
             customerEmail: currentUser?.email || 'admin@estateflow.com',
             successUrl: `${window.location.origin}/billing?checkout=success&plan=${selectedPlanId}`,
             cancelUrl: `${window.location.origin}/billing?checkout=cancel`,
             metadata: { orgId: activeOrg.id, plan: selectedPlanId },
-          }),
+          },
         });
 
-        const checkoutData = await checkoutRes.json();
+        if (checkoutError) throw checkoutError;
 
         if (checkoutData.simulated || checkoutData.url?.includes('sim_checkout')) {
           // Simulated flow — use existing mock logic

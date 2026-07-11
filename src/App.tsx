@@ -64,7 +64,7 @@ export default function App() {
   const [legalTab, setLegalTab] = useState<'privacy' | 'terms'>('privacy');
 
   // Multi-tenant Dynamic SaaS States
-  const [activeOrgId, setActiveOrgId] = useState<string>('org-estateflow-1');
+  const [activeOrgId, setActiveOrgId] = useState<string>('');
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isSuperAdminMode, setIsSuperAdminMode] = useState<boolean>(false);
 
@@ -229,20 +229,15 @@ export default function App() {
     setCopilotLoading(true);
 
     try {
-      const response = await fetch('/api/ai/process-command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const { data: result, error: apiError } = await insforge.functions.invoke('ai-process-command', {
+        body: {
           prompt: textToSend,
           userId: currentUser?.id,
-          organizationId: activeOrgId // Isolates copilot updates!
-        })
+          organizationId: activeOrgId
+        }
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        
-        // Append copilot response
+      if (!apiError && result) {
         setCopilotMessages(prev => [...prev, {
           sender: 'copilot',
           text: result.explanation || "Action matched and incorporated successfully into CRM pipeline.",
@@ -250,13 +245,11 @@ export default function App() {
           action: result.action
         }]);
 
-        // Refresh all elements
         await refreshCRMData();
       } else {
-        const error = await response.json();
         setCopilotMessages(prev => [...prev, {
           sender: 'copilot',
-          text: `Oops, I encountered an error: ${error.error || "Please try again."}`,
+          text: `Oops, I encountered an error: ${apiError?.message || "Please try again."}`,
           timestamp: new Date()
         }]);
       }
@@ -308,14 +301,22 @@ export default function App() {
     }
   };
 
+  // Sync activeOrgId from auth profile
+  useEffect(() => {
+    if (profile?.agency_id) {
+      setActiveOrgId(profile.agency_id);
+    }
+  }, [profile]);
+
   // Poll database inputs periodically to ensure simulated bridges sync
   useEffect(() => {
+    if (!activeOrgId) return;
     refreshCRMData();
     const interval = setInterval(() => {
       refreshCRMData();
-    }, 4500); // 4.5 seconds poll
+    }, 4500);
     return () => clearInterval(interval);
-  }, []);
+  }, [activeOrgId]);
 
   // Sync localization states from the loaded active organization profile
   useEffect(() => {
@@ -387,6 +388,25 @@ export default function App() {
   const handleUpdateLeadParameters = async (leadId: string, updates: Partial<Lead>) => {
     try {
       await api.updateLead(leadId, updates);
+
+      if (updates.status === 'Won') {
+        const lead = leads.find(l => l.id === leadId);
+        if (lead && activeOrgId) {
+          const dealValue = Math.max(lead.budgetMax, lead.budgetMin, 1);
+          const commissionPct = 2.5;
+          await api.createCommission({
+            agency_id: activeOrgId,
+            agent_user_id: lead.assignedAgentId || currentUser?.id || '',
+            lead_id: leadId,
+            property_id: properties[0]?.id || '',
+            commission_percentage: commissionPct,
+            deal_value: dealValue,
+            commission_amount: dealValue * commissionPct / 100,
+            status: 'pending',
+          });
+        }
+      }
+
       await refreshCRMData();
     } catch (e) {
       console.error('Lead update failed:', e);
@@ -410,15 +430,12 @@ export default function App() {
     }
   };
 
-  // Manual Twilio bridge command (needs Edge Function)
-  const handleManualCallBridge = (leadId: string) => {
-    fetch('/api/calls/bridge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leadId })
-    })
-    .then(() => refreshCRMData())
-    .catch(e => console.error('Bridge call failed:', e));
+  const handleManualCallBridge = async (leadId: string) => {
+    const { error } = await insforge.functions.invoke('calls-bridge', {
+      body: { leadId }
+    });
+    if (error) console.error('Bridge call failed:', error);
+    await refreshCRMData();
   };
 
   // Property dispatch action (needs Edge Function for WhatsApp/SMS)
@@ -765,6 +782,7 @@ export default function App() {
                     onUpdateLocalization={handleUpdateLocalization}
                     theme={theme}
                     onToggleTheme={() => setTheme(prev => prev === 'dark' ? 'light' : prev === 'light' ? 'high-contrast' : 'dark')}
+                    onSignOut={signOut}
                   />
                 </motion.div>
               )}

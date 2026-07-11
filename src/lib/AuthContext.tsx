@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import insforge from './insforge';
+import { useInsforgeClient } from './useInsforgeClient';
 
 interface AuthUser {
   id: string;
@@ -24,67 +26,91 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const { isSignedIn, user: clerkUser, isLoaded } = useUser();
+  const { signOut: clerkSignOut } = useClerkAuth();
   const [profile, setProfile] = useState<any | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  useInsforgeClient();
+
   useEffect(() => {
-    let cancelled = false;
-    async function hydrateAuth() {
-      try {
-        // Check if OAuth code exchange might be in progress
-        const urlParams = new URLSearchParams(window.location.search);
-        const hasOAuthCode = urlParams.has('insforge_code');
-
-        const { data, error } = await insforge.auth.getCurrentUser();
-        if (cancelled) return;
-
-        if (!error && data?.user) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email,
-            profile: data.user,
-          });
-          const { data: profData } = await insforge.auth.getProfile(data.user.id);
-          if (profData && !cancelled) setProfile(profData);
-          setLoading(false);
-          return;
-        }
-
-        // OAuth redirect — SDK might still be exchanging the code
-        if (hasOAuthCode) {
-          await new Promise(r => setTimeout(r, 3000));
-          if (cancelled) return;
-          const retryResult = await insforge.auth.getCurrentUser();
-          if (!retryResult.error && retryResult.data?.user) {
-            setUser({
-              id: retryResult.data.user.id,
-              email: retryResult.data.user.email,
-              profile: retryResult.data.user,
-            });
-            const { data: profData } = await insforge.auth.getProfile(retryResult.data.user.id);
-            if (profData && !cancelled) setProfile(profData);
-          }
-        }
-      } catch {
-        // No session
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+    if (!isLoaded) {
+      setLoading(true);
+      return;
     }
-    void hydrateAuth();
-    return () => { cancelled = true; };
-  }, []);
+
+    if (!isSignedIn || !clerkUser) {
+      setUser(null);
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
+    const email = clerkUser.primaryEmailAddress?.emailAddress || '';
+
+    setUser({
+      id: clerkUser.id,
+      email,
+      profile: clerkUser,
+    });
+
+    const fetchOrCreateProfile = async () => {
+      const { data: existing } = await insforge.database
+        .from('profiles')
+        .select('*')
+        .eq('clerk_id', clerkUser.id)
+        .maybeSingle();
+
+      if (existing) {
+        setProfile(existing);
+        setLoading(false);
+        return;
+      }
+
+      const { data: firstAgency } = await insforge.database
+        .from('agencies')
+        .select('id')
+        .limit(1)
+        .maybeSingle();
+
+      if (firstAgency) {
+        const { data: newProfile } = await insforge.database
+          .from('profiles')
+          .insert([{
+            clerk_id: clerkUser.id,
+            user_id: crypto.randomUUID(),
+            agency_id: firstAgency.id,
+            name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+            email,
+            role: 'Admin / Business Owner',
+            phone: clerkUser.primaryPhoneNumber?.phoneNumber || '',
+          }])
+          .select()
+          .single();
+
+        if (newProfile) setProfile(newProfile);
+      }
+
+      setLoading(false);
+    };
+
+    fetchOrCreateProfile();
+  }, [isSignedIn, clerkUser, isLoaded]);
 
   const signOut = async () => {
-    await insforge.auth.signOut();
+    await clerkSignOut();
     setUser(null);
     setProfile(null);
   };
 
   const refreshProfile = async () => {
     if (!user) return;
-    const { data } = await insforge.auth.getProfile(user.id);
+    const { data } = await insforge.database
+      .from('profiles')
+      .select('*')
+      .eq('clerk_id', user.id)
+      .maybeSingle();
     if (data) setProfile(data);
   };
 

@@ -3,7 +3,8 @@ import type {
   Lead, UserProfile, Organization, Property, LeadPropertyShare,
   Activity, CallLog, MessageLog, FollowUp, Attendance, SocialPost,
   IntegrationSettings, Notification, ContactPerson, DashboardStats,
-  LeadSource, PropertyInterestedType, LeadStatus, LeadTemperature
+  LeadSource, PropertyInterestedType, LeadStatus, LeadTemperature,
+  Commission
 } from '../types';
 
 function mapRow<T>(row: any, mapping: Record<string, string>): T {
@@ -439,6 +440,26 @@ export const api = {
     const { data, error } = await query;
     if (error) throw error;
     return mapRows<LeadPropertyShare>(data || [], shareMapping);
+  },
+
+  async getCommissions(agencyId?: string): Promise<Commission[]> {
+    let query = insforge.database.from('commissions').select('*').order('created_at', { ascending: false });
+    if (agencyId) query = query.eq('agency_id', agencyId);
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data || []) as Commission[];
+  },
+
+  async createCommission(row: Partial<Commission>): Promise<Commission> {
+    const { data, error } = await insforge.database.from('commissions').insert([row]).select().single();
+    if (error) throw error;
+    return data as Commission;
+  },
+
+  async updateCommission(id: string, updates: Partial<Commission>): Promise<Commission> {
+    const { data, error } = await insforge.database.from('commissions').update(updates).eq('id', id).select().single();
+    if (error) throw error;
+    return data as Commission;
   },
 
   async getStats(agencyId: string): Promise<DashboardStats> {

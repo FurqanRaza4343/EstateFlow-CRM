@@ -23,13 +23,15 @@ import {
   X,
   FileText,
   CreditCard,
-  Zap
+  Zap,
+  DollarSign
 } from 'lucide-react';
-import { Attendance, UserProfile, Property, SocialPost, Organization, Lead } from '../types';
+import { Attendance, UserProfile, Property, SocialPost, Organization, Lead, Commission } from '../types';
 import SaaSPlansBilling from './SaaSPlansBilling';
 import AiDisclosure from './AiDisclosure';
 import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
+import insforge from '../lib/insforge';
 
 interface MoreModuleProps {
   properties: Property[];
@@ -52,6 +54,7 @@ interface MoreModuleProps {
   }) => Promise<void>;
   theme?: 'dark' | 'light' | 'high-contrast';
   onToggleTheme?: () => void;
+  onSignOut?: () => Promise<void>;
 }
 
 export default function MoreModule({
@@ -69,8 +72,9 @@ export default function MoreModule({
   currency = 'USD',
   propScheme = 'global',
   onUpdateLocalization,
-  theme = 'dark',
-  onToggleTheme
+  theme,
+  onToggleTheme,
+  onSignOut,
 }: MoreModuleProps) {
   
   // Tab states
@@ -216,20 +220,17 @@ export default function MoreModule({
     if (!draftPropertyId) return;
     setDraftLoading(true);
     try {
-      const response = await fetch('/api/social-posts/ai-caption', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const { data, error } = await insforge.functions.invoke('ai-social-caption', {
+        body: {
           postType,
           propertyId: draftPropertyId,
           customNotes: customDraftNotes
-        })
+        }
       });
-      const data = await response.json();
-      if (data.caption) {
+      if (!error && data?.caption) {
         setDraftCaption(data.caption);
       } else {
-        setDraftCaption('No caption returned.');
+        setDraftCaption(error?.message || 'No caption returned.');
       }
     } catch (e) {
       setDraftCaption('Fallback Reel caption: Exquisite Marbella villa! Modern bathrooms and layout. Price in Cr. Call for catalog.');
@@ -295,6 +296,64 @@ export default function MoreModule({
   };
 
   // 5. Save settings configurations
+  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [commissionModal, setCommissionModal] = useState(false);
+  const [newCommission, setNewCommission] = useState({ agent_user_id: '', lead_id: '', property_id: '', commission_percentage: 2.5, deal_value: 0 });
+
+  const fetchCommissions = async () => {
+    try {
+      const data = await api.getCommissions(activeOrg?.id);
+      setCommissions(data);
+    } catch {}
+  };
+
+  useEffect(() => { if (activeTab === 'commissions') fetchCommissions(); }, [activeTab]);
+
+  const handleCreateCommission = async () => {
+    try {
+      await api.createCommission({
+        agency_id: activeOrg?.id,
+        agent_user_id: newCommission.agent_user_id,
+        lead_id: newCommission.lead_id,
+        property_id: newCommission.property_id,
+        commission_percentage: newCommission.commission_percentage,
+        deal_value: newCommission.deal_value,
+        commission_amount: newCommission.deal_value * newCommission.commission_percentage / 100,
+        status: 'pending',
+      });
+      setCommissionModal(false);
+      fetchCommissions();
+    } catch (err: any) {
+      alert('Failed to create commission: ' + err.message);
+    }
+  };
+
+  const handleMarkCommissionPaid = async (id: string) => {
+    try {
+      await api.updateCommission(id, { status: 'paid', paid_at: new Date().toISOString() });
+      fetchCommissions();
+    } catch {}
+  };
+
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'DELETE') return;
+    setDeleteLoading(true);
+    try {
+      await insforge.database.from('profiles').delete().eq('clerk_id', currentUser.id);
+      await insforge.functions.invoke('delete-account', {
+        body: { clerkId: currentUser.id },
+      });
+      if (onSignOut) await onSignOut();
+    } catch (err: any) {
+      alert('Failed to delete account: ' + (err.message || 'Unknown error'));
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const handleSaveSettings = () => {
     // Settings (Twilio keys, etc.) stored via InsForge secrets; Edge Functions read them server-side.
     alert('Settings saved locally (sync to InsForge secrets pending).');
@@ -334,6 +393,12 @@ export default function MoreModule({
           className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'reports' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <BarChart3 size={15} /> CRM Analytics Reports
+        </button>
+        <button 
+          onClick={() => setActiveTab('commissions')}
+          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'commissions' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+        >
+          <DollarSign size={15} className="text-emerald-400" /> Commission Tracking
         </button>
         <button 
           onClick={() => setActiveTab('billing')}
@@ -880,6 +945,123 @@ export default function MoreModule({
           </div>
         )}
 
+        {/* VIEW: COMMISSION TRACKING */}
+        {activeTab === 'commissions' && (
+          <div className="space-y-5 md:col-span-9" id="more-view-commissions">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-extrabold text-primary flex items-center gap-2">
+                  <DollarSign size={18} className="text-emerald-400" /> Commission Tracking
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Track agent commissions per closed deal.</p>
+              </div>
+              <button
+                onClick={() => setCommissionModal(true)}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer"
+              >
+                + Add Commission
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {commissions.length === 0 ? (
+                <div className="text-center py-12 text-muted text-xs">
+                  <DollarSign size={32} className="mx-auto mb-2 opacity-40" />
+                  <p>No commissions yet. Close a deal to auto-generate, or add one manually.</p>
+                </div>
+              ) : (
+                commissions.map(c => {
+                  const agent = users.find(u => u.id === c.agent_user_id);
+                  const deal = leads.find(l => l.id === c.lead_id);
+                  return (
+                    <div key={c.id} className="bg-card border border-default rounded-xl p-4 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-primary">{agent?.name || c.agent_user_id}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            c.status === 'paid' ? 'bg-emerald-900/40 text-emerald-300' :
+                            c.status === 'cancelled' ? 'bg-rose-900/40 text-rose-300' :
+                            'bg-amber-900/40 text-amber-300'
+                          }`}>
+                            {c.status}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-secondary space-x-3">
+                          <span>Deal: {deal?.fullName || c.lead_id}</span>
+                          <span>•</span>
+                          <span>{c.commission_percentage}% of {new Intl.NumberFormat().format(c.deal_value)}</span>
+                          <span>•</span>
+                          <span className="font-bold text-emerald-400">{new Intl.NumberFormat().format(c.commission_amount)}</span>
+                        </div>
+                        {c.paid_at && <p className="text-[10px] text-muted">Paid: {new Date(c.paid_at).toLocaleDateString()}</p>}
+                      </div>
+                      {c.status === 'pending' && (
+                        <button
+                          onClick={() => handleMarkCommissionPaid(c.id)}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer"
+                        >
+                          Mark Paid
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Add Commission Modal */}
+            {commissionModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setCommissionModal(false)}>
+                <div className="bg-card border border-default rounded-2xl p-6 w-full max-w-md space-y-4" onClick={e => e.stopPropagation()}>
+                  <h4 className="text-sm font-extrabold text-primary">New Commission</h4>
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="font-bold text-secondary block mb-1">Agent</label>
+                      <select value={newCommission.agent_user_id} onChange={e => setNewCommission({...newCommission, agent_user_id: e.target.value})} className="w-full bg-surface border border-default rounded-xl p-2.5 text-xs">
+                        <option value="">Select agent...</option>
+                        {users.filter(u => u.role.includes('Agent') || u.role.includes('Manager') || u.role.includes('Owner')).map(u => (
+                          <option key={u.id} value={u.id}>{u.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-bold text-secondary block mb-1">Lead/Deal</label>
+                      <select value={newCommission.lead_id} onChange={e => {
+                        const selectedLead = leads.find(l => l.id === e.target.value);
+                        setNewCommission({...newCommission, lead_id: e.target.value, deal_value: selectedLead ? Math.max(selectedLead.budgetMax, selectedLead.budgetMin) : 0});
+                      }} className="w-full bg-surface border border-default rounded-xl p-2.5 text-xs">
+                        <option value="">Select lead...</option>
+                        {leads.filter(l => l.status === 'Won' || l.status === 'Negotiation').map(l => (
+                          <option key={l.id} value={l.id}>{l.fullName} - {new Intl.NumberFormat().format(l.budgetMax)}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-bold text-secondary block mb-1">Commission %</label>
+                        <input type="number" value={newCommission.commission_percentage} onChange={e => setNewCommission({...newCommission, commission_percentage: parseFloat(e.target.value) || 0})} className="w-full bg-surface border border-default rounded-xl p-2.5 text-xs" step="0.1" min="0" max="100" />
+                      </div>
+                      <div>
+                        <label className="font-bold text-secondary block mb-1">Deal Value</label>
+                        <input type="number" value={newCommission.deal_value} onChange={e => setNewCommission({...newCommission, deal_value: parseFloat(e.target.value) || 0})} className="w-full bg-surface border border-default rounded-xl p-2.5 text-xs" />
+                      </div>
+                    </div>
+                    <div className="bg-emerald-950/30 border border-emerald-800/40 rounded-xl p-3 text-center">
+                      <span className="text-[11px] text-emerald-300 font-bold">
+                        Commission: {new Intl.NumberFormat().format(newCommission.deal_value * newCommission.commission_percentage / 100)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => setCommissionModal(false)} className="flex-1 bg-surface border border-default text-secondary font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">Cancel</button>
+                    <button onClick={handleCreateCommission} disabled={!newCommission.agent_user_id || !newCommission.lead_id} className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">Create Commission</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* VIEW: DELEGATED SAAS PLANS & BILLING CENTRE */}
         {activeTab === 'billing' && (
           <SaaSPlansBilling 
@@ -982,6 +1164,57 @@ export default function MoreModule({
               >
                 Save configurations params
               </button>
+            </div>
+
+            {/* Delete Account Danger Zone */}
+            <div className="bg-rose-950/20 border border-rose-800/40 rounded-xl p-5 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-rose-900/30 rounded-lg shrink-0">
+                  <AlertTriangle size={18} className="text-rose-400" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold text-rose-300">Delete Account</h4>
+                  <p className="text-xs text-rose-400/80 mt-1">
+                    Permanently delete your account and all associated data. This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+              {deleteConfirm === '' ? (
+                <button
+                  onClick={() => setDeleteConfirm('typing')}
+                  className="bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition w-full cursor-pointer"
+                >
+                  Delete My Account
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-[11px] text-rose-300 font-medium">
+                    Type <strong>DELETE</strong> to confirm permanent removal:
+                  </p>
+                  <input
+                    type="text"
+                    value={deleteConfirm}
+                    onChange={e => setDeleteConfirm(e.target.value)}
+                    placeholder="Type DELETE to confirm"
+                    className="w-full bg-surface border border-rose-800/50 rounded-xl px-3 py-2 text-xs text-primary focus:outline-none focus:border-rose-500"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setDeleteConfirm('')}
+                      className="flex-1 bg-surface border border-slate-700 text-secondary font-bold py-2 rounded-xl text-xs transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      disabled={deleteConfirm !== 'DELETE'}
+                      className="flex-1 bg-rose-700 hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-2 rounded-xl text-xs transition cursor-pointer"
+                    >
+                      {deleteLoading ? 'Deleting...' : 'Confirm Delete'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
