@@ -88,41 +88,10 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
   }, []);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    if (isSignedIn && clerkUser) {
-      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
-      const finishAuth = async () => {
-        try {
-          const { data: profile } = await insforge.database
-            .from('profiles')
-            .select('*')
-            .eq('clerk_id', clerkUser.id)
-            .maybeSingle();
-          onCompleteAuth({
-            id: profile?.id || clerkUser.id,
-            organizationId: profile?.agency_id || agencies[0]?.id || '',
-            name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-            email,
-            role: profile?.role || 'Admin / Business Owner',
-            phone: profile?.phone || '',
-            avatarSeed: profile?.avatar_seed || 'user',
-          });
-        } catch (err) {
-          console.error('[OnboardingAuth] Profile fetch failed after OAuth — proceeding with Clerk user', err);
-          onCompleteAuth({
-            id: clerkUser.id,
-            organizationId: agencies[0]?.id || '',
-            name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-            email,
-            role: 'Admin / Business Owner',
-            phone: '',
-            avatarSeed: 'user',
-          });
-        }
-      };
-      finishAuth();
+    if (isLoaded) {
+      console.log('[OnboardingAuth] Clerk state — isLoaded:', isLoaded, 'isSignedIn:', isSignedIn, 'clerkUser:', clerkUser?.id);
     }
-  }, [isSignedIn, clerkUser, isLoaded]);
+  }, [isLoaded, isSignedIn, clerkUser]);
 
   const handleNextSlide = () => {
     setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
@@ -244,15 +213,28 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setErrorMsg(null);
     setLoading(true);
 
+    if (!signIn) {
+      console.error('[OAuth] signIn not available from Clerk');
+      setLoading(false);
+      setErrorMsg(`Clerk not ready yet. Please refresh and try again.`);
+      return;
+    }
+
     try {
-      await signIn.authenticateWithRedirect({
-        strategy: `oauth_${provider}`,
-        redirectUrl: window.location.origin,
-        redirectUrlComplete: window.location.origin,
-      });
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('OAuth redirect timed out after 15s')), 15000));
+      await Promise.race([
+        signIn.authenticateWithRedirect({
+          strategy: `oauth_${provider}`,
+          redirectUrl: window.location.origin,
+          redirectUrlComplete: window.location.origin,
+        }),
+        timeoutPromise,
+      ]);
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg(err.errors?.[0]?.message || `${provider} login failed.`);
+      const msg = err.errors?.[0]?.message || err.message || `${provider} login failed.`;
+      console.error(`[OAuth] ${provider} error:`, msg, err);
+      setErrorMsg(`${provider}: ${msg}`);
     }
   };
 

@@ -45,6 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useInsforgeClient();
 
   useEffect(() => {
+    console.log('[AuthContext] Clerk state — isLoaded:', isLoaded, 'isSignedIn:', isSignedIn, 'clerkUser:', clerkUser?.id);
+
     if (!isLoaded) {
       setLoading(true);
       return;
