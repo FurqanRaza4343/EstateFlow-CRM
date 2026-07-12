@@ -19,8 +19,9 @@ export function useInsforgeClient() {
         const token = await getToken({ template: 'insforge' });
         if (cancel) return;
         insforge.setAccessToken(token ?? null);
-      } catch {
+      } catch (err) {
         if (cancel) return;
+        console.error('[InsForge] Failed to get Clerk JWT — did you create the "insforge" JWT template in Clerk Dashboard?', err);
         insforge.setAccessToken(null);
       }
     };
