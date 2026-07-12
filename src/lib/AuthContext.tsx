@@ -25,6 +25,16 @@ const AuthContext = createContext<AuthContextType>({
   refreshProfile: async () => {},
 });
 
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { isSignedIn, user: clerkUser, isLoaded } = useUser();
   const { signOut: clerkSignOut } = useClerkAuth();
@@ -56,43 +66,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     const fetchOrCreateProfile = async () => {
-      const { data: existing } = await insforge.database
-        .from('profiles')
-        .select('*')
-        .eq('clerk_id', clerkUser.id)
-        .maybeSingle();
-
-      if (existing) {
-        setProfile(existing);
-        setLoading(false);
-        return;
-      }
-
-      const { data: firstAgency } = await insforge.database
-        .from('agencies')
-        .select('id')
-        .limit(1)
-        .maybeSingle();
-
-      if (firstAgency) {
-        const { data: newProfile } = await insforge.database
+      try {
+        const { data: existing } = await insforge.database
           .from('profiles')
-          .insert([{
-            clerk_id: clerkUser.id,
-            user_id: crypto.randomUUID(),
-            agency_id: firstAgency.id,
-            name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-            email,
-            role: 'Admin / Business Owner',
-            phone: clerkUser.primaryPhoneNumber?.phoneNumber || '',
-          }])
-          .select()
-          .single();
+          .select('*')
+          .eq('clerk_id', clerkUser.id)
+          .maybeSingle();
 
-        if (newProfile) setProfile(newProfile);
+        if (existing) {
+          setProfile(existing);
+          return;
+        }
+
+        const { data: firstAgency } = await insforge.database
+          .from('agencies')
+          .select('id')
+          .limit(1)
+          .maybeSingle();
+
+        if (firstAgency) {
+          const { data: newProfile } = await insforge.database
+            .from('profiles')
+            .insert([{
+              clerk_id: clerkUser.id,
+              user_id: generateId(),
+              agency_id: firstAgency.id,
+              name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+              email,
+              role: 'Admin / Business Owner',
+              phone: clerkUser.primaryPhoneNumber?.phoneNumber || '',
+            }])
+            .select()
+            .single();
+
+          if (newProfile) setProfile(newProfile);
+        }
+      } catch (err) {
+        console.error('Profile fetch/create error:', err);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchOrCreateProfile();
@@ -106,12 +119,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshProfile = async () => {
     if (!user) return;
-    const { data } = await insforge.database
-      .from('profiles')
-      .select('*')
-      .eq('clerk_id', user.id)
-      .maybeSingle();
-    if (data) setProfile(data);
+    try {
+      const { data } = await insforge.database
+        .from('profiles')
+        .select('*')
+        .eq('clerk_id', user.id)
+        .maybeSingle();
+      if (data) setProfile(data);
+    } catch (err) {
+      console.error('Profile refresh error:', err);
+    }
   };
 
   return (
