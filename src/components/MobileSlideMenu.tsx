@@ -3,11 +3,19 @@ import { Clock, Menu, X } from 'lucide-react';
 import useLondonTime from '../hooks/useLondonTime';
 import TextRollButton from './TextRollButton';
 
+const TABS = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'leads', label: 'Leads' },
+  { id: 'properties', label: 'Properties' },
+  { id: 'contacts', label: 'Contacts' },
+  { id: 'more', label: 'More' },
+];
+
 interface MobileSlideMenuProps {
-  navLinks: { label: string; href: string }[];
+  onNavigate: (tab: string) => void;
 }
 
-export default function MobileSlideMenu({ navLinks }: MobileSlideMenuProps) {
+export default function MobileSlideMenu({ onNavigate }: MobileSlideMenuProps) {
   const [open, setOpen] = useState(false);
   const londonTime = useLondonTime();
 
@@ -25,8 +33,15 @@ export default function MobileSlideMenu({ navLinks }: MobileSlideMenuProps) {
               <span>{londonTime} in London</span>
             </div>
             <div className="space-y-4">
-              {navLinks.map(link => (
-                <a key={link.href} href={link.href} className="block text-[28px] font-medium text-primary" style={{ lineHeight: '32px' }}>{link.label}</a>
+              {TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => { onNavigate(tab.id); setOpen(false); }}
+                  className="block w-full text-left text-[28px] font-medium text-primary cursor-pointer"
+                  style={{ lineHeight: '32px' }}
+                >
+                  {tab.label}
+                </button>
               ))}
             </div>
             <TextRollButton text="Start a project" />

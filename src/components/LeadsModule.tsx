@@ -33,6 +33,8 @@ import {
 } from 'lucide-react';
 import { Lead, UserProfile, LeadStatus, LeadTemperature, Property, LeadSource } from '../types';
 import AiDisclosure from './AiDisclosure';
+import SkeletonLoader from './SkeletonLoader';
+import GradientAvatar from './GradientAvatar';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
 import insforge from '../lib/insforge';
@@ -108,6 +110,20 @@ export default function LeadsModule({
   const [loadingScore, setLoadingScore] = useState(false);
   
   const [timeline, setTimeline] = useState<any[]>([]);
+
+  // Skeleton loader — show on first mount until leads arrive or timeout
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  useEffect(() => {
+    if (leads.length > 0) {
+      setIsFirstLoad(false);
+    }
+  }, [leads]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsFirstLoad(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Reset selected lead when initialFilter changes (for dashboard redirect support)
   useEffect(() => {
@@ -384,6 +400,12 @@ export default function LeadsModule({
 
         {/* Lead Rows List */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-50" id="leads-rows">
+          {leads.length === 0 && isFirstLoad ? (
+            <div className="space-y-2 p-3">
+              <SkeletonLoader count={5} height="80px" className="mb-2" />
+            </div>
+          ) : (
+          <>
           {filteredLeads.map(lead => {
             const agent = users.find(u => u.id === lead.assignedAgentId);
             const isSelected = selectedLeadId === lead.id;
@@ -430,7 +452,12 @@ export default function LeadsModule({
 
                 {/* Agent Assignment bottom preview */}
                 <div className="flex justify-between items-center border-t border-slate-50 pt-2 text-[9px] text-muted">
-                  <span>Owner: {agent ? agent.name : 'Unallocated'}</span>
+                  <span className="flex items-center gap-1.5">
+                    {agent ? (
+                      <GradientAvatar name={agent.name} size={18} />
+                    ) : null}
+                    Owner: {agent ? agent.name : 'Unallocated'}
+                  </span>
                   <span>{new Date(lead.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                 </div>
               </div>
@@ -446,6 +473,8 @@ export default function LeadsModule({
                 <Plus size={14} /> Add Lead
               </button>
             </div>
+          )}
+          </>
           )}
         </div>
       </div>

@@ -47,9 +47,13 @@ import OnboardingAuth from './components/OnboardingAuth';
 import ShaderBackground from './components/ShaderBackground';
 import TextRollButton from './components/TextRollButton';
 import MobileSlideMenu from './components/MobileSlideMenu';
+import BottomNav from './components/BottomNav';
 import ClickSpark from './components/ClickSpark';
+import { ToastProvider, useToast } from './components/ToastProvider';
 
-export default function App() {
+function AppInner() {
+  const toast = useToast();
+
   // Global tab levels
   const [activeTab, setActiveTab] = useState('dashboard');
   const [moreSubview, setMoreSubview] = useState('attendance');
@@ -141,7 +145,7 @@ export default function App() {
     }
 
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Your browser does not support Speech Recognition. Please type your query in the input field!');
+      toast.warning('Your browser does not support Speech Recognition. Please type your query in the input field.');
       return;
     }
 
@@ -346,7 +350,7 @@ export default function App() {
   const handleCreateLeadManual = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadName || !leadPhone) {
-      alert('Candidate full name and phone number is required.');
+      toast.warning('Full name and phone number are required.');
       return;
     }
 
@@ -365,7 +369,7 @@ export default function App() {
         organizationId: activeOrgId,
       });
 
-      alert('Success: Lead added!');
+      toast.success('Lead added successfully.');
       
       // Reset states
       setLeadName('');
@@ -379,7 +383,7 @@ export default function App() {
       setActiveTab('leads');
       setLeadsFilterRedirect('New');
     } catch (err: any) {
-      alert(`Error: ${err.message || err}`);
+      toast.error(err.message || 'An error occurred.');
       console.error(err);
     }
   };
@@ -626,13 +630,13 @@ export default function App() {
 
             {/* Mobile slide menu */}
             <div className="md:hidden">
-              <MobileSlideMenu navLinks={[
-                { label: 'Dashboard', href: '#' },
-                { label: 'Leads', href: '#' },
-                { label: 'Properties', href: '#' },
-                { label: 'Contacts', href: '#' },
-                { label: 'More', href: '#' },
-              ]} />
+              <MobileSlideMenu
+                onNavigate={(tab) => {
+                  setActiveTab(tab);
+                  setLeadsFilterRedirect('');
+                  if (tab === 'more') setMoreSubview('attendance');
+                }}
+              />
             </div>
 
             {/* Sign Out */}
@@ -725,7 +729,7 @@ export default function App() {
                       if (!error) {
                         refreshCRMData();
                       } else {
-                        alert(`Billing Threshold Restriction: ${error.message || 'Check plans limits.'}`);
+                        toast.error(`Billing Threshold Restriction: ${error.message || 'Check plans limits.'}`);
                       }
                     }}
                     onShareProperty={handleSharePropertyBypass}
@@ -792,28 +796,14 @@ export default function App() {
       </main>
 
       {/* 3. MOBILE BOTTOM NAVIGATION STRIP BAR */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around items-center safe-bottom" id="bottom-navigation-bar" aria-label="Primary Mobile Navigation" style={{ background: 'var(--bg-surface)', borderTop: '1px solid var(--border-light)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        {[
-          { id: 'dashboard', icon: Home, label: t('nav.home', lang) },
-          { id: 'leads', icon: Users, label: t('nav.leads', lang) },
-          { id: 'properties', icon: Award, label: t('nav.hotEstates', lang) },
-          { id: 'followups', icon: Calendar, label: t('nav.schedules', lang) },
-          { id: 'contacts', icon: MessageSquare, label: t('nav.whatsapp', lang) },
-          { id: 'more', icon: MoreHorizontal, label: t('nav.more', lang) },
-        ].map(({ id, icon: Icon, label }) => (
-          <button
-            key={id}
-            onClick={() => { setActiveTab(id); if (id === 'more') setMoreSubview('attendance'); setLeadsFilterRedirect(''); }}
-            className="flex-1 flex flex-col items-center py-1.5 transition min-touch"
-            style={{ color: activeTab === id ? 'var(--color-accent)' : 'var(--text-muted)' }}
-            aria-label={`Navigate to ${label}`}
-            aria-current={activeTab === id ? 'page' : undefined}
-          >
-            <Icon size={18} />
-            <span className="text-[9px] uppercase font-bold mt-0.5 tracking-tight">{label}</span>
-          </button>
-        ))}
-      </nav>
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'more') setMoreSubview('attendance');
+          setLeadsFilterRedirect('');
+        }}
+      />
 
       {/* 4. NOTIFICATION FEED SIDE DRAWER */}
       {showNotifDrawer && (
@@ -1073,5 +1063,13 @@ export default function App() {
       />
     </div>
     </ClickSpark>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <AppInner />
+    </ToastProvider>
   );
 }

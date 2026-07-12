@@ -157,8 +157,22 @@ button, a, [role="button"] {
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 .animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
 
-/* Reduced motion */
+@keyframes gradientCycle {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-animated-gradient {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-gold), var(--bg-primary));
+  background-size: 200% 200%;
+  animation: gradientCycle 8s ease infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hero-animated-gradient {
+    animation: none;
+    background-size: 100% 100%;
+  }
   .animate-fadeIn,
   .animate-slideUp,
   .animate-scaleIn,

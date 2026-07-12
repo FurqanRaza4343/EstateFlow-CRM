@@ -32,6 +32,7 @@ import AiDisclosure from './AiDisclosure';
 import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
 import insforge from '../lib/insforge';
+import GradientAvatar from './GradientAvatar';
 
 interface MoreModuleProps {
   properties: Property[];
@@ -865,9 +866,12 @@ export default function MoreModule({
                 <div className="space-y-2 max-h-[300px] overflow-y-auto">
                   {users.map(u => (
                     <div key={u.id} className="p-3 bg-card border border-default rounded-xl shadow-xs text-xs flex justify-between items-center text-secondary">
-                      <div>
-                        <h4 className="font-bold text-primary">{u.name}</h4>
-                        <p className="text-[10px] text-slate-400 mt-1">{u.role} • {u.phone}</p>
+                      <div className="flex items-center gap-2">
+                        <GradientAvatar name={u.name} size={28} active={u.id === currentUser.id} />
+                        <div>
+                          <h4 className="font-bold text-primary">{u.name}</h4>
+                          <p className="text-[10px] text-slate-400 mt-1">{u.role} • {u.phone}</p>
+                        </div>
                       </div>
                       <span className="text-[9px] uppercase tracking-widest font-black bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
                         CRM Logged
