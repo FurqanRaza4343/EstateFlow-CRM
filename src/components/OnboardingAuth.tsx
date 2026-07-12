@@ -92,20 +92,33 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     if (isSignedIn && clerkUser) {
       const email = clerkUser.primaryEmailAddress?.emailAddress || '';
       const finishAuth = async () => {
-        const { data: profile } = await insforge.database
-          .from('profiles')
-          .select('*')
-          .eq('clerk_id', clerkUser.id)
-          .maybeSingle();
-        onCompleteAuth({
-          id: profile?.id || clerkUser.id,
-          organizationId: profile?.agency_id || agencies[0]?.id || '',
-          name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-          email,
-          role: profile?.role || 'Admin / Business Owner',
-          phone: profile?.phone || '',
-          avatarSeed: profile?.avatar_seed || 'user',
-        });
+        try {
+          const { data: profile } = await insforge.database
+            .from('profiles')
+            .select('*')
+            .eq('clerk_id', clerkUser.id)
+            .maybeSingle();
+          onCompleteAuth({
+            id: profile?.id || clerkUser.id,
+            organizationId: profile?.agency_id || agencies[0]?.id || '',
+            name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+            email,
+            role: profile?.role || 'Admin / Business Owner',
+            phone: profile?.phone || '',
+            avatarSeed: profile?.avatar_seed || 'user',
+          });
+        } catch (err) {
+          console.error('[OnboardingAuth] Profile fetch failed after OAuth — proceeding with Clerk user', err);
+          onCompleteAuth({
+            id: clerkUser.id,
+            organizationId: agencies[0]?.id || '',
+            name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+            email,
+            role: 'Admin / Business Owner',
+            phone: '',
+            avatarSeed: 'user',
+          });
+        }
       };
       finishAuth();
     }
