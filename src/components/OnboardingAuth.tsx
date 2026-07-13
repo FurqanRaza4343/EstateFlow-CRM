@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Github
 } from 'lucide-react';
-import { useUser, useSignIn, useSignUp } from '@clerk/clerk-react';
 import insforge from '../lib/insforge';
 import { UserProfile } from '../types';
 import ShaderBackground from './ShaderBackground';
@@ -49,7 +48,7 @@ const ONBOARDING_SLIDES = [
   }
 ];
 
-type AuthView = 'login' | 'signup' | 'verify' | 'forgot-password' | 'reset-password';
+type AuthView = 'login' | 'signup' | 'verify' | 'forgot-password' | 'reset-password' | 'loading';
 
 export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: OnboardingAuthProps) {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -67,10 +66,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
   const [agencies, setAgencies] = useState<any[]>([]);
 
-  const { isSignedIn, user: clerkUser, isLoaded } = useUser();
-  const { signIn, setActive: setSignInActive } = useSignIn();
-  const { signUp, setActive: setSignUpActive } = useSignUp();
-
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
@@ -87,11 +82,48 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }).catch(() => {});
   }, []);
 
+  // Auto-detect existing session on mount
   useEffect(() => {
-    if (isLoaded) {
-      console.log('[OnboardingAuth] Clerk state — isLoaded:', isLoaded, 'isSignedIn:', isSignedIn, 'clerkUser:', clerkUser?.id);
-    }
-  }, [isLoaded, isSignedIn, clerkUser]);
+    let cancelled = false;
+    const checkSession = async () => {
+      setLoading(true);
+      setView('loading');
+      try {
+        const { data, error } = await insforge.auth.getCurrentUser();
+        if (cancelled) return;
+        if (error || !data?.user) {
+          setView('login');
+          setLoading(false);
+          return;
+        }
+        const authUser = data.user;
+        const email = authUser.email || '';
+        const { data: profile } = await insforge.database
+          .from('profiles')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .maybeSingle();
+        if (cancelled) return;
+        onCompleteAuth({
+          id: profile?.id || authUser.id,
+          organizationId: profile?.agency_id || agencies[0]?.id || '',
+          name: profile?.name || authUser.raw_user_meta_data?.name || email.split('@')[0] || 'User',
+          email,
+          role: profile?.role || 'Admin / Business Owner',
+          phone: profile?.phone || '',
+          avatarSeed: profile?.avatar_seed || 'user',
+        });
+      } catch (err) {
+        console.error('[OnboardingAuth] Session check error:', err);
+        if (!cancelled) {
+          setView('login');
+          setLoading(false);
+        }
+      }
+    };
+    checkSession();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleNextSlide = () => {
     setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
@@ -113,33 +145,57 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
     setLoading(true);
     try {
-      const result = await signUp.create({
-        emailAddress: email,
+      const { data, error } = await insforge.auth.signUp({
+        email,
         password,
-        firstName: fullName,
+        name: fullName,
+        redirectTo: window.location.origin,
       });
 
-      if (result.status === 'complete') {
-        await setSignUpActive({ session: result.createdSessionId });
-        const { data: profile } = await insforge.database
+      if (error) throw error;
+
+      if (data?.requireEmailVerification) {
+        setSuccessMsg('Account created! Please check your email for the verification code.');
+        setView('verify');
+      } else if (data?.accessToken) {
+        setSuccessMsg('Account created successfully!');
+        const userId = data.user?.id;
+        const { data: existingProfile } = await insforge.database
           .from('profiles')
           .select('*')
-          .eq('clerk_id', result.createdUserId)
+          .eq('user_id', userId)
           .maybeSingle();
-        setSuccessMsg('Account created successfully!');
+        let profile = existingProfile;
+        if (!profile) {
+          const { data: byEmail } = await insforge.database
+            .from('profiles')
+            .select('*')
+            .eq('email', email)
+            .maybeSingle();
+          if (byEmail) {
+            await insforge.database.from('profiles').update({ user_id: userId }).eq('id', byEmail.id);
+            profile = { ...byEmail, user_id: userId };
+          } else if (agencies.length > 0) {
+            const { data: newP } = await insforge.database.from('profiles').insert([{
+              user_id: userId,
+              agency_id: agencies[0].id,
+              name: fullName,
+              email,
+              role: 'Admin / Business Owner',
+              phone: '',
+            }]).select().single();
+            if (newP) profile = newP;
+          }
+        }
         onCompleteAuth({
-          id: profile?.id || result.createdUserId,
+          id: profile?.id || userId,
           organizationId: profile?.agency_id || agencies[0]?.id || '',
-          name: fullName,
+          name: fullName || profile?.name || email.split('@')[0],
           email,
           role: profile?.role || 'Admin / Business Owner',
           phone: profile?.phone || '',
           avatarSeed: profile?.avatar_seed || 'user',
         });
-      } else if (result.status === 'missing_fields') {
-        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-        setSuccessMsg('Account created! Please check your email for the verification code.');
-        setView('verify');
       }
     } catch (err: any) {
       setErrorMsg(err.errors?.[0]?.message || err.message || 'Sign up failed. Please try again.');
@@ -154,26 +210,48 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setLoading(true);
 
     try {
-      const result = await signUp.attemptEmailAddressVerification({ code: otp });
+      const { data, error } = await insforge.auth.verifyEmail({ email, otp });
 
-      if (result.status === 'complete') {
-        await setSignUpActive({ session: result.createdSessionId });
-        setSuccessMsg('Email verified! Signing you in...');
-        const { data: profile } = await insforge.database
+      if (error) throw error;
+
+      setSuccessMsg('Email verified! Signing you in...');
+      const userId = data.user?.id;
+      const { data: existingProfile } = await insforge.database
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+      let profile = existingProfile;
+      if (!profile) {
+        const { data: byEmail } = await insforge.database
           .from('profiles')
           .select('*')
-          .eq('clerk_id', result.createdUserId)
+          .eq('email', email)
           .maybeSingle();
-        onCompleteAuth({
-          id: profile?.id || result.createdUserId,
-          organizationId: profile?.agency_id || agencies[0]?.id || '',
-          name: fullName,
-          email,
-          role: profile?.role || 'Admin / Business Owner',
-          phone: profile?.phone || '',
-          avatarSeed: profile?.avatar_seed || 'user',
-        });
+        if (byEmail) {
+          await insforge.database.from('profiles').update({ user_id: userId }).eq('id', byEmail.id);
+          profile = { ...byEmail, user_id: userId };
+        } else if (agencies.length > 0) {
+          const { data: newP } = await insforge.database.from('profiles').insert([{
+            user_id: userId,
+            agency_id: agencies[0].id,
+            name: fullName,
+            email,
+            role: 'Admin / Business Owner',
+            phone: '',
+          }]).select().single();
+          if (newP) profile = newP;
+        }
       }
+      onCompleteAuth({
+        id: profile?.id || userId,
+        organizationId: profile?.agency_id || agencies[0]?.id || '',
+        name: fullName || profile?.name || email.split('@')[0],
+        email,
+        role: profile?.role || 'Admin / Business Owner',
+        phone: profile?.phone || '',
+        avatarSeed: profile?.avatar_seed || 'user',
+      });
     } catch (err: any) {
       setErrorMsg(err.errors?.[0]?.message || err.message || 'Verification failed. Check your code.');
     } finally {
@@ -193,14 +271,49 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
 
     setLoading(true);
     try {
-      const result = await signIn.create({ identifier: email, password });
+      const { data, error } = await insforge.auth.signInWithPassword({ email, password });
 
-      if (result.status === 'complete') {
-        await setSignInActive({ session: result.createdSessionId });
-        setSuccessMsg('Login successful! Entering dashboard...');
-      } else if (result.status === 'needs_prepare') {
-        setSuccessMsg('Email not verified. Check your inbox.');
-        setView('verify');
+      if (error) {
+        if (error.statusCode === 403) {
+          setSuccessMsg('Email not verified. Check your inbox.');
+          setView('verify');
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      setSuccessMsg('Login successful! Entering dashboard...');
+      const { data: currentUser } = await insforge.auth.getCurrentUser();
+      if (currentUser?.user) {
+        const userId = currentUser.user.id;
+        const email = currentUser.user.email || '';
+        const { data: profile } = await insforge.database
+          .from('profiles')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+        let resolved = profile;
+        if (!resolved) {
+          const { data: byEmail } = await insforge.database
+            .from('profiles')
+            .select('*')
+            .eq('email', email)
+            .maybeSingle();
+          if (byEmail) {
+            await insforge.database.from('profiles').update({ user_id: userId }).eq('id', byEmail.id);
+            resolved = { ...byEmail, user_id: userId };
+          }
+        }
+        onCompleteAuth({
+          id: resolved?.id || userId,
+          organizationId: resolved?.agency_id || agencies[0]?.id || '',
+          name: resolved?.name || email.split('@')[0],
+          email,
+          role: resolved?.role || 'Admin / Business Owner',
+          phone: resolved?.phone || '',
+          avatarSeed: resolved?.avatar_seed || 'user',
+        });
       }
     } catch (err: any) {
       setErrorMsg(err.errors?.[0]?.message || err.message || 'Login failed. Please check your credentials.');
@@ -209,63 +322,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }
   };
 
-  // Auto-detect Clerk session after OAuth redirect
-  useEffect(() => {
-    if (isLoaded && isSignedIn && clerkUser) {
-      console.log('[OnboardingAuth] Clerk session detected post-OAuth:', clerkUser.id);
-      setLoading(true);
-      const finishOAuth = async () => {
-        try {
-          const { data: profile } = await insforge.database
-            .from('profiles')
-            .select('*')
-            .eq('clerk_id', clerkUser.id)
-            .maybeSingle();
-          const email = clerkUser.primaryEmailAddress?.emailAddress || '';
-          onCompleteAuth({
-            id: profile?.id || clerkUser.id,
-            organizationId: profile?.agency_id || agencies[0]?.id || '',
-            name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-            email,
-            role: profile?.role || 'Admin / Business Owner',
-            phone: profile?.phone || '',
-            avatarSeed: profile?.avatar_seed || 'user',
-          });
-        } catch (err) {
-          console.error('[OAuth] Post-auth profile fetch error:', err);
-          setLoading(false);
-        }
-      };
-      finishOAuth();
-    }
-  }, [isLoaded, isSignedIn, clerkUser]);
-
   const handleOAuth = async (provider: 'google' | 'github') => {
     setErrorMsg(null);
     setLoading(true);
 
-    if (!signIn) {
-      console.error('[OAuth] signIn not available from Clerk');
-      setLoading(false);
-      setErrorMsg(`Clerk not ready yet. Please refresh and try again.`);
-      return;
-    }
-
     try {
-      await signIn.authenticateWithRedirect({
-        strategy: `oauth_${provider}`,
-        redirectUrl: window.location.href,
-        redirectUrlComplete: window.location.href,
+      await insforge.auth.signInWithOAuth(provider, {
+        redirectTo: window.location.origin,
       });
     } catch (err: any) {
       setLoading(false);
       const msg = err.errors?.[0]?.message || err.message || `${provider} login failed.`;
       console.error(`[OAuth] ${provider} error:`, msg, err);
-      setErrorMsg(`${provider}: ${msg}
-
-Make sure:
-1. Google OAuth is enabled in Clerk Dashboard → Social Connections
-2. Redirect URLs in Clerk Dashboard include: ${window.location.origin}`);
+      setErrorMsg(`${provider}: ${msg}`);
     }
   };
 
@@ -275,9 +344,9 @@ Make sure:
     setLoading(true);
 
     try {
-      await signIn.create({
-        strategy: 'reset_password_email_code',
-        identifier: email,
+      await insforge.auth.sendResetPasswordEmail({
+        email,
+        redirectTo: window.location.origin,
       });
       setSuccessMsg('Password reset code sent to your email!');
       setView('reset-password');
@@ -294,23 +363,39 @@ Make sure:
     setLoading(true);
 
     try {
-      const result = await signIn.attemptFirstFactor({
-        strategy: 'reset_password_email_code',
+      const { data: exchangeData, error: exchangeError } = await insforge.auth.exchangeResetPasswordToken({
+        email,
         code: otp,
-        password: newPassword,
       });
 
-      if (result.status === 'complete') {
-        await setSignInActive({ session: result.createdSessionId });
-        setSuccessMsg('Password reset successfully!');
-        setTimeout(() => setView('login'), 2000);
-      }
+      if (exchangeError) throw exchangeError;
+
+      const { error: resetError } = await insforge.auth.resetPassword({
+        newPassword,
+        otp: exchangeData.token,
+      });
+
+      if (resetError) throw resetError;
+
+      setSuccessMsg('Password reset successfully!');
+      setTimeout(() => setView('login'), 2000);
     } catch (err: any) {
       setErrorMsg(err.errors?.[0]?.message || 'Password reset failed.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (view === 'loading') {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--color-accent)', borderTopColor: 'transparent' }} />
+          <p className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>Checking session...</p>
+        </div>
+      </div>
+    );
+  }
 
   const SlideIcon = ONBOARDING_SLIDES[activeSlide].icon;
 
@@ -541,11 +626,6 @@ Make sure:
                 </svg>
                 <span>Continue with Google</span>
               </button>
-
-              <button type="button" onClick={() => handleOAuth('github')} disabled={loading} className="w-full font-medium py-3 rounded-xl text-xs flex items-center justify-center gap-2.5 transition cursor-pointer disabled:opacity-50" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}>
-                <Github size={16} />
-                <span>Continue with GitHub</span>
-              </button>
             </>
           )}
 
@@ -594,7 +674,7 @@ Make sure:
       </div>
 
       <div className="text-[10px] font-medium flex items-center gap-1 mt-2 z-20" style={{ color: 'var(--text-muted)' }}>
-        Powered by Clerk + InsForge • EstateFlow Real Estate CRM Platform
+        Powered by InsForge • EstateFlow Real Estate CRM Platform
       </div>
     </div>
   );

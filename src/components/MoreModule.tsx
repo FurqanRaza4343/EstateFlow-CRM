@@ -343,9 +343,9 @@ export default function MoreModule({
     if (deleteConfirm !== 'DELETE') return;
     setDeleteLoading(true);
     try {
-      await insforge.database.from('profiles').delete().eq('clerk_id', currentUser.id);
+      await insforge.database.from('profiles').delete().eq('user_id', currentUser.id);
       await insforge.functions.invoke('delete-account', {
-        body: { clerkId: currentUser.id },
+        body: { userId: currentUser.id },
       });
       if (onSignOut) await onSignOut();
     } catch (err: any) {

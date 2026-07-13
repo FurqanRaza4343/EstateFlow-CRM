@@ -1,12 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import insforge from './insforge';
-import { useInsforgeClient } from './useInsforgeClient';
 
 interface AuthUser {
   id: string;
   email: string;
-  profile: Record<string, any> | null;
+  name?: string;
 }
 
 interface AuthContextType {
@@ -25,96 +23,100 @@ const AuthContext = createContext<AuthContextType>({
   refreshProfile: async () => {},
 });
 
-function generateId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { isSignedIn, user: clerkUser, isLoaded } = useUser();
-  const { signOut: clerkSignOut } = useClerkAuth();
-  const [profile, setProfile] = useState<any | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useInsforgeClient();
-
   useEffect(() => {
-    console.log('[AuthContext] Clerk state — isLoaded:', isLoaded, 'isSignedIn:', isSignedIn, 'clerkUser:', clerkUser?.id);
+    let cancelled = false;
 
-    if (!isLoaded) {
-      setLoading(true);
-      return;
-    }
-
-    if (!isSignedIn || !clerkUser) {
-      setUser(null);
-      setProfile(null);
-      setLoading(false);
-      return;
-    }
-
-    const email = clerkUser.primaryEmailAddress?.emailAddress || '';
-
-    setUser({
-      id: clerkUser.id,
-      email,
-      profile: clerkUser,
-    });
-
-    const fetchOrCreateProfile = async () => {
+    async function hydrateAuth() {
       try {
-        const { data: existing } = await insforge.database
-          .from('profiles')
-          .select('*')
-          .eq('clerk_id', clerkUser.id)
-          .maybeSingle();
+        const { data, error } = await insforge.auth.getCurrentUser();
 
-        if (existing) {
-          setProfile(existing);
+        if (cancelled) return;
+
+        if (error || !data?.user) {
+          setUser(null);
+          setProfile(null);
+          setLoading(false);
           return;
         }
 
-        const { data: firstAgency } = await insforge.database
-          .from('agencies')
-          .select('id')
-          .limit(1)
+        const authUser = data.user;
+        const email = authUser.email || '';
+        const userId = authUser.id;
+
+        setUser({
+          id: userId,
+          email,
+          name: authUser.raw_user_meta_data?.name || authUser.email?.split('@')[0] || 'User',
+        });
+
+        const { data: existing } = await insforge.database
+          .from('profiles')
+          .select('*')
+          .eq('user_id', userId)
           .maybeSingle();
 
-        if (firstAgency) {
-          const { data: newProfile } = await insforge.database
-            .from('profiles')
-            .insert([{
-              clerk_id: clerkUser.id,
-              user_id: generateId(),
-              agency_id: firstAgency.id,
-              name: clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
-              email,
-              role: 'Admin / Business Owner',
-              phone: clerkUser.primaryPhoneNumber?.phoneNumber || '',
-            }])
-            .select()
-            .single();
+        if (cancelled) return;
 
-          if (newProfile) setProfile(newProfile);
+        if (existing) {
+          setProfile(existing);
+        } else {
+          // Migration: try to find profile by email (for existing Clerk users)
+          const { data: byEmail } = await insforge.database
+            .from('profiles')
+            .select('*')
+            .eq('email', email)
+            .maybeSingle();
+
+          if (!cancelled && byEmail) {
+            await insforge.database
+              .from('profiles')
+              .update({ user_id: userId })
+              .eq('id', byEmail.id);
+            setProfile({ ...byEmail, user_id: userId });
+          } else {
+            const { data: firstAgency } = await insforge.database
+              .from('agencies')
+              .select('id')
+              .limit(1)
+              .maybeSingle();
+
+            if (!cancelled && firstAgency) {
+              const { data: newProfile } = await insforge.database
+                .from('profiles')
+                .insert([{
+                  user_id: userId,
+                  agency_id: firstAgency.id,
+                  name: authUser.raw_user_meta_data?.name || email.split('@')[0] || 'User',
+                  email,
+                  role: 'Admin / Business Owner',
+                  phone: '',
+                }])
+                .select()
+                .single();
+
+              if (newProfile) setProfile(newProfile);
+            }
+          }
         }
       } catch (err) {
-        console.error('Profile fetch/create error:', err);
+        console.error('[Auth] Hydrate error:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
+    }
 
-    fetchOrCreateProfile();
-  }, [isSignedIn, clerkUser, isLoaded]);
+    void hydrateAuth();
+
+    return () => { cancelled = true; };
+  }, []);
 
   const signOut = async () => {
-    await clerkSignOut();
+    await insforge.auth.signOut();
     setUser(null);
     setProfile(null);
   };
@@ -125,11 +127,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data } = await insforge.database
         .from('profiles')
         .select('*')
-        .eq('clerk_id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
       if (data) setProfile(data);
     } catch (err) {
-      console.error('Profile refresh error:', err);
+      console.error('[Auth] Profile refresh error:', err);
     }
   };
 

@@ -546,7 +546,7 @@ function AppInner() {
       setIsAuthed(true);
       if (!welcomeToastShown.current) {
         welcomeToastShown.current = true;
-        toast.info('Session secured with Clerk cookies. Welcome back!');
+        toast.info('Session secured. Welcome back!');
       }
       refreshCRMData();
     }
@@ -564,7 +564,7 @@ function AppInner() {
             setIsAuthed(true);
             if (!welcomeToastShown.current) {
               welcomeToastShown.current = true;
-              toast.info('Session secured with Clerk cookies. Welcome back!');
+              toast.info('Session secured. Welcome back!');
             }
             localStorage.setItem('estateflow_is_authed', 'true');
             localStorage.setItem('estateflow_authed_user', JSON.stringify(user));
