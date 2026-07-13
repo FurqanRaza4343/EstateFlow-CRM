@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { 
   Plus, 
   Search, 
@@ -232,18 +233,31 @@ export default function ContactsModule({
         </div>
 
         {/* Contacts Grid/List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[500px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
-          {filteredContacts.map(contact => {
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[500px] overflow-y-auto pr-1"
+          style={{ scrollbarWidth: 'thin' }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.04 } }
+          }}
+        >
+          {filteredContacts.slice(0, 8).map(contact => {
             const initialLetter = contact.firstName ? contact.firstName.charAt(0).toUpperCase() : '?';
             const generatedAvatarBg = getAvatarColorClass(initialLetter);
 
             return (
-              <div 
-                key={contact.id} 
+              <motion.div
+                key={contact.id}
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.2 }}
                 className="p-4 bg-surface hover:bg-card border border-default hover:border-default rounded-2xl transition duration-150 flex items-center justify-between gap-3 group relative hover:shadow-md"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
-                  {/* WhatsApp-Style Left Greenish/Color Circle Avatar */}
                   <div className={`h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 uppercase tracking-wider relative ${generatedAvatarBg}`}>
                     {initialLetter}
                     <div className="absolute -bottom-0.5 -right-0.5 bg-emerald-500 border-2 border-slate-50 h-3.5 w-3.5 rounded-full flex items-center justify-center">
@@ -279,10 +293,7 @@ export default function ContactsModule({
                   </div>
                 </div>
 
-                {/* WhatsApp Action Buttons on Right */}
                 <div className="flex items-center gap-1.5 shrink-0 pl-1">
-                  
-                  {/* Simulate Direct WhatsApp Chat Trigger */}
                   <button
                     onClick={() => triggerWhatsAppBypass(contact)}
                     className="p-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-slate-950 rounded-xl transition cursor-pointer"
@@ -291,7 +302,6 @@ export default function ContactsModule({
                     <MessageSquare size={14} />
                   </button>
 
-                  {/* Simulate Direct telephone dialing / voip callback */}
                   <button
                     onClick={() => triggerCallBypass(contact)}
                     className="p-2.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-xl transition cursor-pointer"
@@ -299,6 +309,23 @@ export default function ContactsModule({
                   >
                     <Phone size={13} />
                   </button>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {filteredContacts.slice(8).map(contact => {
+            const initialLetter = contact.firstName ? contact.firstName.charAt(0).toUpperCase() : '?';
+            return (
+              <div key={contact.id} className="p-4 bg-surface hover:bg-card border border-default hover:border-default rounded-2xl transition duration-150 flex items-center justify-between gap-3 group relative hover:shadow-md">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 uppercase tracking-wider" style={{ background: 'var(--border-light)', color: 'var(--text-primary)' }}>
+                    {initialLetter}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-extrabold text-xs text-primary">{contact.firstName} {contact.lastName}</h3>
+                    <p className="text-[11px] font-bold text-slate-500 mt-0.5">{contact.phone}</p>
+                  </div>
                 </div>
               </div>
             );
@@ -314,7 +341,7 @@ export default function ContactsModule({
               </button>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* WHATSAPP CONTACT SAVING MODAL DIALOG */}

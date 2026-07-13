@@ -25,10 +25,9 @@ export default function ConsentBanner({ onOpenPrivacy }: ConsentBannerProps) {
     try {
       const storedConsent = localStorage.getItem(CONSENT_VERSION);
       if (!storedConsent) {
-        // Trigger banner after a short 1 second delay on first visit for dynamic entry effect
         const timer = setTimeout(() => {
           setIsVisible(true);
-        }, 1000);
+        }, 300);
         return () => clearTimeout(timer);
       }
     } catch (e) {

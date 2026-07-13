@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Home, Users, Award, MessageSquare, MoreHorizontal } from 'lucide-react';
 
 interface BottomNavProps {
@@ -14,6 +15,16 @@ const TABS = [
 ];
 
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 flex md:hidden justify-around items-center safe-bottom"
@@ -37,6 +48,15 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           >
             <Icon size={18} />
             <span className="text-[9px] uppercase font-bold mt-0.5 tracking-tight">{label}</span>
+            {isActive && !prefersReduced && (
+              <div
+                className="absolute -bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-full"
+                style={{
+                  width: '20px',
+                  background: 'var(--color-accent)',
+                }}
+              />
+            )}
           </button>
         );
       })}

@@ -53,6 +53,7 @@ import { ToastProvider, useToast } from './components/ToastProvider';
 
 function AppInner() {
   const toast = useToast();
+  const welcomeToastShown = useRef(false);
 
   // Global tab levels
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -543,6 +544,10 @@ function AppInner() {
       setCurrentUser(userProfile);
       setActiveOrgId(userProfile.organizationId);
       setIsAuthed(true);
+      if (!welcomeToastShown.current) {
+        welcomeToastShown.current = true;
+        toast.info('Session secured with Clerk cookies. Welcome back!');
+      }
       refreshCRMData();
     }
   }, [isAuthed, authLoading, authUser, profile]);
@@ -557,6 +562,10 @@ function AppInner() {
             setCurrentUser(user);
             setActiveOrgId(user.organizationId);
             setIsAuthed(true);
+            if (!welcomeToastShown.current) {
+              welcomeToastShown.current = true;
+              toast.info('Session secured with Clerk cookies. Welcome back!');
+            }
             localStorage.setItem('estateflow_is_authed', 'true');
             localStorage.setItem('estateflow_authed_user', JSON.stringify(user));
             refreshCRMData();

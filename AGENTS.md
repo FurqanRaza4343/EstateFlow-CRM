@@ -45,7 +45,20 @@
 
 All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 
-### New Features (this session)
+### Kiro AI Visual Upgrade (this session)
+- **SkeletonLoader**: Shimmer placeholder component; wired into Dashboard.tsx + LeadsModule.tsx on first load
+- **TiltCard**: 3D perspective-tilt wrapper; wrapped around 4 Dashboard metric cards
+- **ToastProvider**: Context-based toast notifications (success/error/info/warning) replacing `alert()` calls; Framer Motion slide-in animations; auto-dismiss 3.5s; max 3 toasts
+- **GradientAvatar**: Deterministic color avatar from name hash; integrated into Dashboard greeting, MoreModule team roster, LeadsModule agent list
+- **useCountUp**: Animated stat counter hook (ease-out cubic, 800ms); applied to Dashboard metric numbers
+- **BottomNav**: New mobile bottom tab bar (5 tabs) replacing inline nav; wired into App.tsx
+- **Hero animated gradient**: CSS `gradientCycle` animation (8s) applied to Dashboard greeting card
+- **Staggered Framer Motion animations**: Dashboard metric cards stagger at 0.05s intervals
+- **Dashboard dark theme**: All hardcoded `text-slate-*` / `bg-*-50` classes replaced with CSS variables
+- **MobileSlideMenu fix**: `navLinks` → `onNavigate` callback; `<a>` → `<button>`
+- **Build, Deploy, Push**: `npm run build` succeeds; InsForge deployment live at `https://b9qgdai5.insforge.site`; pushed to GitHub
+
+### New Features (previous session)
 - **Account Deletion UI**: Settings tab in MoreModule → danger zone with "DELETE" confirmation → deletes profile via RLS + Clerk user via `delete-account` edge function + sign out
 - **Privacy/Terms HTML pages**: `public/privacy.html` and `public/terms.html` — deploy as static pages for store review URLs
 - **AI Lead Scoring**: New `ai-score-lead` edge function (Mistral) + UI in LeadsModule detail panel → scores 0-100, suggests Hot/Warm/Cold
@@ -54,13 +67,11 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 - **Cleanup**: Deleted unused `AxionStudio.tsx`, `autoprefixer`, `startup.log/err`, `fix-rls.sql`, `.dockerignore`
 
 ### Remaining
-- Clerk JWT template named `insforge` must be created in Clerk Dashboard (HS256, signing key = InsForge JWT secret `64b179877c6b29a560f5766b016e0e4627bbcc1c`, claims: `{ "role": "authenticated", "aud": "insforge-api" }`)
+- Clerk JWT template must use HS256 algorithm (not RS256) with signing key `64b179877c6b29a560f5766b016e0e4627bbcc1c`
 - Twilio keys & Clerk secret to be set as InsForge secrets (`insforge secrets set`)
-- Skeleton loaders
 - Smart refresh (remove 4.5s polling)
 - PWA (manifest + service worker)
 - Meta tags / SEO
-- Toast notifications
 
 ### DB Tables
 `agencies`, `profiles`, `leads`, `properties`, `shares`, `activities`, `call_logs`, `message_logs`, `followups`, `attendance`, `social_posts`, `contacts`, `notifications`, `commissions`

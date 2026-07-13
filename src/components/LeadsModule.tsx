@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { 
   Plus, 
   Search, 
@@ -113,6 +114,7 @@ export default function LeadsModule({
 
   // Skeleton loader — show on first mount until leads arrive or timeout
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const prefersReduced = useRef(typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : true);
 
   useEffect(() => {
     if (leads.length > 0) {
@@ -406,13 +408,26 @@ export default function LeadsModule({
             </div>
           ) : (
           <>
-          {filteredLeads.map(lead => {
+          <motion.div
+            initial={prefersReduced.current ? undefined : "hidden"}
+            animate={prefersReduced.current ? undefined : "visible"}
+            variants={prefersReduced.current ? undefined : {
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.04 } }
+            }}
+          >
+          {filteredLeads.slice(0, 8).map((lead) => {
             const agent = users.find(u => u.id === lead.assignedAgentId);
             const isSelected = selectedLeadId === lead.id;
 
             return (
-              <div 
+              <motion.div
                 key={lead.id}
+                variants={prefersReduced.current ? undefined : {
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.2 }}
                 id={`lead-row-${lead.id}`}
                 onClick={() => setSelectedLeadId(lead.id)}
                 className={`p-3.5 hover:bg-slate-50/75 transition cursor-pointer flex flex-col gap-2 relative ${
@@ -458,6 +473,34 @@ export default function LeadsModule({
                     ) : null}
                     Owner: {agent ? agent.name : 'Unallocated'}
                   </span>
+                  <span>{new Date(lead.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                </div>
+              </motion.div>
+            );
+          })}
+          </motion.div>
+          {filteredLeads.slice(8).map((lead) => {
+            const agent = users.find(u => u.id === lead.assignedAgentId);
+            const isSelected = selectedLeadId === lead.id;
+            return (
+              <div key={lead.id} id={`lead-row-${lead.id}`} onClick={() => setSelectedLeadId(lead.id)}
+                className={`p-3.5 hover:bg-slate-50/75 transition cursor-pointer flex flex-col gap-2 relative ${isSelected ? 'bg-indigo-50/50 border-r-4 border-indigo-600' : ''}`}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">{lead.fullName}
+                      {lead.temperature === 'Hot' && (<span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" title="Hot temperature Lead" />)}
+                    </h3>
+                    <p className="text-[10px] text-muted mt-0.5">{lead.preferredLocation}</p>
+                  </div>
+                  <span className={`text-[9px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded ${lead.status === 'New' ? 'bg-emerald-100 text-emerald-800' : lead.status === 'Won' ? 'bg-green-100 text-green-900 border border-green-200' : lead.status === 'Lost' ? 'bg-rose-100 text-rose-800' : lead.status === 'Negotiation' ? 'bg-purple-100 text-purple-800' : 'bg-surface text-primary'}`}>{lead.status}</span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-muted mt-0.5">
+                  <span className="bg-surface px-2 py-0.5 rounded-md font-medium text-secondary">{lead.source}</span>
+                  <span className="text-[9px]">{t('field.budgetMax', lang)}: <strong>{formatCurrency(lead.budgetMax, currency, currency === 'PKR' || lang === 'ur' ? 'regional' : 'standard')}</strong></span>
+                </div>
+                <div className="flex justify-between items-center border-t border-slate-50 pt-2 text-[9px] text-muted">
+                  <span className="flex items-center gap-1.5">{agent ? (<GradientAvatar name={agent.name} size={18} />) : null}Owner: {agent ? agent.name : 'Unallocated'}</span>
                   <span>{new Date(lead.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                 </div>
               </div>

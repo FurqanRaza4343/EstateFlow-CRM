@@ -25,6 +25,7 @@ import {
   Building2
 } from 'lucide-react';
 import { Property, Lead, UserProfile } from '../types';
+import TiltCard from './TiltCard';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 
 const REAL_ESTATE_STOCK_GALLERY = [
@@ -249,8 +250,8 @@ export default function PropertiesModule({
         {/* Grid display */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4" id="property-grid-cards">
           {filteredProperties.map(prop => (
+            <TiltCard key={prop.id} maxTilt={5}>
             <div 
-              key={prop.id}
               onClick={() => setSelectedPropertyId(prop.id)}
               className="bg-card border border-default rounded-2xl shadow-xs overflow-hidden hover:border-indigo-200 hover:shadow-md cursor-pointer transition flex flex-col"
             >
@@ -282,6 +283,7 @@ export default function PropertiesModule({
                 </div>
               </div>
             </div>
+            </TiltCard>
           ))}
 
           {filteredProperties.length === 0 && (

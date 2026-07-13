@@ -209,6 +209,37 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }
   };
 
+  // Auto-detect Clerk session after OAuth redirect
+  useEffect(() => {
+    if (isLoaded && isSignedIn && clerkUser) {
+      console.log('[OnboardingAuth] Clerk session detected post-OAuth:', clerkUser.id);
+      setLoading(true);
+      const finishOAuth = async () => {
+        try {
+          const { data: profile } = await insforge.database
+            .from('profiles')
+            .select('*')
+            .eq('clerk_id', clerkUser.id)
+            .maybeSingle();
+          const email = clerkUser.primaryEmailAddress?.emailAddress || '';
+          onCompleteAuth({
+            id: profile?.id || clerkUser.id,
+            organizationId: profile?.agency_id || agencies[0]?.id || '',
+            name: profile?.name || clerkUser.fullName || clerkUser.firstName || email.split('@')[0] || 'User',
+            email,
+            role: profile?.role || 'Admin / Business Owner',
+            phone: profile?.phone || '',
+            avatarSeed: profile?.avatar_seed || 'user',
+          });
+        } catch (err) {
+          console.error('[OAuth] Post-auth profile fetch error:', err);
+          setLoading(false);
+        }
+      };
+      finishOAuth();
+    }
+  }, [isLoaded, isSignedIn, clerkUser]);
+
   const handleOAuth = async (provider: 'google' | 'github') => {
     setErrorMsg(null);
     setLoading(true);
@@ -221,20 +252,20 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }
 
     try {
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('OAuth redirect timed out after 15s')), 15000));
-      await Promise.race([
-        signIn.authenticateWithRedirect({
-          strategy: `oauth_${provider}`,
-          redirectUrl: window.location.origin,
-          redirectUrlComplete: window.location.origin,
-        }),
-        timeoutPromise,
-      ]);
+      await signIn.authenticateWithRedirect({
+        strategy: `oauth_${provider}`,
+        redirectUrl: window.location.href,
+        redirectUrlComplete: window.location.href,
+      });
     } catch (err: any) {
       setLoading(false);
       const msg = err.errors?.[0]?.message || err.message || `${provider} login failed.`;
       console.error(`[OAuth] ${provider} error:`, msg, err);
-      setErrorMsg(`${provider}: ${msg}`);
+      setErrorMsg(`${provider}: ${msg}
+
+Make sure:
+1. Google OAuth is enabled in Clerk Dashboard → Social Connections
+2. Redirect URLs in Clerk Dashboard include: ${window.location.origin}`);
     }
   };
 
