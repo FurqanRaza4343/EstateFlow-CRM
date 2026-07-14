@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Users,
-  Award,
-  Sparkles,
-  ChevronLeft,
-  ChevronRight,
   Mail,
   Lock,
   User,
@@ -15,43 +10,16 @@ import insforge from '../lib/insforge';
 import { UserProfile } from '../types';
 import ShaderBackground from './ShaderBackground';
 import TextRollButton from './TextRollButton';
+import TextType from './TextType';
 
 interface OnboardingAuthProps {
   lang?: 'en' | 'ur' | 'roman-urdu';
   onCompleteAuth: (user: UserProfile) => void;
 }
 
-const ONBOARDING_SLIDES = [
-  {
-    id: 1,
-    title: "Automatic Lead Allocation",
-    description: "Instantly distribute incoming webhook or manual leads to your sales agents using round-robin algorithms.",
-    icon: Users,
-    color: "from-emerald-500 to-teal-600",
-    iconBg: "bg-emerald-950/60 text-emerald-400 border border-emerald-900/40"
-  },
-  {
-    id: 2,
-    title: "White-Label Customization",
-    description: "Fully customize the CRM with your own agency logos, localized currency formats, and regional property units.",
-    icon: Award,
-    color: "from-indigo-500 to-blue-600",
-    iconBg: "bg-indigo-950/60 text-indigo-400 border border-indigo-900/40"
-  },
-  {
-    id: 3,
-    title: "Gemini AI Co-Pilot",
-    description: "Speak or type natural voice commands to draft social posts, allocate schedules, and take instant voice notes.",
-    icon: Sparkles,
-    color: "from-purple-500 to-pink-600",
-    iconBg: "bg-purple-950/60 text-purple-400 border border-purple-900/40"
-  }
-];
-
 type AuthView = 'login' | 'signup' | 'verify' | 'forgot-password' | 'reset-password' | 'loading';
 
 export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: OnboardingAuthProps) {
-  const [activeSlide, setActiveSlide] = useState(0);
   const [view, setView] = useState<AuthView>('login');
 
   const [fullName, setFullName] = useState('');
@@ -67,13 +35,6 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
   const [agencies, setAgencies] = useState<any[]>([]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
     Promise.race([
       insforge.database.from('agencies').select('id, name'),
       new Promise(resolve => setTimeout(() => resolve({ data: null, error: 'timeout' }), 4000))
@@ -82,20 +43,14 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     }).catch(() => {});
   }, []);
 
-  // Auto-detect existing session on mount
+  // Auto-detect existing session on mount — always show welcome page first
   useEffect(() => {
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
     const checkSession = async () => {
-      setLoading(true);
-      setView('loading');
       try {
         const { data, error } = await insforge.auth.getCurrentUser();
-        if (cancelled) return;
-        if (error || !data?.user) {
-          setView('login');
-          setLoading(false);
-          return;
-        }
+        if (cancelled || error || !data?.user) return;
         const authUser = data.user;
         const email = authUser.email || '';
         const { data: profile } = await insforge.database
@@ -104,34 +59,27 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
           .eq('user_id', authUser.id)
           .maybeSingle();
         if (cancelled) return;
-        onCompleteAuth({
-          id: profile?.id || authUser.id,
-          organizationId: profile?.agency_id || agencies[0]?.id || '',
-          name: profile?.name || authUser.raw_user_meta_data?.name || email.split('@')[0] || 'User',
-          email,
-          role: profile?.role || 'Admin / Business Owner',
-          phone: profile?.phone || '',
-          avatarSeed: profile?.avatar_seed || 'user',
-        });
+        // Wait for welcome typing animation to play first sentence
+        timer = setTimeout(() => {
+          if (!cancelled) {
+            onCompleteAuth({
+              id: profile?.id || authUser.id,
+              organizationId: profile?.agency_id || agencies[0]?.id || '',
+              name: profile?.name || authUser.raw_user_meta_data?.name || email.split('@')[0] || 'User',
+              email,
+              role: profile?.role || 'Admin / Business Owner',
+              phone: profile?.phone || '',
+              avatarSeed: profile?.avatar_seed || 'user',
+            });
+          }
+        }, 3500);
       } catch (err) {
         console.error('[OnboardingAuth] Session check error:', err);
-        if (!cancelled) {
-          setView('login');
-          setLoading(false);
-        }
       }
     };
     checkSession();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(timer); };
   }, []);
-
-  const handleNextSlide = () => {
-    setActiveSlide(prev => (prev + 1) % ONBOARDING_SLIDES.length);
-  };
-
-  const handlePrevSlide = () => {
-    setActiveSlide(prev => (prev - 1 + ONBOARDING_SLIDES.length) % ONBOARDING_SLIDES.length);
-  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -397,42 +345,45 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     );
   }
 
-  const SlideIcon = ONBOARDING_SLIDES[activeSlide].icon;
-
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 select-none relative overflow-y-auto" style={{ background: 'var(--bg-primary)' }}>
       <ShaderBackground />
       <div className="w-full max-w-md rounded-3xl overflow-hidden flex flex-col justify-between p-6 sm:p-8 z-20 relative my-6" style={{ background: 'var(--bg-surface)' }}>
 
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center text-center mb-6">
           <div className="w-11 h-11 rounded-full flex items-center justify-center font-bold tracking-tight text-white" style={{ fontSize: '12px', background: 'var(--color-accent)' }}>
             EF
           </div>
-          <h2 className="text-[13px] font-semibold mt-2 tracking-wide" style={{ color: 'var(--text-primary)' }}>EstateFlow</h2>
-          <p className="text-[11px] font-medium mt-0.5" style={{ color: 'var(--text-muted)' }}>Mobile First CRM Suite</p>
-        </div>
-
-        <div className="relative rounded-2xl p-4 sm:p-5 mb-6 flex flex-col items-center text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)' }}>
-          <button onClick={handlePrevSlide} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
-            <ChevronLeft size={16} />
-          </button>
-          <button onClick={handleNextSlide} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition cursor-pointer" style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
-            <ChevronRight size={16} />
-          </button>
-          <div className={`p-3 rounded-2xl inline-flex items-center justify-center mb-3.5`} style={{ background: 'var(--border-light)', color: 'var(--color-accent)' }}>
-            <SlideIcon size={22} />
+          <p className="text-[10px] font-medium mt-3 tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Welcome to</p>
+          <div className="mt-1.5 min-h-[40px] flex items-center justify-center">
+            <TextType
+              text={[
+                "EstateFlow \u2014 Your Intelligent CRM Partner",
+                "Streamline. Sell. Succeed.",
+                "Your All-in-One Management Solution",
+                "Real Estate CRM, Reinvented",
+              ]}
+              as="h2"
+              typingSpeed={60}
+              deletingSpeed={25}
+              pauseDuration={2500}
+              initialDelay={500}
+              showCursor={true}
+              cursorCharacter="|"
+              cursorBlinkDuration={0.5}
+              className="text-[16px] font-bold leading-tight"
+            />
           </div>
-          <div className="min-h-[92px] px-6">
-            <div className="space-y-1 transition-all duration-300">
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{ONBOARDING_SLIDES[activeSlide].title}</h3>
-              <p className="text-[11px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{ONBOARDING_SLIDES[activeSlide].description}</p>
-            </div>
-          </div>
-          <div className="flex justify-center gap-1.5 mt-3">
-            {ONBOARDING_SLIDES.map((_, idx) => (
-              <button key={idx} onClick={() => setActiveSlide(idx)} className={`h-1.5 rounded-full transition-all duration-300 ${activeSlide === idx ? 'w-4' : 'w-1.5'}`} style={{ background: activeSlide === idx ? 'var(--color-accent)' : 'var(--border-color)' }} aria-label={`Go to slide ${idx + 1}`} />
-            ))}
-          </div>
+          <style>{`
+            .text-type {
+              color: var(--color-accent);
+              line-height: 1.3;
+            }
+            .text-type__cursor {
+              color: var(--color-accent);
+              font-weight: 100;
+            }
+          `}</style>
         </div>
 
         <div className="space-y-4">

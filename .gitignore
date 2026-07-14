@@ -5,3 +5,4 @@ dist/
 startup.log
 startup.err
 .DS_Store
+configure-oauth.mjs

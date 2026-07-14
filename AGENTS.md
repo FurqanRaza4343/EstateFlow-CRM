@@ -66,9 +66,19 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 - **WhatsApp**: All wa.me links now point to `+923422582415`
 - **Cleanup**: Deleted unused `AxionStudio.tsx`, `autoprefixer`, `startup.log/err`, `fix-rls.sql`, `.dockerignore`
 
+### Google OAuth Configured ✅
+- PUT `/api/auth/oauth/google/config` returns 500 (platform bug)
+- **Workaround**: Direct SQL update on `auth.oauth_configs` table:
+  - `client_id` → Google Client ID
+  - `secret_id` → UUID of `OAUTH_GOOGLE_CLIENT_SECRET` in `system.secrets`
+  - `use_shared_key` → false
+  - `redirect_uri` → `https://b9qgdai5.us-east.insforge.app/api/auth/oauth/google/callback`
+- `OAUTH_GOOGLE_CLIENT_SECRET` secret active in `system.secrets`
+- GET `/api/auth/oauth/google/config` now returns full config with `clientId` and `clientSecret`
+
 ### Remaining
-- Clerk JWT template must use HS256 algorithm (not RS256) with signing key `64b179877c6b29a560f5766b016e0e4627bbcc1c`
-- Twilio keys & Clerk secret to be set as InsForge secrets (`insforge secrets set`)
+- **YOU MUST**: Google Cloud Console mein redirect URI add karo: `https://b9qgdai5.us-east.insforge.app/api/auth/oauth/google/callback` — Google OAuth tabhi chalega
+- Twilio keys to be set as InsForge secrets (`insforge secrets set`)
 - Smart refresh (remove 4.5s polling)
 - PWA (manifest + service worker)
 - Meta tags / SEO
@@ -77,15 +87,16 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 `agencies`, `profiles`, `leads`, `properties`, `shares`, `activities`, `call_logs`, `message_logs`, `followups`, `attendance`, `social_posts`, `contacts`, `notifications`, `commissions`
 
 ### Auth
-- `AuthContext.tsx` uses Clerk `useUser()` for session hydration
-- `OnboardingAuth` uses Clerk `useSignIn()`/`useSignUp()` for email/password + OAuth
-- Session persists via Clerk httpOnly cookies
-- `useInsforgeClient.ts` passes Clerk JWT to InsForge SDK
+- **Clerk removed!** Auth uses InsForge built-in SDK: `insforge.auth.*`
+- `AuthContext.tsx` uses `insforge.auth.getCurrentUser()` for session hydration
+- `OnboardingAuth` uses `insforge.auth.signUp()`, `signInWithPassword()`, `signInWithOAuth()` for all flows
+- Session: httpOnly cookies managed by InsForge
+- Profile auto-creation via `handle_new_user` trigger on `auth.users` table
+- Existing profiles migrated by email lookup and `user_id` update
+- Google OAuth via `insforge.auth.signInWithOAuth('google', { redirectTo })` — needs Dashboard OAuth key config
 
 ### Codegen
 - RLS policies per agency_id applied on all tables via InsForge CLI
-- `requesting_user_id()` returns Clerk `sub` claim as TEXT for RLS
-- `get_user_agency_id()` SECURITY DEFINER function uses `clerk_id` to return agency UUID
-
-### Blocked
-- Clerk JWT template creation requires user action in Clerk Dashboard
+- `requesting_user_id()` function **dropped** (was Clerk-specific)
+- `get_user_agency_id()` updated: uses `auth.uid()` instead of `clerk_id`
+- Profiles RLS uses `user_id = auth.uid()` instead of `clerk_id = requesting_user_id()`

@@ -5,6 +5,9 @@ verify_email_method = "code"
 reset_password_method = "code"
 disable_signup = false
 
+[auth.oauth.google]
+enabled = true
+
 [auth.password]
 min_length = 6
 require_number = false
