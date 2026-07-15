@@ -274,15 +274,21 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
     setErrorMsg(null);
     setLoading(true);
 
-    try {
-      await insforge.auth.signInWithOAuth(provider, {
-        redirectTo: window.location.origin,
-      });
-    } catch (err: any) {
+    const result = await insforge.auth.signInWithOAuth(provider, {
+      redirectTo: window.location.origin,
+    });
+
+    if (result.error) {
       setLoading(false);
-      const msg = err.errors?.[0]?.message || err.message || `${provider} login failed.`;
-      console.error(`[OAuth] ${provider} error:`, msg, err);
+      const msg = result.error.message || `${provider} login failed.`;
+      console.error(`[OAuth] ${provider} error:`, msg, result.error);
       setErrorMsg(`${provider}: ${msg}`);
+      return;
+    }
+
+    // If no redirect happened (server mode / skipBrowserRedirect), reset loading
+    if (result.data?.url) {
+      setLoading(false);
     }
   };
 
