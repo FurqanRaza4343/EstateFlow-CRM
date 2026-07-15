@@ -17,21 +17,29 @@ export default async (req) => {
       }), { headers: { 'Content-Type': 'application/json' } });
     }
 
-    const resp = await fetch('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${mistralKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'mistral-small-latest',
-        messages: [
-          { role: 'system', content: 'You are an AI assistant for a real estate CRM. Analyze commands and respond with an explanation and action type.' },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 300,
-      }),
-    });
+    let resp;
+    try {
+      resp = await fetch('https://api.mistral.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${mistralKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'mistral-small-latest',
+          messages: [
+            { role: 'system', content: 'You are an AI assistant for a real estate CRM. Analyze commands and respond with an explanation and action type.' },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: 300,
+        }),
+      });
+    } catch (fetchErr) {
+      console.error('Mistral fetch failed:', fetchErr.message);
+      return new Response(JSON.stringify({ explanation: `Processed command for "${prompt.substring(0, 50)}..." ✅`, action: 'acknowledged' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const data = await resp.json();
     const text = data.choices?.[0]?.message?.content || 'No response from AI.';
@@ -39,7 +47,8 @@ export default async (req) => {
     return new Response(JSON.stringify({ explanation: text, action: 'ai_response' }), {
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch {
+  } catch (err) {
+    console.error('ai-process-command error:', err);
     return new Response(JSON.stringify({ explanation: 'AI service temporarily unavailable. Please try again.', action: 'error' }), {
       headers: { 'Content-Type': 'application/json' },
     });

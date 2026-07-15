@@ -67,7 +67,9 @@ function AppInner() {
   // InsForge Authentication
   const { user: authUser, profile, loading: authLoading, signOut } = useAuth();
   const [isAuthed, setIsAuthed] = useState<boolean>(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    return sessionStorage.getItem('estateflow_splash_done') !== 'true';
+  });
 
   // Legal documentation overlay modal states
   const [showLegalModal, setShowLegalModal] = useState(false);
@@ -558,7 +560,10 @@ function AppInner() {
   }, [isAuthed, authLoading, authUser, profile]);
 
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    return <SplashScreen onComplete={() => {
+      sessionStorage.setItem('estateflow_splash_done', 'true');
+      setShowSplash(false);
+    }} />;
   }
 
   if (!isAuthed || !currentUser) {
@@ -908,21 +913,21 @@ function AppInner() {
               <div className="space-y-1">
                 <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.source', lang)}</label>
                 <select value={leadSource} onChange={e => setLeadSource(e.target.value)} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none cursor-pointer">
-                  <option className="bg-[var(--bg-surface)]">36 Acre Campaign</option>
-                  <option className="bg-[var(--bg-surface)]">MagicBricks</option>
-                  <option className="bg-[var(--bg-surface)]">Housing.com</option>
-                  <option className="bg-[var(--bg-surface)]">Facebook Promo</option>
-                  <option className="bg-[var(--bg-surface)]">Referral</option>
+                  <option value="36 Acre" className="bg-[var(--bg-surface)]">36 Acre</option>
+                  <option value="MagicBricks" className="bg-[var(--bg-surface)]">MagicBricks</option>
+                  <option value="Housing.com" className="bg-[var(--bg-surface)]">Housing.com</option>
+                  <option value="Facebook Ads" className="bg-[var(--bg-surface)]">Facebook Ads</option>
+                  <option value="Referral" className="bg-[var(--bg-surface)]">Referral</option>
                 </select>
               </div>
               <div className="space-y-1">
                 <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.propertyType', lang)}</label>
                 <select value={leadProp} onChange={e => setLeadProp(e.target.value)} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2.5 rounded-lg text-xs focus:outline-none cursor-pointer">
-                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Apartment', propScheme, lang)}</option>
-                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Villa', propScheme, lang)}</option>
-                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Plot', propScheme, lang)}</option>
-                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Commercial', propScheme, lang)}</option>
-                  <option className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Rental', propScheme, lang)}</option>
+                  <option value="Apartment" className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Apartment', propScheme, lang)}</option>
+                  <option value="Villa" className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Villa', propScheme, lang)}</option>
+                  <option value="Plot" className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Plot', propScheme, lang)}</option>
+                  <option value="Commercial" className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Commercial', propScheme, lang)}</option>
+                  <option value="Rental" className="bg-[var(--bg-surface)]">{getLocalizedPropertyType('Rental', propScheme, lang)}</option>
                 </select>
               </div>
               <div className="space-y-1">
