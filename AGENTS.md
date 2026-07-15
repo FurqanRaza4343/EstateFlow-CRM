@@ -94,6 +94,7 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 - Profile auto-creation via `handle_new_user` trigger on `auth.users` table
 - Existing profiles migrated by email lookup and `user_id` update
 - Google OAuth via `insforge.auth.signInWithOAuth('google', { redirectTo })` — needs Dashboard OAuth key config
+- **BUGFIX**: `handleOAuth` was using try/catch but `signInWithOAuth` returns errors (never throws). Caused loading to stay `true` forever, button appeared stuck. Fixed: check `result.error` instead of try/catch, call `setLoading(false)` on error, show error message.
 
 ### Codegen
 - RLS policies per agency_id applied on all tables via InsForge CLI
