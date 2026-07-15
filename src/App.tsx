@@ -49,6 +49,9 @@ import TextRollButton from './components/TextRollButton';
 import MobileSlideMenu from './components/MobileSlideMenu';
 import BottomNav from './components/BottomNav';
 import ClickSpark from './components/ClickSpark';
+import SplashScreen from './components/SplashScreen';
+import StaggeredMenu from './components/StaggeredMenu';
+import type { StaggeredMenuItem } from './components/StaggeredMenu';
 import { ToastProvider, useToast } from './components/ToastProvider';
 
 function AppInner() {
@@ -63,6 +66,7 @@ function AppInner() {
   // InsForge Authentication
   const { user: authUser, profile, loading: authLoading, signOut } = useAuth();
   const [isAuthed, setIsAuthed] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Legal documentation overlay modal states
   const [showLegalModal, setShowLegalModal] = useState(false);
@@ -552,6 +556,10 @@ function AppInner() {
     }
   }, [isAuthed, authLoading, authUser, profile]);
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   if (!isAuthed || !currentUser) {
     return (
       <div className="bg-[var(--bg-primary)] min-h-screen w-full flex items-center justify-center">
@@ -637,9 +645,21 @@ function AppInner() {
               {unreadCount > 0 && <span className="absolute top-1 right-1 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: 'var(--color-accent)' }}>{unreadCount}</span>}
             </button>
 
-            {/* Mobile slide menu */}
+            {/* Staggered mobile menu */}
             <div className="md:hidden">
-              <MobileSlideMenu
+              <StaggeredMenu
+                items={[
+                  { label: 'Dashboard', tab: 'dashboard', icon: '' },
+                  { label: 'Leads', tab: 'leads', icon: '' },
+                  { label: 'Properties', tab: 'properties', icon: '' },
+                  { label: 'Contacts', tab: 'contacts', icon: '' },
+                  { label: 'More', tab: 'more', icon: '' },
+                ]}
+                activeTab={activeTab}
+                displayItemNumbering={true}
+                displaySocials={true}
+                accentColor="#ff5f03"
+                colors={['#0f1322', '#1a1a2e', '#16213e']}
                 onNavigate={(tab) => {
                   setActiveTab(tab);
                   setLeadsFilterRedirect('');

@@ -9,7 +9,7 @@ import {
 import insforge from '../lib/insforge';
 import { UserProfile } from '../types';
 import ShaderBackground from './ShaderBackground';
-import TextRollButton from './TextRollButton';
+import SpecularButton from './SpecularButton';
 import TextType from './TextType';
 
 interface OnboardingAuthProps {
@@ -432,20 +432,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                   <input type="password" placeholder="•••••••• (min 6 chars)" value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
-              <TextRollButton
-                text={loading ? 'Creating Account...' : 'Create Free Account'}
-                bgColor=""
-                hoverBg=""
-                textColor="text-white"
-                circleBg="bg-white"
-                arrowIconColor="text-gray-900"
-                circleSize="w-7 h-7"
-                containerPad="pl-5 pr-2 py-2.5 w-full justify-center"
-                fontSize="13px"
+              <SpecularButton
                 type="submit"
+                size="md"
                 disabled={loading}
-                style={{ background: 'var(--color-accent)' }}
-              />
+                fullWidth
+                baseColor="#ff5f03"
+                lineColor="#ffffff"
+                intensity={1.2}
+                followMouse={true}
+                proximity={200}
+              >
+                {loading ? 'Creating Account...' : 'Create Free Account'}
+              </SpecularButton>
             </form>
           )}
 
@@ -465,20 +464,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                   <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
-              <TextRollButton
-                text={loading ? 'Signing In...' : 'Log In to System'}
-                bgColor=""
-                hoverBg=""
-                textColor="text-white"
-                circleBg="bg-white"
-                arrowIconColor="text-gray-900"
-                circleSize="w-7 h-7"
-                containerPad="pl-5 pr-2 py-2.5 w-full justify-center"
-                fontSize="13px"
+              <SpecularButton
                 type="submit"
+                size="md"
                 disabled={loading}
-                style={{ background: 'var(--color-accent)' }}
-              />
+                fullWidth
+                baseColor="#ff5f03"
+                lineColor="#ffffff"
+                intensity={1.2}
+                followMouse={true}
+                proximity={200}
+              >
+                {loading ? 'Signing In...' : 'Log In to System'}
+              </SpecularButton>
               <button type="button" onClick={() => setView('forgot-password')} className="text-[11px] font-medium block mx-auto text-center w-full cursor-pointer" style={{ color: 'var(--text-muted)' }}>
                 Forgot Password?
               </button>
@@ -492,20 +490,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 <label className="text-[11px] font-medium block" style={{ color: 'var(--text-secondary)' }}>Verification Code</label>
                 <input type="text" placeholder="000000" value={otp} onChange={e => setOtp(e.target.value)} maxLength={6} className="w-full rounded-xl px-4 py-2.5 text-xs text-center tracking-[8px] font-bold focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
               </div>
-              <TextRollButton
-                text={loading ? 'Verifying...' : 'Verify Email'}
-                bgColor=""
-                hoverBg=""
-                textColor="text-white"
-                circleBg="bg-white"
-                arrowIconColor="text-gray-900"
-                circleSize="w-7 h-7"
-                containerPad="pl-5 pr-2 py-2.5 w-full justify-center"
-                fontSize="13px"
+              <SpecularButton
                 type="submit"
+                size="md"
                 disabled={loading}
-                style={{ background: 'var(--color-accent)' }}
-              />
+                fullWidth
+                baseColor="#ff5f03"
+                lineColor="#ffffff"
+                intensity={1.2}
+                followMouse={true}
+                proximity={200}
+              >
+                {loading ? 'Verifying...' : 'Verify Email'}
+              </SpecularButton>
             </form>
           )}
 
@@ -518,20 +515,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                   <input type="email" placeholder="name@agency.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
                 </div>
               </div>
-              <TextRollButton
-                text={loading ? 'Sending...' : 'Send Reset Code'}
-                bgColor=""
-                hoverBg=""
-                textColor="text-white"
-                circleBg="bg-white"
-                arrowIconColor="text-gray-900"
-                circleSize="w-7 h-7"
-                containerPad="pl-5 pr-2 py-2.5 w-full justify-center"
-                fontSize="13px"
+              <SpecularButton
                 type="submit"
+                size="md"
                 disabled={loading}
-                style={{ background: 'var(--color-accent)' }}
-              />
+                fullWidth
+                baseColor="#ff5f03"
+                lineColor="#ffffff"
+                intensity={1.2}
+                followMouse={true}
+                proximity={200}
+              >
+                {loading ? 'Sending...' : 'Send Reset Code'}
+              </SpecularButton>
             </form>
           )}
 
@@ -543,20 +539,19 @@ export default function OnboardingAuth({ lang = 'en', onCompleteAuth }: Onboardi
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}><Lock size={14} /></span>
                 <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} />
               </div>
-              <TextRollButton
-                text={loading ? 'Resetting...' : 'Reset Password'}
-                bgColor=""
-                hoverBg=""
-                textColor="text-white"
-                circleBg="bg-white"
-                arrowIconColor="text-gray-900"
-                circleSize="w-7 h-7"
-                containerPad="pl-5 pr-2 py-2.5 w-full justify-center"
-                fontSize="13px"
+              <SpecularButton
                 type="submit"
+                size="md"
                 disabled={loading}
-                style={{ background: 'var(--color-accent)' }}
-              />
+                fullWidth
+                baseColor="#ff5f03"
+                lineColor="#ffffff"
+                intensity={1.2}
+                followMouse={true}
+                proximity={200}
+              >
+                {loading ? 'Resetting...' : 'Reset Password'}
+              </SpecularButton>
             </form>
           )}
 
