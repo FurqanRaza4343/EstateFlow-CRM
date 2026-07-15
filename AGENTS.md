@@ -95,6 +95,11 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 - Existing profiles migrated by email lookup and `user_id` update
 - Google OAuth via `insforge.auth.signInWithOAuth('google', { redirectTo })` — needs Dashboard OAuth key config
 - **BUGFIX**: `handleOAuth` was using try/catch but `signInWithOAuth` returns errors (never throws). Caused loading to stay `true` forever, button appeared stuck. Fixed: check `result.error` instead of try/catch, call `setLoading(false)` on error, show error message.
+- **BUTTON ANIMATIONS**: Global `button` CSS (hover/active scale) + `btn-enhance` class on sidebar tabs + SpecularButton on ~20 CTA buttons across LeadsModule, Dashboard, OnboardingAuth, App.tsx
+- **LEAD SCOUT**: New `LeadScout.tsx` component + `scrape-leads` edge function (Apify Google Maps Scraper) + "Lead Scout" tab in MoreModule — one-click scrape 5–20 leads, select all/individual, import to CRM, download CSV
+- **MISTRAL_API_KEY updated**: InsForge secret updated with new key from user
+- **APIFY_API_KEY added**: Two Apify API keys stored as InsForge secrets `APIFY_API_KEY` + `APIFY_API_KEY_2`
+- **allowed_redirect_urls fixed**: Added `https://estateflow-crm.insforge.site` to `insforge.toml` — Google OAuth now works on custom domain
 
 ### Codegen
 - RLS policies per agency_id applied on all tables via InsForge CLI

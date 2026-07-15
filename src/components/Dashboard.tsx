@@ -25,6 +25,7 @@ import { Lead, Activity as CRMActivity, DashboardStats, UserProfile } from '../t
 import SkeletonLoader from './SkeletonLoader';
 import TiltCard from './TiltCard';
 import GradientAvatar from './GradientAvatar';
+import SpecularButton from './SpecularButton';
 import { useCountUp } from '../hooks/useCountUp';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 
@@ -114,22 +115,28 @@ export default function Dashboard({
           </div>
           
           <div className="mt-4 flex flex-wrap gap-2">
-            <button 
-              id="quick-add-lead-btn"
+            <SpecularButton
+              size="md"
               onClick={onOpenAddLead}
-              className="min-touch text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
-              style={{ background: 'var(--color-accent)', color: '#fff' }}
+              baseColor="#3B82F6"
+              lineColor="#ffffff"
+              intensity={1.2}
+              followMouse={true}
+              proximity={200}
             >
               <Plus size={14} /> {t('action.createLead', lang)}
-            </button>
-            <button 
-              id="quick-attendance-btn"
+            </SpecularButton>
+            <SpecularButton
+              size="md"
               onClick={() => onNavigate('more', 'attendance')}
-              className="min-touch text-xs font-extrabold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer"
-              style={{ background: 'var(--border-light)', color: 'var(--text-secondary)' }}
+              baseColor="#64748B"
+              lineColor="#ffffff"
+              intensity={1}
+              followMouse={true}
+              proximity={200}
             >
               <MapPin size={14} /> Attendance Login
-            </button>
+            </SpecularButton>
           </div>
         </div>
       </div>

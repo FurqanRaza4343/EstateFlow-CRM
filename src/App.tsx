@@ -50,6 +50,7 @@ import MobileSlideMenu from './components/MobileSlideMenu';
 import BottomNav from './components/BottomNav';
 import ClickSpark from './components/ClickSpark';
 import SplashScreen from './components/SplashScreen';
+import SpecularButton from './components/SpecularButton';
 import StaggeredMenu from './components/StaggeredMenu';
 import type { StaggeredMenuItem } from './components/StaggeredMenu';
 import { ToastProvider, useToast } from './components/ToastProvider';
@@ -944,24 +945,27 @@ function AppInner() {
                 <label className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('field.notes', lang)}</label>
                 <textarea value={leadNotes} onChange={e => setLeadNotes(e.target.value)} placeholder="Prefers high floor, modular developer kitchens..." rows={2} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} className="w-full p-2 rounded-lg text-xs resize-none focus:outline-none" />
               </div>
-              <button id="submit-add-lead-btn" type="submit" className="col-span-2 min-touch font-bold py-2.5 rounded-xl text-center transition text-xs" style={{ background: 'var(--color-accent)', color: '#fff' }}>
+              <SpecularButton id="submit-add-lead-btn" type="submit" size="md" fullWidth baseColor="#3B82F6" lineColor="#ffffff" intensity={1.2} followMouse={true} proximity={200}>
                 Confirm Add & Allocate Agent
-              </button>
+              </SpecularButton>
             </form>
           </div>
         </div>
       )}
 
       {/* 6. GLOBAL AI CO-PILOT FLOATING BUTTON */}
-      <button
-        id="global-ai-copilot-bubble"
+      <SpecularButton
+        size="md"
         onClick={() => setShowAiCopilot(true)}
-        className="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 font-black text-xs cursor-pointer min-touch px-4 py-3 rounded-2xl shadow-2xl active:scale-95 transition-transform"
-        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--color-accent)' }}
+        baseColor="#0f1529"
+        lineColor="#3B82F6"
+        intensity={1.5}
+        followMouse={true}
+        proximity={200}
+        className="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 z-40 !shadow-2xl"
       >
-        <Sparkles size={16} style={{ color: 'var(--color-accent)' }} />
-        <span className="font-bold text-[11px]">AI Co-Pilot</span>
-      </button>
+        <Sparkles size={16} /> <span className="font-bold text-[11px]">AI Co-Pilot</span>
+      </SpecularButton>
 
       {/* 7. AI CO-PILOT CHAT MODAL */}
       {showAiCopilot && (

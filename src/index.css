@@ -243,3 +243,52 @@ button, a, [role="button"] {
 .text-muted { color: var(--text-muted); }
 .border-default { border-color: var(--border-color); }
 .border-light { border-color: var(--border-light); }
+
+/* Global button animation — applies to ALL buttons */
+button {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              opacity 0.15s ease;
+  cursor: pointer;
+}
+button:active {
+  transform: scale(0.97);
+}
+button:disabled {
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Enhanced scale + glow for non-SpecularButton buttons */
+.btn-enhance {
+  will-change: transform;
+}
+.btn-enhance:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.15);
+}
+.btn-enhance:active {
+  transform: scale(0.96);
+}
+
+/* Shimmer shine effect for prominent buttons */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  transform: rotate(25deg);
+  transition: left 0.6s ease;
+}
+.btn-shine:hover::after {
+  left: 120%;
+}

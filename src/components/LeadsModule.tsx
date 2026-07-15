@@ -36,6 +36,7 @@ import { Lead, UserProfile, LeadStatus, LeadTemperature, Property, LeadSource } 
 import AiDisclosure from './AiDisclosure';
 import SkeletonLoader from './SkeletonLoader';
 import GradientAvatar from './GradientAvatar';
+import SpecularButton from './SpecularButton';
 import { t, formatCurrency, getLocalizedPropertyType, LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
 import insforge from '../lib/insforge';
@@ -317,14 +318,18 @@ export default function LeadsModule({
             <h2 className="text-sm font-bold text-primary">Counseled Leads ({filteredLeads.length})</h2>
             <p className="text-[10px] text-muted mt-0.5">Round-robin live allocation</p>
           </div>
-          <button 
-            id="add-lead-top-btn"
+          <SpecularButton
+            size="sm"
             onClick={onOpenAddLead}
-            className="bg-slate-900 hover:bg-slate-800 text-white p-1.5 rounded-xl transition cursor-pointer"
+            baseColor="#3B82F6"
+            lineColor="#ffffff"
+            intensity={1}
+            followMouse={true}
+            proximity={150}
             title="Create Lead Manually"
           >
             <Plus size={16} />
-          </button>
+          </SpecularButton>
         </div>
 
         {/* Search & Mini Filters Bar */}
@@ -512,9 +517,9 @@ export default function LeadsModule({
               <Users size={40} className="mx-auto text-slate-300 mb-3" />
               <p className="text-sm font-bold text-muted">No leads found</p>
               <p className="text-xs text-slate-300 mt-1">Try changing your filters or add a new lead</p>
-              <button onClick={onOpenAddLead} className="mt-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer inline-flex items-center gap-1.5">
+              <SpecularButton size="sm" onClick={onOpenAddLead} baseColor="#3B82F6" lineColor="#ffffff" intensity={1} followMouse={true} proximity={150}>
                 <Plus size={14} /> Add Lead
-              </button>
+              </SpecularButton>
             </div>
           )}
           </>
@@ -548,13 +553,18 @@ export default function LeadsModule({
               
               {/* Quick Dials Dials */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <button 
+                <SpecularButton
+                  size="sm"
                   onClick={() => handleStartCallSimulation(activeLead)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2.5 rounded-xl transition font-black text-xs flex items-center gap-1 cursor-pointer"
+                  baseColor="#6366F1"
+                  lineColor="#ffffff"
+                  intensity={1}
+                  followMouse={true}
+                  proximity={150}
                   title="Direct Call Bridge Dialer"
                 >
                   <Phone size={13} /> Bridge Call
-                </button>
+                </SpecularButton>
                 <a 
                   href="https://wa.me/923422582415"
                   target="_blank"
@@ -757,14 +767,18 @@ export default function LeadsModule({
                       placeholder="e.g. Schedule a Marbella villa walkthrough..."
                       className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-muted focus:outline-none"
                     />
-                    <button 
-                      id="draft-ai-message-btn"
+                    <SpecularButton
+                      size="sm"
                       onClick={handleGenerateAiMessage}
                       disabled={loadingAi}
-                      className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                      baseColor="#10B981"
+                      lineColor="#ffffff"
+                      intensity={1}
+                      followMouse={true}
+                      proximity={150}
                     >
                       {loadingAi ? 'AI Drafting...' : 'Gemini Draft'}
-                    </button>
+                    </SpecularButton>
                   </div>
                 </div>
 
@@ -797,12 +811,17 @@ export default function LeadsModule({
                           SMS Sender
                         </button>
                       </div>
-                      <button 
+                      <SpecularButton
+                        size="sm"
                         onClick={handleSendDraft}
-                        className="bg-emerald-400 hover:bg-emerald-500 text-slate-950 text-xs font-bold px-3 py-1 rounded-lg transition flex items-center gap-1"
+                        baseColor="#10B981"
+                        lineColor="#ffffff"
+                        intensity={1}
+                        followMouse={true}
+                        proximity={150}
                       >
                         <Send size={12} /> Send Now
-                      </button>
+                      </SpecularButton>
                     </div>
                   </div>
                 )}
@@ -815,12 +834,17 @@ export default function LeadsModule({
                     <Clock size={14} className="text-muted" />
                     Timeline & History Log
                   </h3>
-                  <button 
+                  <SpecularButton
+                    size="sm"
                     onClick={() => setShowFollowupModal(true)}
-                    className="text-[11px] text-indigo-600 font-bold hover:underline"
+                    baseColor="#6366F1"
+                    lineColor="#ffffff"
+                    intensity={0.8}
+                    followMouse={true}
+                    proximity={150}
                   >
                     + Schedule Followup
-                  </button>
+                  </SpecularButton>
                 </div>
 
                 {/* Add dynamic manual Note Box */}
@@ -833,13 +857,17 @@ export default function LeadsModule({
                     onChange={e => setNewNote(e.target.value)}
                     className="flex-1 bg-surface border border-default rounded-xl px-3 py-2 text-xs text-secondary focus:outline-none placeholder:text-muted"
                   />
-                  <button 
-                    id="add-note-submit-btn"
+                  <SpecularButton
+                    size="sm"
                     type="submit"
-                    className="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl"
+                    baseColor="#3B82F6"
+                    lineColor="#ffffff"
+                    intensity={0.8}
+                    followMouse={true}
+                    proximity={150}
                   >
                     Add
-                  </button>
+                  </SpecularButton>
                 </form>
 
                 {/* Timeline items list */}
@@ -935,19 +963,31 @@ export default function LeadsModule({
             {/* Quick Actions */}
             <div className="flex gap-2">
               {callSession.step !== 'ended' ? (
-                <button 
+                <SpecularButton
+                  size="md"
+                  fullWidth
                   onClick={() => setCallSession(prev => prev ? { ...prev, step: 'ended' } : null)}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 rounded-xl transition cursor-pointer"
+                  baseColor="#E11D48"
+                  lineColor="#ffffff"
+                  intensity={1}
+                  followMouse={true}
+                  proximity={150}
                 >
                   Hang Up Call
-                </button>
+                </SpecularButton>
               ) : (
-                <button 
+                <SpecularButton
+                  size="md"
+                  fullWidth
                   onClick={() => setCallSession(null)}
-                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2 rounded-xl"
+                  baseColor="#475569"
+                  lineColor="#ffffff"
+                  intensity={1}
+                  followMouse={true}
+                  proximity={150}
                 >
                   Close Manager Window
-                </button>
+                </SpecularButton>
               )}
             </div>
           </div>
@@ -1006,13 +1046,18 @@ export default function LeadsModule({
               </div>
             </div>
 
-            <button 
-              id="confirm-followup-btn"
+            <SpecularButton
+              size="md"
+              fullWidth
               onClick={submitFollowUp}
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-xl transition"
+              baseColor="#6366F1"
+              lineColor="#ffffff"
+              intensity={1}
+              followMouse={true}
+              proximity={200}
             >
               Verify & Add Schedule
-            </button>
+            </SpecularButton>
           </div>
         </div>
       )}

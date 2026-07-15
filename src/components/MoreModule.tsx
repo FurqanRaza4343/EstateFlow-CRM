@@ -24,7 +24,8 @@ import {
   FileText,
   CreditCard,
   Zap,
-  DollarSign
+  DollarSign,
+  Search
 } from 'lucide-react';
 import { Attendance, UserProfile, Property, SocialPost, Organization, Lead, Commission } from '../types';
 import SaaSPlansBilling from './SaaSPlansBilling';
@@ -33,6 +34,7 @@ import { LanguageCode, CurrencyCode, PropertySchemeType } from '../lib/i18n';
 import { api } from '../lib/api';
 import insforge from '../lib/insforge';
 import GradientAvatar from './GradientAvatar';
+import LeadScout from './LeadScout';
 
 interface MoreModuleProps {
   properties: Property[];
@@ -367,57 +369,63 @@ export default function MoreModule({
       <div className="md:col-span-3 bg-card p-3 border border-default rounded-2xl flex flex-col space-y-1.5 h-fit">
         <button 
           onClick={() => setActiveTab('attendance')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'attendance' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'attendance' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Clock size={15} /> Field GPS Attendance
         </button>
         <button 
           onClick={() => setActiveTab('social')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'social' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'social' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <MessageSquare size={15} /> Social Captions (Gemini)
         </button>
         <button 
           onClick={() => setActiveTab('webhook_tester')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'webhook_tester' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'webhook_tester' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Webhook size={15} /> Webhook Intake Playground
         </button>
         <button 
           onClick={() => setActiveTab('team')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'team' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'team' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Users size={15} /> Team & Recruitment
         </button>
         <button 
           onClick={() => setActiveTab('reports')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'reports' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'reports' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <BarChart3 size={15} /> CRM Analytics Reports
         </button>
         <button 
           onClick={() => setActiveTab('commissions')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'commissions' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'commissions' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <DollarSign size={15} className="text-emerald-400" /> Commission Tracking
         </button>
         <button 
           onClick={() => setActiveTab('billing')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'billing' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'billing' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <CreditCard size={15} className="text-indigo-505" strokeWidth={2.5} /> Subscription & Billing
         </button>
         <button 
           onClick={() => setActiveTab('settings')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'settings' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'settings' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
         >
           <Settings size={15} /> Config Settings
         </button>
         <button 
           onClick={() => setActiveTab('brand_kit')}
-          className={`text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'brand_kit' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-slate-705 text-secondary'}`}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'brand_kit' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-slate-705 text-secondary'}`}
         >
           <Sparkles size={15} className="text-amber-500 animate-pulse" /> Corporate Brand Kit
+        </button>
+        <button 
+          onClick={() => setActiveTab('lead_scout')}
+          className={`btn-enhance text-left p-3 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === 'lead_scout' ? 'bg-slate-900 text-white' : 'hover:bg-surface-alt text-secondary'}`}
+        >
+          <Search size={15} className="text-blue-400" /> Lead Scout
         </button>
 
         <div className="border-t border-default my-2 pt-2"></div>
@@ -1223,7 +1231,33 @@ export default function MoreModule({
           </div>
         )}
 
-        {/* VIEW 7: ESTATEFLOW CORPORATE BRAND KIT PORTFOLIO */}
+        {/* VIEW 7: LEAD SCOUT */}
+        {activeTab === 'lead_scout' && (
+          <LeadScout
+            organizationId={activeOrg?.id || ''}
+            agents={users?.map(u => ({ id: u.id, name: u.name })) || []}
+            onImportLeads={async (scrapedLeads) => {
+              for (const lead of scrapedLeads) {
+                await api.createLead({
+                  organizationId: activeOrg?.id || '',
+                  fullName: lead.fullName,
+                  phone: lead.phone,
+                  email: lead.email,
+                  source: 'Manual',
+                  propertyType: 'Apartment',
+                  preferredLocation: lead.preferredLocation,
+                  notes: lead.notes,
+                  assignedAgentId: lead.assignedAgentId || undefined,
+                  status: 'New',
+                  temperature: 'Warm',
+                }).catch(err => console.error('Import lead error:', err));
+              }
+              onRefreshAllData();
+            }}
+          />
+        )}
+
+        {/* VIEW 8: ESTATEFLOW CORPORATE BRAND KIT PORTFOLIO */}
         {activeTab === 'brand_kit' && (
           <div className="space-y-6" id="more-view-brand-kit">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
