@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Search, Download, Import, Loader2, MapPin, User, Phone, Star, Globe, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Search, Download, Import, Loader2, MapPin, User, Phone, Star, Globe, AlertTriangle, CheckCircle, MessageSquare } from 'lucide-react';
 import insforge from '../lib/insforge';
 import GradientAvatar from './GradientAvatar';
 import SpecularButton from './SpecularButton';
@@ -32,10 +32,34 @@ interface LeadScoutProps {
   onImportLeads: (leads: ScrapedLead[]) => Promise<void>;
 }
 
+function parseNaturalInput(input: string): { query: string; location: string; maxResults: number } {
+  let text = input.trim();
+  let maxResults = 10;
+  const numMatch = text.match(/^(\d+)\s+/);
+  if (numMatch) {
+    maxResults = Math.min(Math.max(parseInt(numMatch[1]), 1), 50);
+    text = text.slice(numMatch[0].length);
+  }
+  const inIdx = text.toLowerCase().lastIndexOf(' in ');
+  if (inIdx > 0) {
+    return {
+      query: text.slice(0, inIdx).trim(),
+      location: text.slice(inIdx + 4).trim(),
+      maxResults,
+    };
+  }
+  return { query: text, location: '', maxResults };
+}
+
+const EXAMPLES = [
+  '10 real estate agents in California, USA',
+  '5 property dealers in Lahore, Pakistan',
+  '20 real estate brokers in Dubai, UAE',
+  'real estate investors in London, UK',
+];
+
 export default function LeadScout({ organizationId, agents, onImportLeads }: LeadScoutProps) {
-  const [query, setQuery] = useState('real estate agents');
-  const [location, setLocation] = useState('');
-  const [maxResults, setMaxResults] = useState(10);
+  const [input, setInput] = useState('');
   const [scraping, setScraping] = useState(false);
   const [results, setResults] = useState<ScrapedLead[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +70,12 @@ export default function LeadScout({ organizationId, agents, onImportLeads }: Lea
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleScrape = async () => {
-    if (!query.trim()) return;
+    if (!input.trim()) return;
+    const parsed = parseNaturalInput(input);
+    if (!parsed.query) {
+      setError('Please describe what kind of leads you need.');
+      return;
+    }
     setScraping(true);
     setError(null);
     setResults([]);
@@ -55,7 +84,7 @@ export default function LeadScout({ organizationId, agents, onImportLeads }: Lea
     try {
       const { data, error: fnError } = await insforge.functions.invoke('scrape-leads', {
         method: 'POST',
-        body: { query: query.trim(), location: location.trim(), maxResults },
+        body: { query: parsed.query, location: parsed.location, maxResults: parsed.maxResults },
       });
 
       if (fnError) throw new Error(fnError.message || 'Scraping failed');
@@ -72,6 +101,12 @@ export default function LeadScout({ organizationId, agents, onImportLeads }: Lea
       setError(err.message || 'Scraping failed. Please try again.');
     } finally {
       setScraping(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !scraping) {
+      handleScrape();
     }
   };
 
@@ -138,59 +173,46 @@ export default function LeadScout({ organizationId, agents, onImportLeads }: Lea
         <Search size={16} style={{ color: 'var(--color-accent)' }} />
         <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Lead Scout</h3>
         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--color-accent)' }}>
-          Apify
+          AI Powered
         </span>
       </div>
 
       <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="space-y-1 sm:col-span-2">
-            <label className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>Search Query</label>
+        <div className="space-y-1">
+          <label className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
+            Describe the leads you need
+          </label>
+          <div className="relative">
             <input
               type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="e.g. real estate agents, property dealers"
-              className="w-full rounded-xl px-3 py-2.5 text-xs outline-none"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="e.g. 10 real estate agents in California, USA"
+              className="w-full rounded-xl px-3 py-3 text-xs outline-none pr-10"
               style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}
             />
+            <MessageSquare size={14} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>Location (optional)</label>
-            <input
-              type="text"
-              value={location}
-              onChange={e => setLocation(e.target.value)}
-              placeholder="e.g. Dubai, Karachi"
-              className="w-full rounded-xl px-3 py-2.5 text-xs outline-none"
-              style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}
-            />
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {EXAMPLES.map((ex, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setInput(ex)}
+                className="text-[10px] px-2 py-1 rounded-lg transition"
+                style={{ background: 'rgba(59,130,246,0.08)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}
+              >
+                {ex}
+              </button>
+            ))}
           </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>Max Leads:</span>
-          {[5, 10, 15, 20].map(n => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setMaxResults(n)}
-              className="btn-enhance px-3 py-1.5 rounded-lg text-[10px] font-bold transition"
-              style={{
-                background: maxResults === n ? 'var(--color-accent)' : 'var(--bg-surface)',
-                color: maxResults === n ? '#fff' : 'var(--text-secondary)',
-                border: '1px solid var(--border-light)',
-              }}
-            >
-              {n}
-            </button>
-          ))}
         </div>
 
         <SpecularButton
           size="md"
           fullWidth
-          disabled={scraping || !query.trim()}
+          disabled={scraping || !input.trim()}
           onClick={handleScrape}
           baseColor="#3B82F6"
           lineColor="#ffffff"
@@ -201,7 +223,7 @@ export default function LeadScout({ organizationId, agents, onImportLeads }: Lea
           {scraping ? (
             <span className="flex items-center justify-center gap-2">
               <Loader2 size={14} className="animate-spin" />
-              Scraping...
+              Searching...
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
