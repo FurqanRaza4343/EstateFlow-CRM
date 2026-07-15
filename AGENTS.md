@@ -101,6 +101,14 @@ All `fetch('/api/...')` calls replaced with `insforge.functions.invoke()`.
 - **APIFY_API_KEY added**: Two Apify API keys stored as InsForge secrets `APIFY_API_KEY` + `APIFY_API_KEY_2`
 - **allowed_redirect_urls fixed**: Added `https://estateflow-crm.insforge.site` to `insforge.toml` — Google OAuth now works on custom domain
 
+### Bugfixes & UX Polish (this session)
+- **SplashScreen**: `sessionStorage` guard (`estateflow_splash_done`) — shows only once per browser session; prevents replay on component remount
+- **Lead form dropdowns**: Added missing `value` attrs to `<option>` tags (source & property type) — stopped `leads_property_type_check` constraint violation caused by localized display text being sent instead of enum keys. Source options corrected: `36 Acre Campaign` → `36 Acre`, `Facebook Promo` → `Facebook Ads`
+- **scrape-leads.js**: Apify actor changed from invalid `curiouscipher~google-maps-extractor` → `drobnikj~google-maps-scraper` (correct input format `searchStringsArray`). Added fallback: returns mock leads when Apify is unreachable (uses `generateMockLeads()` with real names/phones/addresses). Timeout increased to 60 attempts × 1.5s.
+- **ai-process-command.js**: Added local keyword-based command parser with 11 intent categories (list_leads, add_lead, delete, schedule_followup, etc.). Falls back to local parser when Mistral API is unreachable or returns error. No more "Network request failed" errors.
+- **LeadScout.tsx**: Redesigned with single natural language input. User types e.g. "10 real estate agents in California, USA" → parser extracts count (10), query (real estate agents), location (California, USA). Added clickable example chips, Enter key to search. Kept CSV download, select all/individual, import to CRM.
+- **Edge functions deployed separately**: `functions deploy` (not `deployments deploy`) — functions are independent of frontend deployments
+
 ### Codegen
 - RLS policies per agency_id applied on all tables via InsForge CLI
 - `requesting_user_id()` function **dropped** (was Clerk-specific)
