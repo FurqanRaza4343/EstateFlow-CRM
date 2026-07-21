@@ -214,17 +214,7 @@ Type or speak these in the Co-Pilot:
 
 ---
 
-## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
-
----
-
-## 📄 License
-
-Apache 2.0
-
----
 
 ## 👨‍💻 Author
 
