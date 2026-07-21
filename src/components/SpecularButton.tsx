@@ -81,6 +81,9 @@ interface SpecularButtonProps {
   proximity?: number;
   autoAnimate?: boolean;
   disabled?: boolean;
+  id?: string;
+  title?: string;
+  style?: React.CSSProperties;
   onClick?: (e: React.MouseEvent) => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
@@ -107,6 +110,9 @@ export default function SpecularButton({
   autoAnimate = false,
   disabled = false,
   onClick,
+  id,
+  title,
+  style,
   type = 'button',
   className = '',
   fullWidth = false,
